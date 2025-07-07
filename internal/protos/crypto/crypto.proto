@@ -1,0 +1,15 @@
+syntax = "proto3";
+package crypto;
+// import "common/common.proto";
+
+option go_package = "grpc/proto";
+
+service CryptoController {
+    rpc GetPublicKeyPEM(GetPublicKeyPEMRequest) returns (GetPublicKeyPEMResponse);
+}
+
+message GetPublicKeyPEMRequest {}
+
+message GetPublicKeyPEMResponse {
+    string public_key_pem = 1;
+}

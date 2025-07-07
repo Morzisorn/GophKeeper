@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS users (
+    login VARCHAR(50) NOT NULL PRIMARY KEY,
+    password BYTEA NOT NULL
+);
