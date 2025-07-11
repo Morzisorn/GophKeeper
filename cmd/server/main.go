@@ -30,5 +30,5 @@ func main() {
 	us := userv.NewUserService(repo)
 	cs := cserv.NewCryptoService(repo)
 
-	server.CreateAndRun(us, cs, &repo)
+	server.CreateAndRun(us, cs)
 }

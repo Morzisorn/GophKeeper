@@ -7,7 +7,6 @@ import (
 	pbus "gophkeeper/internal/protos/users"
 	pbcs "gophkeeper/internal/protos/crypto"
 	"gophkeeper/internal/server/controllers"
-	"gophkeeper/internal/server/repositories"
 	cserv "gophkeeper/internal/server/services/crypto_service"
 	userv "gophkeeper/internal/server/services/user_service"
 	"net"
@@ -21,29 +20,28 @@ import (
 )
 
 type Server interface {
-	Create(us *userv.UserService, storage *repositories.Storage)
+	Create(us *userv.UserService)
 	Run()
 	Shutdown(ctx context.Context, idleConnsClosed chan struct{})
 }
 
-func CreateAndRun(us *userv.UserService, cs *cserv.CryptoService, storage *repositories.Storage) {
+func CreateAndRun(us *userv.UserService, cs *cserv.CryptoService) {
 	var g *GRPCServer
 
-	g = createGRPCServer(us, cs, storage)
+	g = createGRPCServer(us, cs)
 
 	g.Run()
 }
 
 type GRPCServer struct {
 	Server  *grpc.Server
-	Storage *repositories.Storage
 	Listen  net.Listener
 
 	US *userv.UserService
 	CS *cserv.CryptoService
 }
 
-func createGRPCServer(us *userv.UserService, cs *cserv.CryptoService, storage *repositories.Storage) *GRPCServer {
+func createGRPCServer(us *userv.UserService, cs *cserv.CryptoService) *GRPCServer {
 	uc := controllers.NewUserController(us)
 	cc := controllers.NewCryptoController()
 	cnfg := config.GetServerConfig()
@@ -58,8 +56,8 @@ func createGRPCServer(us *userv.UserService, cs *cserv.CryptoService, storage *r
 
 	return &GRPCServer{
 		Server: s, 
-		Storage: storage, 
 		Listen:listen,
+
 		US: us,
 		CS: cs,
 	}

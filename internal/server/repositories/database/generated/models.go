@@ -4,6 +4,91 @@
 
 package database
 
+import (
+	"database/sql/driver"
+	"fmt"
+
+	"github.com/jackc/pgx/v5/pgtype"
+)
+
+type ItemType string
+
+const (
+	ItemTypeCREDENTIALS ItemType = "CREDENTIALS"
+	ItemTypeTEXT        ItemType = "TEXT"
+	ItemTypeBINARY      ItemType = "BINARY"
+	ItemTypeCARD        ItemType = "CARD"
+)
+
+func (e *ItemType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = ItemType(s)
+	case string:
+		*e = ItemType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for ItemType: %T", src)
+	}
+	return nil
+}
+
+type NullItemType struct {
+	ItemType ItemType `json:"item_type"`
+	Valid    bool     `json:"valid"` // Valid is true if ItemType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullItemType) Scan(value interface{}) error {
+	if value == nil {
+		ns.ItemType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.ItemType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullItemType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.ItemType), nil
+}
+
+type BinaryDatum struct {
+	ItemID  pgtype.UUID `json:"item_id"`
+	Content []byte      `json:"content"`
+}
+
+type CardDatum struct {
+	ItemID         pgtype.UUID `json:"item_id"`
+	Number         string      `json:"number"`
+	ExpiryDate     string      `json:"expiry_date"`
+	SecurityCode   string      `json:"security_code"`
+	CardholderName string      `json:"cardholder_name"`
+}
+
+type CredentialsDatum struct {
+	ItemID   pgtype.UUID `json:"item_id"`
+	Login    string      `json:"login"`
+	Password string      `json:"password"`
+}
+
+type Item struct {
+	ID        pgtype.UUID      `json:"id"`
+	UserLogin string           `json:"user_login"`
+	Name      string           `json:"name"`
+	Type      ItemType         `json:"type"`
+	Meta      []byte           `json:"meta"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+}
+
+type TextDatum struct {
+	ItemID  pgtype.UUID `json:"item_id"`
+	Content string      `json:"content"`
+}
+
 type User struct {
 	Login    string `json:"login"`
 	Password []byte `json:"password"`

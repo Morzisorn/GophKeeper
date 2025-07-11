@@ -6,9 +6,28 @@ package database
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
+	AddBinary(ctx context.Context, arg AddBinaryParams) error
+	AddCard(ctx context.Context, arg AddCardParams) error
+	AddCredentials(ctx context.Context, arg AddCredentialsParams) error
+	AddItem(ctx context.Context, arg AddItemParams) (pgtype.UUID, error)
+	AddText(ctx context.Context, arg AddTextParams) error
+	DeleteItem(ctx context.Context, arg DeleteItemParams) error
+	EditBinary(ctx context.Context, arg EditBinaryParams) error
+	EditCard(ctx context.Context, arg EditCardParams) error
+	EditCredentials(ctx context.Context, arg EditCredentialsParams) error
+	EditItem(ctx context.Context, arg EditItemParams) error
+	EditText(ctx context.Context, arg EditTextParams) error
+	GetAllUserItems(ctx context.Context, userLogin string) ([]GetAllUserItemsRow, error)
+	GetBinaries(ctx context.Context, userLogin string) ([]GetBinariesRow, error)
+	GetCards(ctx context.Context, userLogin string) ([]GetCardsRow, error)
+	GetCredentials(ctx context.Context, userLogin string) ([]GetCredentialsRow, error)
+	GetTexts(ctx context.Context, userLogin string) ([]GetTextsRow, error)
+	GetTypesCounts(ctx context.Context, userLogin string) ([]GetTypesCountsRow, error)
 	GetUser(ctx context.Context, login string) (User, error)
 	SignUpUser(ctx context.Context, arg SignUpUserParams) error
 }

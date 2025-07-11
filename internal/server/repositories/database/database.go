@@ -8,18 +8,19 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	gen "gophkeeper/internal/server/repositories/database/generated"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Database interface {
 	UserDatabase
-	CredentialsDatabase
+	ItemDatabase
 }
 
 type PGDB struct {
 	users UserDatabase
-	creds CredentialsDatabase
+	items ItemDatabase
 }
 
 func NewPGDB(cfg *config.Config) (Database, error) {
@@ -32,12 +33,12 @@ func NewPGDB(cfg *config.Config) (Database, error) {
 	if err != nil {
 		return nil, fmt.Errorf("create db tables error: %v", err)
 	}
-	
-	q := gen.New(pool) 
+
+	q := gen.New(pool)
 
 	return &PGDB{
-		users: NewUserDB(q),
-		creds: NewCredsDB(q),
+		users: NewUserDB(q, pool),
+		items: NewItemDB(q, pool),
 	}, nil
 }
 
@@ -69,6 +70,28 @@ func (pg *PGDB) GetUser(ctx context.Context, login string) (*models.User, error)
 	return pg.users.GetUser(ctx, login)
 }
 
+func (pg *PGDB) GetAllUserItems(ctx context.Context, login string) ([]models.Item, error) {
+	return pg.items.GetAllUserItems(ctx, login)
+}
+
+func (pg *PGDB) GetUserItemsWithType(ctx context.Context, typ models.ItemType, login string) ([]models.Item, error) {
+	return pg.items.GetUserItemsWithType(ctx, typ, login)
+}
+
+func (pg *PGDB) AddItem(ctx context.Context, item *models.Item) error {
+	return pg.items.AddItem(ctx, item)
+}
+
+func (pg *PGDB) EditItem(ctx context.Context, item *models.Item) error {
+	return pg.items.EditItem(ctx, item)
+}
+
+func (pg *PGDB) DeleteItem(ctx context.Context, login string, itemID string) error {
+	return pg.items.DeleteItem(ctx, login, itemID)
+}
+
+func (pg *PGDB) GetTypesCounts(ctx context.Context, login string) (map[models.ItemType]int32, error)
+
 // func (db *PGDB) Close() error {
-	
+
 // }

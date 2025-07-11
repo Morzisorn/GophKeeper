@@ -1,6 +1,5 @@
 syntax = "proto3";
 package users;
-// import "common/common.proto";
 
 option go_package = "grpc/proto";
 

@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package items;
+option go_package = "grpc/proto";
+
+import "google/protobuf/timestamp.proto";
+
+message Item {
+    string id = 1;
+    string user_login = 2;
+    string name = 3;
+    ItemType type = 4;
+    oneof data {
+        Credentials credentials = 5;
+        Text text = 6;
+        Binary binary = 7;
+        Card card = 8;
+    }
+    map<string, string> meta = 9;
+    google.protobuf.Timestamp created_at = 10;
+    google.protobuf.Timestamp updated_at = 11;
+}
+
+enum ItemType {
+    ITEM_TYPE_UNSPECIFIED = 0;
+    ITEM_TYPE_CREDENTIALS = 1;
+    ITEM_TYPE_TEXT = 2;
+    ITEM_TYPE_BINARY = 3;
+    ITEM_TYPE_CARD = 4;
+}
+
+message Credentials {
+    string login = 1;
+    string password = 2;
+}
+
+message Text {
+    string content = 1;
+}
+
+message Binary {
+    bytes content = 1;  // []byte в Go
+}
+
+message Card {
+    string number = 1;
+    string expiry_date = 2;
+    string security_code = 3;
+    string cardholder_name = 4;
+}
+
+service ItemsService {
+    rpc AddItem(AddItemRequest) returns (AddItemResponse);
+    rpc EditItem(EditItemRequest) returns (EditItemResponse);
+    rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse);
+    rpc GetUserItems(GetUserItemsRequest) returns (GetUserItemsResponse);
+	rpc TypesCounts(TypesCountsRequest) returns (TypesCountsResponse);
+}
+
+message AddItemRequest {
+    Item item = 1;
+}
+
+message AddItemResponse {
+    bool success = 1;
+}
+
+message GetUserItemsRequest {
+    string user_login = 1;
+    ItemType type = 2; 
+}
+
+message GetUserItemsResponse {
+    map<string, Item> items = 1;
+}
+
+message EditItemRequest {
+    Item item = 1;
+}
+
+message EditItemResponse {
+    bool success = 1;
+}
+
+message DeleteItemRequest {
+    string user_login = 1;
+    string item_id = 2;
+}
+
+message DeleteItemResponse {
+    bool success = 1;
+}
+
+message TypesCountsRequest {
+	string user_login = 1;
+}
+
+message TypesCountsResponse {
+	map<string,int32> types = 1;
+}
