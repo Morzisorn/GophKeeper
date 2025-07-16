@@ -22,7 +22,7 @@ type UserDB struct {
 
 func NewUserDB(q *gen.Queries, pool *pgxpool.Pool) UserDatabase {
 	return &UserDB{
-		q: q,
+		q:    q,
 		pool: pool,
 	}
 }
@@ -31,6 +31,7 @@ func (db *UserDB) SignUpUser(ctx context.Context, user *models.User) error {
 	return db.q.SignUpUser(ctx, gen.SignUpUserParams{
 		Login:    user.Login,
 		Password: user.Password,
+		Salt:     user.Salt,
 	})
 }
 
@@ -42,5 +43,6 @@ func (db *UserDB) GetUser(ctx context.Context, login string) (*models.User, erro
 	return &models.User{
 		Login:    user.Login,
 		Password: user.Password,
+		Salt:     user.Salt,
 	}, nil
 }

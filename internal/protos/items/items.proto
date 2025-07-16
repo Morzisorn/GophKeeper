@@ -49,7 +49,7 @@ message Card {
     string cardholder_name = 4;
 }
 
-service ItemsService {
+service ItemsController {
     rpc AddItem(AddItemRequest) returns (AddItemResponse);
     rpc EditItem(EditItemRequest) returns (EditItemResponse);
     rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse);
@@ -71,7 +71,7 @@ message GetUserItemsRequest {
 }
 
 message GetUserItemsResponse {
-    map<string, Item> items = 1;
+    repeated Item items = 1;
 }
 
 message EditItemRequest {

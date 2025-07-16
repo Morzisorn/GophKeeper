@@ -120,7 +120,8 @@ func (x *SignUpUserRequest) GetUser() *User {
 type SignUpUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	Salt          string                 `protobuf:"bytes,2,opt,name=salt,proto3" json:"salt,omitempty"`
+	Error         string                 `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -158,6 +159,13 @@ func (*SignUpUserResponse) Descriptor() ([]byte, []int) {
 func (x *SignUpUserResponse) GetToken() string {
 	if x != nil {
 		return x.Token
+	}
+	return ""
+}
+
+func (x *SignUpUserResponse) GetSalt() string {
+	if x != nil {
+		return x.Salt
 	}
 	return ""
 }
@@ -216,7 +224,8 @@ func (x *SignInUserRequest) GetUser() *User {
 type SignInUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Error         string                 `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+	Salt          string                 `protobuf:"bytes,2,opt,name=salt,proto3" json:"salt,omitempty"`
+	Error         string                 `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -258,6 +267,13 @@ func (x *SignInUserResponse) GetToken() string {
 	return ""
 }
 
+func (x *SignInUserResponse) GetSalt() string {
+	if x != nil {
+		return x.Salt
+	}
+	return ""
+}
+
 func (x *SignInUserResponse) GetError() string {
 	if x != nil {
 		return x.Error
@@ -274,15 +290,17 @@ const file_internal_protos_users_users_proto_rawDesc = "" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"4\n" +
 	"\x11SignUpUserRequest\x12\x1f\n" +
-	"\x04user\x18\x01 \x01(\v2\v.users.UserR\x04user\"@\n" +
+	"\x04user\x18\x01 \x01(\v2\v.users.UserR\x04user\"T\n" +
 	"\x12SignUpUserResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error\"4\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12\x12\n" +
+	"\x04salt\x18\x02 \x01(\tR\x04salt\x12\x14\n" +
+	"\x05error\x18\x03 \x01(\tR\x05error\"4\n" +
 	"\x11SignInUserRequest\x12\x1f\n" +
-	"\x04user\x18\x01 \x01(\v2\v.users.UserR\x04user\"@\n" +
+	"\x04user\x18\x01 \x01(\v2\v.users.UserR\x04user\"T\n" +
 	"\x12SignInUserResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12\x14\n" +
-	"\x05error\x18\x02 \x01(\tR\x05error2\x96\x01\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12\x12\n" +
+	"\x04salt\x18\x02 \x01(\tR\x04salt\x12\x14\n" +
+	"\x05error\x18\x03 \x01(\tR\x05error2\x96\x01\n" +
 	"\x0eUserController\x12A\n" +
 	"\n" +
 	"SignUpUser\x12\x18.users.SignUpUserRequest\x1a\x19.users.SignUpUserResponse\x12A\n" +

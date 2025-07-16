@@ -18,12 +18,13 @@ func main() {
 	}
 	cnfg := config.GetAgentConfig()
 	client := client.NewGRPCClient(cnfg)
-	us := services.NewUserService(client)
 	cs := services.NewCryptoService(client)
+	us := services.NewUserService(client, cs)
+	is := services.NewItemService(client)
 	err = cs.SetPublicKey()
 	if err != nil {
 		logger.Log.Fatal("Set public key error: ", zap.Error(err))
 	}
-	uiContr := ui.NewUIController(us)
+	uiContr := ui.NewUIController(us, is)
 	uiContr.Run()
 }

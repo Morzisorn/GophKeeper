@@ -540,7 +540,7 @@ func (q *Queries) GetTypesCounts(ctx context.Context, userLogin string) ([]GetTy
 }
 
 const getUser = `-- name: GetUser :one
-SELECT login, password
+SELECT login, password, salt
 FROM users
 WHERE login = $1
 `
@@ -548,21 +548,22 @@ WHERE login = $1
 func (q *Queries) GetUser(ctx context.Context, login string) (User, error) {
 	row := q.db.QueryRow(ctx, getUser, login)
 	var i User
-	err := row.Scan(&i.Login, &i.Password)
+	err := row.Scan(&i.Login, &i.Password, &i.Salt)
 	return i, err
 }
 
 const signUpUser = `-- name: SignUpUser :exec
-INSERT INTO users (login, password)
-VALUES ($1, $2)
+INSERT INTO users (login, password, salt)
+VALUES ($1, $2, $3)
 `
 
 type SignUpUserParams struct {
 	Login    string `json:"login"`
 	Password []byte `json:"password"`
+	Salt     string `json:"salt"`
 }
 
 func (q *Queries) SignUpUser(ctx context.Context, arg SignUpUserParams) error {
-	_, err := q.db.Exec(ctx, signUpUser, arg.Login, arg.Password)
+	_, err := q.db.Exec(ctx, signUpUser, arg.Login, arg.Password, arg.Salt)
 	return err
 }

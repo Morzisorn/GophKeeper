@@ -255,7 +255,7 @@ func (db *ItemDB) AddItem(ctx context.Context, item *models.Item) error {
 
 		switch item.Type {
 		case models.ItemTypeCREDENTIALS:
-			return db.addCredentials(ctx, itemID, item.Data.(*models.Credentials))
+			return db.addCredentials(ctx, qtx, itemID, item.Data.(*models.Credentials))
 		case models.ItemTypeTEXT:
 			return db.addText(ctx, itemID, item.Data.(*models.Text))
 		case models.ItemTypeBINARY:
@@ -267,13 +267,13 @@ func (db *ItemDB) AddItem(ctx context.Context, item *models.Item) error {
 		}
 	})
 	if err != nil {
-		return fmt.Errorf("edit %s item error: %w", item.Type, err)
+		return fmt.Errorf("add %s item error: %w", item.Type, err)
 	}
 	return nil
 }
 
-func (db *ItemDB) addCredentials(ctx context.Context, itemID pgtype.UUID, cr *models.Credentials) error {
-	return db.q.AddCredentials(ctx, gen.AddCredentialsParams{
+func (db *ItemDB) addCredentials(ctx context.Context, qtx *gen.Queries, itemID pgtype.UUID, cr *models.Credentials) error {
+	return qtx.AddCredentials(ctx, gen.AddCredentialsParams{
 		ItemID:   itemID,
 		Login:    cr.Login,
 		Password: cr.Password,

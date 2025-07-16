@@ -15,7 +15,7 @@ func NewItemService(repo repositories.Storage) *ItemService {
 	return &ItemService{repo: repo}
 }
 
-func (is *ItemService) GetUserItems(ctx context.Context, typ models.ItemType, login string) (map[string]models.Item, error) {
+func (is *ItemService) GetUserItems(ctx context.Context, typ models.ItemType, login string) ([]models.Item, error) {
 	var sl []models.Item
 	var err error
 	if typ != "" {
@@ -27,11 +27,7 @@ func (is *ItemService) GetUserItems(ctx context.Context, typ models.ItemType, lo
 		return nil, fmt.Errorf("failed to get %s from db for %s: %w", typ, login, err)
 	}
 
-	res := make(map[string]models.Item, len(sl))
-	for _, i := range sl {
-		res[i.ID] = i
-	}
-	return res, nil
+	return sl, nil
 }
 
 func (is *ItemService) GetTypesCounts(ctx context.Context, login string) (map[models.ItemType]int32, error) {
@@ -40,8 +36,8 @@ func (is *ItemService) GetTypesCounts(ctx context.Context, login string) (map[mo
 		return nil, err
 	}
 
-	if len(typesCount) != len(models.Types) {
-		for _, t := range models.Types {
+	if len(typesCount) != len(models.ItemTypes) {
+		for _, t := range models.ItemTypes {
 			_, ok := typesCount[t]
 			if !ok {
 				typesCount[t] = int32(0)

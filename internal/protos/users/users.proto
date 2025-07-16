@@ -19,7 +19,8 @@ message SignUpUserRequest {
 
 message SignUpUserResponse {
     string token = 1;
-    string error = 2;
+    string salt = 2;
+    string error = 3;
 }
 
 message SignInUserRequest {
@@ -28,5 +29,6 @@ message SignInUserRequest {
 
 message SignInUserResponse {
     string token = 1;
-    string error = 2;
+    string salt = 2;
+    string error = 3;
 }

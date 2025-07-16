@@ -1,9 +1,9 @@
 -- name: SignUpUser :exec
-INSERT INTO users (login, password)
-VALUES ($1, $2);
+INSERT INTO users (login, password, salt)
+VALUES ($1, $2, $3);
 
 -- name: GetUser :one
-SELECT login, password
+SELECT login, password, salt
 FROM users
 WHERE login = $1;
 

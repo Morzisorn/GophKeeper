@@ -25,13 +25,16 @@ type CommonConfig struct {
 }
 
 type AgentConfig struct {
-	PublicKey *rsa.PublicKey
+	PublicKey      *rsa.PublicKey
+	MasterPassword string
+	MasterKey      []byte
+	Salt           []byte
 }
 
 type ServerConfig struct {
-	DBConnStr  string
-	PrivateKey *rsa.PrivateKey
-	PublicKeyPEM  []byte
+	DBConnStr    string
+	PrivateKey   *rsa.PrivateKey
+	PublicKeyPEM []byte
 }
 
 var (

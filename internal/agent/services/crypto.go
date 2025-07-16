@@ -5,19 +5,24 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"encoding/base64"
 	"fmt"
 	"gophkeeper/config"
 	"gophkeeper/internal/agent/client"
 	"gophkeeper/internal/server/crypto"
+
+	"golang.org/x/crypto/pbkdf2"
 )
 
 type CryptoService struct {
 	Client client.Client
+	config *config.Config
 }
 
 func NewCryptoService(client client.Client) *CryptoService {
 	return &CryptoService{
 		Client: client,
+		config: config.GetAgentConfig(),
 	}
 }
 
@@ -32,7 +37,7 @@ func (cs *CryptoService) SetPublicKey() error {
 		return fmt.Errorf("get public key from pem error: %w", err)
 	}
 
-	config.GetAgentConfig().PublicKey = key
+	cs.config.PublicKey = key
 
 	return nil
 }
@@ -45,4 +50,48 @@ func encryptData(data []byte) ([]byte, error) {
 		data,
 		nil,
 	)
+}
+
+func (cs *CryptoService) SetSalt(salt string) error {
+	var err error
+	cs.config.Salt, err = base64.StdEncoding.DecodeString(salt)
+	if err != nil {
+		return fmt.Errorf("set salt error: %w", err)
+	}
+
+	if len(cs.config.MasterKey) > 0 {
+		mc := cs.GenerateMasterKey([]byte(cs.GetMasterPassword()))
+		cs.SetMasterKey(mc)
+	}
+
+	return nil
+}
+
+func (cs *CryptoService) GetSalt() []byte {
+	return cs.config.Salt
+}
+
+func (cs *CryptoService) SetMasterPassword(masterPassword string) {
+	cs.config.MasterPassword = masterPassword
+	if len(cs.config.MasterKey) > 0 {
+		mc := cs.GenerateMasterKey([]byte(masterPassword))
+		cs.SetMasterKey(mc)
+	}
+}
+
+func (cs *CryptoService) GetMasterPassword() string {
+	return cs.config.MasterPassword
+}
+
+func (cs *CryptoService) GenerateMasterKey(masterPassword []byte) []byte {
+	cs.config.MasterKey = pbkdf2.Key(masterPassword, cs.config.Salt, 10000, 32, sha256.New)
+	return cs.config.MasterKey
+}
+
+func (cs *CryptoService) SetMasterKey(mc []byte) {
+	cs.config.MasterKey = mc
+}
+
+func (cs *CryptoService) GetMasterKey() []byte {
+	return cs.config.MasterKey
 }

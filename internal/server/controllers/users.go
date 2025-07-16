@@ -27,7 +27,7 @@ func (us *UserController) SignUpUser(ctx context.Context, in *pb.SignUpUserReque
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
 
-	token, err := us.service.SignUpUser(ctx, in.User.Login, in.User.Password)
+	token, salt, err := us.service.SignUpUser(ctx, in.User.Login, in.User.Password)
 	switch {
 	case errors.Is(err, errs.ErrUserAlreadyRegistered):
 		return &pb.SignUpUserResponse{
@@ -39,6 +39,7 @@ func (us *UserController) SignUpUser(ctx context.Context, in *pb.SignUpUserReque
 
 	return &pb.SignUpUserResponse{
 		Token: token,
+		Salt: salt,
 	}, nil
 }
 
@@ -47,7 +48,7 @@ func (us *UserController) SignInUser(ctx context.Context, in *pb.SignInUserReque
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
 
-	token, err := us.service.SignInUser(ctx, in.User.Login, in.User.Password)
+	token, salt, err := us.service.SignInUser(ctx, in.User.Login, in.User.Password)
 	switch {
 	case errors.Is(err, errs.ErrUserNotFound):
 		return &pb.SignInUserResponse{
@@ -63,5 +64,6 @@ func (us *UserController) SignInUser(ctx context.Context, in *pb.SignInUserReque
 
 	return &pb.SignInUserResponse{
 		Token: token,
+		Salt: salt,
 	}, nil
 }

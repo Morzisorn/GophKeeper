@@ -11,6 +11,7 @@ import (
 	"gophkeeper/config"
 	"gophkeeper/internal/errs"
 	"gophkeeper/internal/hash"
+	"gophkeeper/internal/server/crypto"
 	"gophkeeper/internal/server/repositories"
 	"gophkeeper/models"
 
@@ -37,64 +38,71 @@ func (us *UserService) GetUser(ctx context.Context, user *models.User) (*models.
 	return nil, fmt.Errorf("get user error: %w", err)
 }
 
-func (us *UserService) SignUpUser(ctx context.Context, login, encryptedPassword string) (token string, err error) {
+func (us *UserService) SignUpUser(ctx context.Context, login, encryptedPassword string) (token string, salt string, err error) {
 	_, err = us.GetUser(ctx, &models.User{Login: login})
 	switch {
 	case err == nil:
-		return "", fmt.Errorf("sign up user error: %w", errs.ErrUserAlreadyRegistered)
+		return "", "", fmt.Errorf("sign up user error: %w", errs.ErrUserAlreadyRegistered)
 	case !errors.Is(err, errs.ErrUserNotFound):
-		return "", fmt.Errorf("sign up user error: %w", err)
+		return "", "", fmt.Errorf("sign up user error: %w", err)
 	}
 
 	decryptedPassword, err := decryptPassword(encryptedPassword)
 	if err != nil {
-		return "", fmt.Errorf("failed to decrypt password: %w", err)
+		return "", "", fmt.Errorf("failed to decrypt password: %w", err)
 	}
 
 	hash, err := hash.GetHash(decryptedPassword)
 	if err != nil {
-		return "", fmt.Errorf("generate password hash error: %w", err)
+		return "", "", fmt.Errorf("generate password hash error: %w", err)
 	}
+
+	salt, err = crypto.GenerateSalt()
+	if err != nil {
+		return "", "", fmt.Errorf("generate salt error: %w", err)
+	}
+
 	err = us.repo.SignUpUser(ctx, &models.User{
 		Login:    login,
 		Password: hash,
+		Salt:     salt,
 	})
 	if err != nil {
-		return "", fmt.Errorf("sign up user in db error: %w", err)
+		return "", "", fmt.Errorf("sign up user in db error: %w", err)
 	}
 
 	token, err = generateToken(login)
 	if err != nil {
-		return "", fmt.Errorf("generate token after sign up user error: %w", err)
+		return "", "", fmt.Errorf("generate token after sign up user error: %w", err)
 	}
 
-	return token, nil
+	return token, salt, nil
 }
 
-func (us *UserService) SignInUser(ctx context.Context, login, encryptedPassword string) (token string, err error) {
+func (us *UserService) SignInUser(ctx context.Context, login, encryptedPassword string) (token string, salt string, err error) {
 	user, err := us.GetUser(ctx, &models.User{Login: login})
 	switch {
 	case errors.Is(err, errs.ErrUserNotFound):
-		return "", err
+		return "", "", err
 	case err != nil && !errors.Is(err, errs.ErrUserNotFound):
-		return "", fmt.Errorf("sign in user error: %w", err)
+		return "", "", fmt.Errorf("sign in user error: %w", err)
 	}
 
 	decryptedPassword, err := decryptPassword(encryptedPassword)
 	if err != nil {
-		return "", fmt.Errorf("failed to decrypt password: %w", err)
+		return "", "", fmt.Errorf("failed to decrypt password: %w", err)
 	}
 
 	if !hash.VerifyHash(decryptedPassword, user.Password) {
-		return "", errs.ErrIncorrectCredentials
+		return "", "", errs.ErrIncorrectCredentials
 	}
 
 	token, err = generateToken(login)
 	if err != nil {
-		return "", fmt.Errorf("generate token after sign up user error: %w", err)
+		return "", "", fmt.Errorf("generate token after sign up user error: %w", err)
 	}
 
-	return token, nil
+	return token, user.Salt, nil
 }
 
 func decryptPassword(encryptedPassword string) ([]byte, error) {

@@ -9,3 +9,4 @@ type CryptoService struct {
 func NewCryptoService(repo repositories.Storage) *CryptoService {
 	return &CryptoService{repo: repo}
 }
+

@@ -15,7 +15,7 @@ const (
 	ItemTypeCARD        ItemType = "CARD"
 )
 
-var Types []ItemType = []ItemType{ItemTypeCREDENTIALS, ItemTypeTEXT, ItemTypeBINARY, ItemTypeCARD}
+var ItemTypes []ItemType = []ItemType{ItemTypeCREDENTIALS, ItemTypeTEXT, ItemTypeBINARY, ItemTypeCARD}
 
 type Item struct {
 	ID        string

@@ -19,17 +19,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ItemsService_AddItem_FullMethodName      = "/items.ItemsService/AddItem"
-	ItemsService_EditItem_FullMethodName     = "/items.ItemsService/EditItem"
-	ItemsService_DeleteItem_FullMethodName   = "/items.ItemsService/DeleteItem"
-	ItemsService_GetUserItems_FullMethodName = "/items.ItemsService/GetUserItems"
-	ItemsService_TypesCounts_FullMethodName  = "/items.ItemsService/TypesCounts"
+	ItemsController_AddItem_FullMethodName      = "/items.ItemsController/AddItem"
+	ItemsController_EditItem_FullMethodName     = "/items.ItemsController/EditItem"
+	ItemsController_DeleteItem_FullMethodName   = "/items.ItemsController/DeleteItem"
+	ItemsController_GetUserItems_FullMethodName = "/items.ItemsController/GetUserItems"
+	ItemsController_TypesCounts_FullMethodName  = "/items.ItemsController/TypesCounts"
 )
 
-// ItemsServiceClient is the client API for ItemsService service.
+// ItemsControllerClient is the client API for ItemsController service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ItemsServiceClient interface {
+type ItemsControllerClient interface {
 	AddItem(ctx context.Context, in *AddItemRequest, opts ...grpc.CallOption) (*AddItemResponse, error)
 	EditItem(ctx context.Context, in *EditItemRequest, opts ...grpc.CallOption) (*EditItemResponse, error)
 	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error)
@@ -37,235 +37,235 @@ type ItemsServiceClient interface {
 	TypesCounts(ctx context.Context, in *TypesCountsRequest, opts ...grpc.CallOption) (*TypesCountsResponse, error)
 }
 
-type itemsServiceClient struct {
+type itemsControllerClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewItemsServiceClient(cc grpc.ClientConnInterface) ItemsServiceClient {
-	return &itemsServiceClient{cc}
+func NewItemsControllerClient(cc grpc.ClientConnInterface) ItemsControllerClient {
+	return &itemsControllerClient{cc}
 }
 
-func (c *itemsServiceClient) AddItem(ctx context.Context, in *AddItemRequest, opts ...grpc.CallOption) (*AddItemResponse, error) {
+func (c *itemsControllerClient) AddItem(ctx context.Context, in *AddItemRequest, opts ...grpc.CallOption) (*AddItemResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddItemResponse)
-	err := c.cc.Invoke(ctx, ItemsService_AddItem_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ItemsController_AddItem_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itemsServiceClient) EditItem(ctx context.Context, in *EditItemRequest, opts ...grpc.CallOption) (*EditItemResponse, error) {
+func (c *itemsControllerClient) EditItem(ctx context.Context, in *EditItemRequest, opts ...grpc.CallOption) (*EditItemResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EditItemResponse)
-	err := c.cc.Invoke(ctx, ItemsService_EditItem_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ItemsController_EditItem_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itemsServiceClient) DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error) {
+func (c *itemsControllerClient) DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteItemResponse)
-	err := c.cc.Invoke(ctx, ItemsService_DeleteItem_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ItemsController_DeleteItem_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itemsServiceClient) GetUserItems(ctx context.Context, in *GetUserItemsRequest, opts ...grpc.CallOption) (*GetUserItemsResponse, error) {
+func (c *itemsControllerClient) GetUserItems(ctx context.Context, in *GetUserItemsRequest, opts ...grpc.CallOption) (*GetUserItemsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserItemsResponse)
-	err := c.cc.Invoke(ctx, ItemsService_GetUserItems_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ItemsController_GetUserItems_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *itemsServiceClient) TypesCounts(ctx context.Context, in *TypesCountsRequest, opts ...grpc.CallOption) (*TypesCountsResponse, error) {
+func (c *itemsControllerClient) TypesCounts(ctx context.Context, in *TypesCountsRequest, opts ...grpc.CallOption) (*TypesCountsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TypesCountsResponse)
-	err := c.cc.Invoke(ctx, ItemsService_TypesCounts_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ItemsController_TypesCounts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ItemsServiceServer is the server API for ItemsService service.
-// All implementations must embed UnimplementedItemsServiceServer
+// ItemsControllerServer is the server API for ItemsController service.
+// All implementations must embed UnimplementedItemsControllerServer
 // for forward compatibility.
-type ItemsServiceServer interface {
+type ItemsControllerServer interface {
 	AddItem(context.Context, *AddItemRequest) (*AddItemResponse, error)
 	EditItem(context.Context, *EditItemRequest) (*EditItemResponse, error)
 	DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error)
 	GetUserItems(context.Context, *GetUserItemsRequest) (*GetUserItemsResponse, error)
 	TypesCounts(context.Context, *TypesCountsRequest) (*TypesCountsResponse, error)
-	mustEmbedUnimplementedItemsServiceServer()
+	mustEmbedUnimplementedItemsControllerServer()
 }
 
-// UnimplementedItemsServiceServer must be embedded to have
+// UnimplementedItemsControllerServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedItemsServiceServer struct{}
+type UnimplementedItemsControllerServer struct{}
 
-func (UnimplementedItemsServiceServer) AddItem(context.Context, *AddItemRequest) (*AddItemResponse, error) {
+func (UnimplementedItemsControllerServer) AddItem(context.Context, *AddItemRequest) (*AddItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddItem not implemented")
 }
-func (UnimplementedItemsServiceServer) EditItem(context.Context, *EditItemRequest) (*EditItemResponse, error) {
+func (UnimplementedItemsControllerServer) EditItem(context.Context, *EditItemRequest) (*EditItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditItem not implemented")
 }
-func (UnimplementedItemsServiceServer) DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error) {
+func (UnimplementedItemsControllerServer) DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteItem not implemented")
 }
-func (UnimplementedItemsServiceServer) GetUserItems(context.Context, *GetUserItemsRequest) (*GetUserItemsResponse, error) {
+func (UnimplementedItemsControllerServer) GetUserItems(context.Context, *GetUserItemsRequest) (*GetUserItemsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserItems not implemented")
 }
-func (UnimplementedItemsServiceServer) TypesCounts(context.Context, *TypesCountsRequest) (*TypesCountsResponse, error) {
+func (UnimplementedItemsControllerServer) TypesCounts(context.Context, *TypesCountsRequest) (*TypesCountsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TypesCounts not implemented")
 }
-func (UnimplementedItemsServiceServer) mustEmbedUnimplementedItemsServiceServer() {}
-func (UnimplementedItemsServiceServer) testEmbeddedByValue()                      {}
+func (UnimplementedItemsControllerServer) mustEmbedUnimplementedItemsControllerServer() {}
+func (UnimplementedItemsControllerServer) testEmbeddedByValue()                         {}
 
-// UnsafeItemsServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ItemsServiceServer will
+// UnsafeItemsControllerServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ItemsControllerServer will
 // result in compilation errors.
-type UnsafeItemsServiceServer interface {
-	mustEmbedUnimplementedItemsServiceServer()
+type UnsafeItemsControllerServer interface {
+	mustEmbedUnimplementedItemsControllerServer()
 }
 
-func RegisterItemsServiceServer(s grpc.ServiceRegistrar, srv ItemsServiceServer) {
-	// If the following call pancis, it indicates UnimplementedItemsServiceServer was
+func RegisterItemsControllerServer(s grpc.ServiceRegistrar, srv ItemsControllerServer) {
+	// If the following call pancis, it indicates UnimplementedItemsControllerServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&ItemsService_ServiceDesc, srv)
+	s.RegisterService(&ItemsController_ServiceDesc, srv)
 }
 
-func _ItemsService_AddItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ItemsController_AddItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddItemRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItemsServiceServer).AddItem(ctx, in)
+		return srv.(ItemsControllerServer).AddItem(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItemsService_AddItem_FullMethodName,
+		FullMethod: ItemsController_AddItem_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItemsServiceServer).AddItem(ctx, req.(*AddItemRequest))
+		return srv.(ItemsControllerServer).AddItem(ctx, req.(*AddItemRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItemsService_EditItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ItemsController_EditItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EditItemRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItemsServiceServer).EditItem(ctx, in)
+		return srv.(ItemsControllerServer).EditItem(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItemsService_EditItem_FullMethodName,
+		FullMethod: ItemsController_EditItem_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItemsServiceServer).EditItem(ctx, req.(*EditItemRequest))
+		return srv.(ItemsControllerServer).EditItem(ctx, req.(*EditItemRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItemsService_DeleteItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ItemsController_DeleteItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteItemRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItemsServiceServer).DeleteItem(ctx, in)
+		return srv.(ItemsControllerServer).DeleteItem(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItemsService_DeleteItem_FullMethodName,
+		FullMethod: ItemsController_DeleteItem_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItemsServiceServer).DeleteItem(ctx, req.(*DeleteItemRequest))
+		return srv.(ItemsControllerServer).DeleteItem(ctx, req.(*DeleteItemRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItemsService_GetUserItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ItemsController_GetUserItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserItemsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItemsServiceServer).GetUserItems(ctx, in)
+		return srv.(ItemsControllerServer).GetUserItems(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItemsService_GetUserItems_FullMethodName,
+		FullMethod: ItemsController_GetUserItems_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItemsServiceServer).GetUserItems(ctx, req.(*GetUserItemsRequest))
+		return srv.(ItemsControllerServer).GetUserItems(ctx, req.(*GetUserItemsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ItemsService_TypesCounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ItemsController_TypesCounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TypesCountsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ItemsServiceServer).TypesCounts(ctx, in)
+		return srv.(ItemsControllerServer).TypesCounts(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ItemsService_TypesCounts_FullMethodName,
+		FullMethod: ItemsController_TypesCounts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ItemsServiceServer).TypesCounts(ctx, req.(*TypesCountsRequest))
+		return srv.(ItemsControllerServer).TypesCounts(ctx, req.(*TypesCountsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ItemsService_ServiceDesc is the grpc.ServiceDesc for ItemsService service.
+// ItemsController_ServiceDesc is the grpc.ServiceDesc for ItemsController service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ItemsService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "items.ItemsService",
-	HandlerType: (*ItemsServiceServer)(nil),
+var ItemsController_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "items.ItemsController",
+	HandlerType: (*ItemsControllerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "AddItem",
-			Handler:    _ItemsService_AddItem_Handler,
+			Handler:    _ItemsController_AddItem_Handler,
 		},
 		{
 			MethodName: "EditItem",
-			Handler:    _ItemsService_EditItem_Handler,
+			Handler:    _ItemsController_EditItem_Handler,
 		},
 		{
 			MethodName: "DeleteItem",
-			Handler:    _ItemsService_DeleteItem_Handler,
+			Handler:    _ItemsController_DeleteItem_Handler,
 		},
 		{
 			MethodName: "GetUserItems",
-			Handler:    _ItemsService_GetUserItems_Handler,
+			Handler:    _ItemsController_GetUserItems_Handler,
 		},
 		{
 			MethodName: "TypesCounts",
-			Handler:    _ItemsService_TypesCounts_Handler,
+			Handler:    _ItemsController_TypesCounts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

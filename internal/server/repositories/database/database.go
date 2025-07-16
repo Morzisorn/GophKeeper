@@ -90,7 +90,9 @@ func (pg *PGDB) DeleteItem(ctx context.Context, login string, itemID string) err
 	return pg.items.DeleteItem(ctx, login, itemID)
 }
 
-func (pg *PGDB) GetTypesCounts(ctx context.Context, login string) (map[models.ItemType]int32, error)
+func (pg *PGDB) GetTypesCounts(ctx context.Context, login string) (map[models.ItemType]int32, error) {
+	return pg.items.GetTypesCounts(ctx, login)
+}
 
 // func (db *PGDB) Close() error {
 

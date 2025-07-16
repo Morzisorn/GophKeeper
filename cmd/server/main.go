@@ -8,6 +8,7 @@ import (
 	"gophkeeper/internal/server/repositories"
 	cserv "gophkeeper/internal/server/services/crypto_service"
 	userv "gophkeeper/internal/server/services/user_service"
+	iserv "gophkeeper/internal/server/services/item_service"
 
 	"go.uber.org/zap"
 )
@@ -29,6 +30,7 @@ func main() {
 	}
 	us := userv.NewUserService(repo)
 	cs := cserv.NewCryptoService(repo)
+	ic := iserv.NewItemService(repo)
 
-	server.CreateAndRun(us, cs)
+	server.CreateAndRun(us, cs, ic)
 }

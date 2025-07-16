@@ -92,4 +92,5 @@ type TextDatum struct {
 type User struct {
 	Login    string `json:"login"`
 	Password []byte `json:"password"`
+	Salt     string `json:"salt"`
 }

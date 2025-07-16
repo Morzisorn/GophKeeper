@@ -597,7 +597,7 @@ func (x *GetUserItemsRequest) GetType() ItemType {
 
 type GetUserItemsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         map[string]*Item       `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Items         []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -632,7 +632,7 @@ func (*GetUserItemsResponse) Descriptor() ([]byte, []int) {
 	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *GetUserItemsResponse) GetItems() map[string]*Item {
+func (x *GetUserItemsResponse) GetItems() []*Item {
 	if x != nil {
 		return x.Items
 	}
@@ -956,13 +956,9 @@ const file_internal_protos_items_items_proto_rawDesc = "" +
 	"\x13GetUserItemsRequest\x12\x1d\n" +
 	"\n" +
 	"user_login\x18\x01 \x01(\tR\tuserLogin\x12#\n" +
-	"\x04type\x18\x02 \x01(\x0e2\x0f.items.ItemTypeR\x04type\"\x9b\x01\n" +
-	"\x14GetUserItemsResponse\x12<\n" +
-	"\x05items\x18\x01 \x03(\v2&.items.GetUserItemsResponse.ItemsEntryR\x05items\x1aE\n" +
-	"\n" +
-	"ItemsEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12!\n" +
-	"\x05value\x18\x02 \x01(\v2\v.items.ItemR\x05value:\x028\x01\"2\n" +
+	"\x04type\x18\x02 \x01(\x0e2\x0f.items.ItemTypeR\x04type\"9\n" +
+	"\x14GetUserItemsResponse\x12!\n" +
+	"\x05items\x18\x01 \x03(\v2\v.items.ItemR\x05items\"2\n" +
 	"\x0fEditItemRequest\x12\x1f\n" +
 	"\x04item\x18\x01 \x01(\v2\v.items.ItemR\x04item\",\n" +
 	"\x10EditItemResponse\x12\x18\n" +
@@ -987,8 +983,8 @@ const file_internal_protos_items_items_proto_rawDesc = "" +
 	"\x15ITEM_TYPE_CREDENTIALS\x10\x01\x12\x12\n" +
 	"\x0eITEM_TYPE_TEXT\x10\x02\x12\x14\n" +
 	"\x10ITEM_TYPE_BINARY\x10\x03\x12\x12\n" +
-	"\x0eITEM_TYPE_CARD\x10\x042\xd7\x02\n" +
-	"\fItemsService\x128\n" +
+	"\x0eITEM_TYPE_CARD\x10\x042\xda\x02\n" +
+	"\x0fItemsController\x128\n" +
 	"\aAddItem\x12\x15.items.AddItemRequest\x1a\x16.items.AddItemResponse\x12;\n" +
 	"\bEditItem\x12\x16.items.EditItemRequest\x1a\x17.items.EditItemResponse\x12A\n" +
 	"\n" +
@@ -1010,7 +1006,7 @@ func file_internal_protos_items_items_proto_rawDescGZIP() []byte {
 }
 
 var file_internal_protos_items_items_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_internal_protos_items_items_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_internal_protos_items_items_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_internal_protos_items_items_proto_goTypes = []any{
 	(ItemType)(0),                 // 0: items.ItemType
 	(*Item)(nil),                  // 1: items.Item
@@ -1029,9 +1025,8 @@ var file_internal_protos_items_items_proto_goTypes = []any{
 	(*TypesCountsRequest)(nil),    // 14: items.TypesCountsRequest
 	(*TypesCountsResponse)(nil),   // 15: items.TypesCountsResponse
 	nil,                           // 16: items.Item.MetaEntry
-	nil,                           // 17: items.GetUserItemsResponse.ItemsEntry
-	nil,                           // 18: items.TypesCountsResponse.TypesEntry
-	(*timestamppb.Timestamp)(nil), // 19: google.protobuf.Timestamp
+	nil,                           // 17: items.TypesCountsResponse.TypesEntry
+	(*timestamppb.Timestamp)(nil), // 18: google.protobuf.Timestamp
 }
 var file_internal_protos_items_items_proto_depIdxs = []int32{
 	0,  // 0: items.Item.type:type_name -> items.ItemType
@@ -1040,29 +1035,28 @@ var file_internal_protos_items_items_proto_depIdxs = []int32{
 	4,  // 3: items.Item.binary:type_name -> items.Binary
 	5,  // 4: items.Item.card:type_name -> items.Card
 	16, // 5: items.Item.meta:type_name -> items.Item.MetaEntry
-	19, // 6: items.Item.created_at:type_name -> google.protobuf.Timestamp
-	19, // 7: items.Item.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 6: items.Item.created_at:type_name -> google.protobuf.Timestamp
+	18, // 7: items.Item.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 8: items.AddItemRequest.item:type_name -> items.Item
 	0,  // 9: items.GetUserItemsRequest.type:type_name -> items.ItemType
-	17, // 10: items.GetUserItemsResponse.items:type_name -> items.GetUserItemsResponse.ItemsEntry
+	1,  // 10: items.GetUserItemsResponse.items:type_name -> items.Item
 	1,  // 11: items.EditItemRequest.item:type_name -> items.Item
-	18, // 12: items.TypesCountsResponse.types:type_name -> items.TypesCountsResponse.TypesEntry
-	1,  // 13: items.GetUserItemsResponse.ItemsEntry.value:type_name -> items.Item
-	6,  // 14: items.ItemsService.AddItem:input_type -> items.AddItemRequest
-	10, // 15: items.ItemsService.EditItem:input_type -> items.EditItemRequest
-	12, // 16: items.ItemsService.DeleteItem:input_type -> items.DeleteItemRequest
-	8,  // 17: items.ItemsService.GetUserItems:input_type -> items.GetUserItemsRequest
-	14, // 18: items.ItemsService.TypesCounts:input_type -> items.TypesCountsRequest
-	7,  // 19: items.ItemsService.AddItem:output_type -> items.AddItemResponse
-	11, // 20: items.ItemsService.EditItem:output_type -> items.EditItemResponse
-	13, // 21: items.ItemsService.DeleteItem:output_type -> items.DeleteItemResponse
-	9,  // 22: items.ItemsService.GetUserItems:output_type -> items.GetUserItemsResponse
-	15, // 23: items.ItemsService.TypesCounts:output_type -> items.TypesCountsResponse
-	19, // [19:24] is the sub-list for method output_type
-	14, // [14:19] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	17, // 12: items.TypesCountsResponse.types:type_name -> items.TypesCountsResponse.TypesEntry
+	6,  // 13: items.ItemsController.AddItem:input_type -> items.AddItemRequest
+	10, // 14: items.ItemsController.EditItem:input_type -> items.EditItemRequest
+	12, // 15: items.ItemsController.DeleteItem:input_type -> items.DeleteItemRequest
+	8,  // 16: items.ItemsController.GetUserItems:input_type -> items.GetUserItemsRequest
+	14, // 17: items.ItemsController.TypesCounts:input_type -> items.TypesCountsRequest
+	7,  // 18: items.ItemsController.AddItem:output_type -> items.AddItemResponse
+	11, // 19: items.ItemsController.EditItem:output_type -> items.EditItemResponse
+	13, // 20: items.ItemsController.DeleteItem:output_type -> items.DeleteItemResponse
+	9,  // 21: items.ItemsController.GetUserItems:output_type -> items.GetUserItemsResponse
+	15, // 22: items.ItemsController.TypesCounts:output_type -> items.TypesCountsResponse
+	18, // [18:23] is the sub-list for method output_type
+	13, // [13:18] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_internal_protos_items_items_proto_init() }
@@ -1082,7 +1076,7 @@ func file_internal_protos_items_items_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_internal_protos_items_items_proto_rawDesc), len(file_internal_protos_items_items_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   18,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

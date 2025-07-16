@@ -1,9 +1,15 @@
 CREATE TABLE IF NOT EXISTS users (
     login VARCHAR(50) NOT NULL PRIMARY KEY,
-    password BYTEA NOT NULL
+    password BYTEA NOT NULL,
+    salt  TEXT NOT NULL
 );
 
-CREATE TYPE item_type AS ENUM ('CREDENTIALS', 'TEXT', 'BINARY', 'CARD');
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'item_type') THEN
+        CREATE TYPE item_type AS ENUM ('CREDENTIALS', 'TEXT', 'BINARY', 'CARD');
+    END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -22,17 +28,17 @@ CREATE TABLE IF NOT EXISTS credentials_data (
     password TEXT NOT NULL
 );
 
-CREATE TABLE text_data (
+CREATE TABLE IF NOT EXISTS text_data (
     item_id UUID PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
     content TEXT NOT NULL 
 );
 
-CREATE TABLE binary_data (
+CREATE TABLE IF NOT EXISTS binary_data (
     item_id UUID PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
     content BYTEA NOT NULL 
 );
 
-CREATE TABLE card_data (
+CREATE TABLE IF NOT EXISTS card_data (
     item_id UUID PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
     number VARCHAR(255) NOT NULL, 
     expiry_date VARCHAR(10) NOT NULL,
