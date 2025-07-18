@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package items;
+option go_package = "grpc/proto";
+
+import "google/protobuf/timestamp.proto";
+
+message EncryptedItem {
+    bytes id = 1;
+    string user_login = 2;
+    string name = 3;
+    ItemType type = 4;
+    EncryptedData encrypted_data = 5;
+    map<string, string> meta = 6;
+    google.protobuf.Timestamp created_at = 7;
+    google.protobuf.Timestamp updated_at = 8;
+}
+
+enum ItemType {
+    ITEM_TYPE_EMPTY = 0;
+	ITEM_TYPE_UNSPECIFIED = 1;
+    ITEM_TYPE_CREDENTIALS = 2;
+    ITEM_TYPE_TEXT = 3;
+    ITEM_TYPE_BINARY = 4;
+    ITEM_TYPE_CARD = 5;
+}
+
+message EncryptedData {
+	string encrypted_content = 1;
+	string nonce = 2;
+}
+
+service ItemsController {
+    rpc AddItem(AddItemRequest) returns (AddItemResponse);
+    rpc EditItem(EditItemRequest) returns (EditItemResponse);
+    rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse);
+    rpc GetUserItems(GetUserItemsRequest) returns (GetUserItemsResponse);
+	rpc TypesCounts(TypesCountsRequest) returns (TypesCountsResponse);
+}
+
+message AddItemRequest {
+    EncryptedItem item = 1;
+}
+
+message AddItemResponse {
+    bool success = 1;
+}
+
+message GetUserItemsRequest {
+    string user_login = 1;
+    ItemType type = 2; 
+}
+
+message GetUserItemsResponse {
+    repeated EncryptedItem items = 1;
+}
+
+message EditItemRequest {
+    EncryptedItem item = 1;
+}
+
+message EditItemResponse {
+    bool success = 1;
+}
+
+message DeleteItemRequest {
+    string user_login = 1;
+    bytes item_id = 2;
+}
+
+message DeleteItemResponse {
+    bool success = 1;
+}
+
+message TypesCountsRequest {
+	string user_login = 1;
+}
+
+message TypesCountsResponse {
+	map<string,int32> types = 1;
+}

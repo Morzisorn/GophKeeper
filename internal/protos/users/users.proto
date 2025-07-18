@@ -1,0 +1,34 @@
+syntax = "proto3";
+package users;
+
+option go_package = "grpc/proto";
+
+message User {
+    string login = 1;
+    string password = 2;
+}
+
+service UserController {
+    rpc SignUpUser(SignUpUserRequest) returns (SignUpUserResponse);
+    rpc SignInUser(SignInUserRequest) returns (SignInUserResponse);
+}
+
+message SignUpUserRequest {
+    User user = 1;
+}
+
+message SignUpUserResponse {
+    string token = 1;
+    string salt = 2;
+    string error = 3;
+}
+
+message SignInUserRequest {
+    User user = 1;
+}
+
+message SignInUserResponse {
+    string token = 1;
+    string salt = 2;
+    string error = 3;
+}
