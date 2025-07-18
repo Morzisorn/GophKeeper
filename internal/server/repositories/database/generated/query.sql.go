@@ -11,72 +11,19 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const addBinary = `-- name: AddBinary :exec
-INSERT INTO binary_data (item_id, content)
-VALUES ($1, $2)
-`
-
-type AddBinaryParams struct {
-	ItemID  pgtype.UUID `json:"item_id"`
-	Content []byte      `json:"content"`
-}
-
-func (q *Queries) AddBinary(ctx context.Context, arg AddBinaryParams) error {
-	_, err := q.db.Exec(ctx, addBinary, arg.ItemID, arg.Content)
-	return err
-}
-
-const addCard = `-- name: AddCard :exec
-INSERT INTO card_data (item_id, number, expiry_date, security_code, cardholder_name)
-VALUES ($1, $2, $3, $4, $5)
-`
-
-type AddCardParams struct {
-	ItemID         pgtype.UUID `json:"item_id"`
-	Number         string      `json:"number"`
-	ExpiryDate     string      `json:"expiry_date"`
-	SecurityCode   string      `json:"security_code"`
-	CardholderName string      `json:"cardholder_name"`
-}
-
-func (q *Queries) AddCard(ctx context.Context, arg AddCardParams) error {
-	_, err := q.db.Exec(ctx, addCard,
-		arg.ItemID,
-		arg.Number,
-		arg.ExpiryDate,
-		arg.SecurityCode,
-		arg.CardholderName,
-	)
-	return err
-}
-
-const addCredentials = `-- name: AddCredentials :exec
-INSERT INTO credentials_data (item_id, login, password)
-VALUES ($1, $2, $3)
-`
-
-type AddCredentialsParams struct {
-	ItemID   pgtype.UUID `json:"item_id"`
-	Login    string      `json:"login"`
-	Password string      `json:"password"`
-}
-
-func (q *Queries) AddCredentials(ctx context.Context, arg AddCredentialsParams) error {
-	_, err := q.db.Exec(ctx, addCredentials, arg.ItemID, arg.Login, arg.Password)
-	return err
-}
-
 const addItem = `-- name: AddItem :one
-INSERT INTO items (user_login, name, type, meta)
-VALUES ($1, $2, $3, $4)
+INSERT INTO items (user_login, name, type, encrypted_data_content, encrypted_data_nonce, meta)
+VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING id
 `
 
 type AddItemParams struct {
-	UserLogin string   `json:"user_login"`
-	Name      string   `json:"name"`
-	Type      ItemType `json:"type"`
-	Meta      []byte   `json:"meta"`
+	UserLogin            string   `json:"user_login"`
+	Name                 string   `json:"name"`
+	Type                 ItemType `json:"type"`
+	EncryptedDataContent string   `json:"encrypted_data_content"`
+	EncryptedDataNonce   string   `json:"encrypted_data_nonce"`
+	Meta                 []byte   `json:"meta"`
 }
 
 func (q *Queries) AddItem(ctx context.Context, arg AddItemParams) (pgtype.UUID, error) {
@@ -84,26 +31,13 @@ func (q *Queries) AddItem(ctx context.Context, arg AddItemParams) (pgtype.UUID, 
 		arg.UserLogin,
 		arg.Name,
 		arg.Type,
+		arg.EncryptedDataContent,
+		arg.EncryptedDataNonce,
 		arg.Meta,
 	)
 	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
-}
-
-const addText = `-- name: AddText :exec
-INSERT INTO text_data (item_id, content)
-VALUES ($1, $2)
-`
-
-type AddTextParams struct {
-	ItemID  pgtype.UUID `json:"item_id"`
-	Content string      `json:"content"`
-}
-
-func (q *Queries) AddText(ctx context.Context, arg AddTextParams) error {
-	_, err := q.db.Exec(ctx, addText, arg.ItemID, arg.Content)
-	return err
 }
 
 const deleteItem = `-- name: DeleteItem :exec
@@ -121,94 +55,28 @@ func (q *Queries) DeleteItem(ctx context.Context, arg DeleteItemParams) error {
 	return err
 }
 
-const editBinary = `-- name: EditBinary :exec
-UPDATE binary_data
-SET content = $2
-WHERE item_id = $1
-`
-
-type EditBinaryParams struct {
-	ItemID  pgtype.UUID `json:"item_id"`
-	Content []byte      `json:"content"`
-}
-
-func (q *Queries) EditBinary(ctx context.Context, arg EditBinaryParams) error {
-	_, err := q.db.Exec(ctx, editBinary, arg.ItemID, arg.Content)
-	return err
-}
-
-const editCard = `-- name: EditCard :exec
-UPDATE card_data
-SET number = $2, expiry_date = $3, security_code = $4, cardholder_name = $5 
-WHERE item_id = $1
-`
-
-type EditCardParams struct {
-	ItemID         pgtype.UUID `json:"item_id"`
-	Number         string      `json:"number"`
-	ExpiryDate     string      `json:"expiry_date"`
-	SecurityCode   string      `json:"security_code"`
-	CardholderName string      `json:"cardholder_name"`
-}
-
-func (q *Queries) EditCard(ctx context.Context, arg EditCardParams) error {
-	_, err := q.db.Exec(ctx, editCard,
-		arg.ItemID,
-		arg.Number,
-		arg.ExpiryDate,
-		arg.SecurityCode,
-		arg.CardholderName,
-	)
-	return err
-}
-
-const editCredentials = `-- name: EditCredentials :exec
-UPDATE credentials_data
-SET login = $2, password = $3 
-WHERE item_id = $1
-`
-
-type EditCredentialsParams struct {
-	ItemID   pgtype.UUID `json:"item_id"`
-	Login    string      `json:"login"`
-	Password string      `json:"password"`
-}
-
-func (q *Queries) EditCredentials(ctx context.Context, arg EditCredentialsParams) error {
-	_, err := q.db.Exec(ctx, editCredentials, arg.ItemID, arg.Login, arg.Password)
-	return err
-}
-
 const editItem = `-- name: EditItem :exec
 UPDATE items
-SET name = $2, meta = $3, updated_at =  NOW()
+SET name = $2, encrypted_data_content = $3, encrypted_data_nonce = $4, meta = $5, updated_at =  NOW()
 WHERE id = $1
 `
 
 type EditItemParams struct {
-	ID   pgtype.UUID `json:"id"`
-	Name string      `json:"name"`
-	Meta []byte      `json:"meta"`
+	ID                   pgtype.UUID `json:"id"`
+	Name                 string      `json:"name"`
+	EncryptedDataContent string      `json:"encrypted_data_content"`
+	EncryptedDataNonce   string      `json:"encrypted_data_nonce"`
+	Meta                 []byte      `json:"meta"`
 }
 
 func (q *Queries) EditItem(ctx context.Context, arg EditItemParams) error {
-	_, err := q.db.Exec(ctx, editItem, arg.ID, arg.Name, arg.Meta)
-	return err
-}
-
-const editText = `-- name: EditText :exec
-UPDATE text_data
-SET content = $2 
-WHERE item_id = $1
-`
-
-type EditTextParams struct {
-	ItemID  pgtype.UUID `json:"item_id"`
-	Content string      `json:"content"`
-}
-
-func (q *Queries) EditText(ctx context.Context, arg EditTextParams) error {
-	_, err := q.db.Exec(ctx, editText, arg.ItemID, arg.Content)
+	_, err := q.db.Exec(ctx, editItem,
+		arg.ID,
+		arg.Name,
+		arg.EncryptedDataContent,
+		arg.EncryptedDataNonce,
+		arg.Meta,
+	)
 	return err
 }
 
@@ -217,45 +85,25 @@ SELECT
     i.id,
     i.name,
     i.type,
+    i.encrypted_data_content,
+    i.encrypted_data_nonce,
     i.meta,
     i.created_at,
-    i.updated_at,
-    -- Credentials
-    cr.login,
-    cr.password,
-    -- Card data
-    cd.number,
-    cd.expiry_date,
-    cd.security_code,
-    cd.cardholder_name,
-    -- Text data
-    td.content as text_content,
-    -- Binary data
-    bd.content as binary_content
+    i.updated_at
 FROM items i
-LEFT JOIN credentials_data cr ON i.id = cr.item_id AND i.type = 'CREDENTIALS'
-LEFT JOIN card_data cd ON i.id = cd.item_id AND i.type = 'CARD'
-LEFT JOIN text_data td ON i.id = td.item_id AND i.type = 'TEXT'
-LEFT JOIN binary_data bd ON i.id = bd.item_id AND i.type = 'BINARY'
 WHERE i.user_login = $1
 ORDER BY i.created_at DESC
 `
 
 type GetAllUserItemsRow struct {
-	ID             pgtype.UUID      `json:"id"`
-	Name           string           `json:"name"`
-	Type           ItemType         `json:"type"`
-	Meta           []byte           `json:"meta"`
-	CreatedAt      pgtype.Timestamp `json:"created_at"`
-	UpdatedAt      pgtype.Timestamp `json:"updated_at"`
-	Login          pgtype.Text      `json:"login"`
-	Password       pgtype.Text      `json:"password"`
-	Number         pgtype.Text      `json:"number"`
-	ExpiryDate     pgtype.Text      `json:"expiry_date"`
-	SecurityCode   pgtype.Text      `json:"security_code"`
-	CardholderName pgtype.Text      `json:"cardholder_name"`
-	TextContent    pgtype.Text      `json:"text_content"`
-	BinaryContent  []byte           `json:"binary_content"`
+	ID                   pgtype.UUID      `json:"id"`
+	Name                 string           `json:"name"`
+	Type                 ItemType         `json:"type"`
+	EncryptedDataContent string           `json:"encrypted_data_content"`
+	EncryptedDataNonce   string           `json:"encrypted_data_nonce"`
+	Meta                 []byte           `json:"meta"`
+	CreatedAt            pgtype.Timestamp `json:"created_at"`
+	UpdatedAt            pgtype.Timestamp `json:"updated_at"`
 }
 
 func (q *Queries) GetAllUserItems(ctx context.Context, userLogin string) ([]GetAllUserItemsRow, error) {
@@ -271,229 +119,11 @@ func (q *Queries) GetAllUserItems(ctx context.Context, userLogin string) ([]GetA
 			&i.ID,
 			&i.Name,
 			&i.Type,
+			&i.EncryptedDataContent,
+			&i.EncryptedDataNonce,
 			&i.Meta,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Login,
-			&i.Password,
-			&i.Number,
-			&i.ExpiryDate,
-			&i.SecurityCode,
-			&i.CardholderName,
-			&i.TextContent,
-			&i.BinaryContent,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getBinaries = `-- name: GetBinaries :many
-SELECT 
-    i.id,
-    i.name,
-    i.meta,
-    i.created_at,
-    i.updated_at,
-    b.content
-FROM items i
-LEFT JOIN binary_data b ON i.id = b.item_id 
-WHERE i.type = 'BINARY' AND i.user_login = $1
-ORDER BY created_at DESC
-`
-
-type GetBinariesRow struct {
-	ID        pgtype.UUID      `json:"id"`
-	Name      string           `json:"name"`
-	Meta      []byte           `json:"meta"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-	Content   []byte           `json:"content"`
-}
-
-func (q *Queries) GetBinaries(ctx context.Context, userLogin string) ([]GetBinariesRow, error) {
-	rows, err := q.db.Query(ctx, getBinaries, userLogin)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetBinariesRow
-	for rows.Next() {
-		var i GetBinariesRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Meta,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.Content,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getCards = `-- name: GetCards :many
-SELECT 
-    i.id,
-    i.name,
-    i.meta,
-    i.created_at,
-    i.updated_at,
-    c.number,
-    c.expiry_date,
-    c.security_code,
-    c.cardholder_name
-FROM items i
-LEFT JOIN card_data c ON i.id = c.item_id 
-WHERE i.type = 'BINARY' AND i.user_login = $1
-ORDER BY created_at DESC
-`
-
-type GetCardsRow struct {
-	ID             pgtype.UUID      `json:"id"`
-	Name           string           `json:"name"`
-	Meta           []byte           `json:"meta"`
-	CreatedAt      pgtype.Timestamp `json:"created_at"`
-	UpdatedAt      pgtype.Timestamp `json:"updated_at"`
-	Number         pgtype.Text      `json:"number"`
-	ExpiryDate     pgtype.Text      `json:"expiry_date"`
-	SecurityCode   pgtype.Text      `json:"security_code"`
-	CardholderName pgtype.Text      `json:"cardholder_name"`
-}
-
-func (q *Queries) GetCards(ctx context.Context, userLogin string) ([]GetCardsRow, error) {
-	rows, err := q.db.Query(ctx, getCards, userLogin)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetCardsRow
-	for rows.Next() {
-		var i GetCardsRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Meta,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.Number,
-			&i.ExpiryDate,
-			&i.SecurityCode,
-			&i.CardholderName,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getCredentials = `-- name: GetCredentials :many
-SELECT 
-    i.id,
-    i.name,
-    i.meta,
-    i.created_at,
-    i.updated_at,
-    cr.login,
-    cr.password
-FROM items i
-LEFT JOIN credentials_data cr ON i.id = cr.item_id 
-WHERE i.type = 'CREDENTIALS' AND i.user_login = $1
-ORDER BY created_at DESC
-`
-
-type GetCredentialsRow struct {
-	ID        pgtype.UUID      `json:"id"`
-	Name      string           `json:"name"`
-	Meta      []byte           `json:"meta"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-	Login     pgtype.Text      `json:"login"`
-	Password  pgtype.Text      `json:"password"`
-}
-
-func (q *Queries) GetCredentials(ctx context.Context, userLogin string) ([]GetCredentialsRow, error) {
-	rows, err := q.db.Query(ctx, getCredentials, userLogin)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetCredentialsRow
-	for rows.Next() {
-		var i GetCredentialsRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Meta,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.Login,
-			&i.Password,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getTexts = `-- name: GetTexts :many
-SELECT 
-    i.id,
-    i.name,
-    i.meta,
-    i.created_at,
-    i.updated_at,
-    t.content
-FROM items i
-LEFT JOIN text_data t ON i.id = t.item_id 
-WHERE i.type = 'TEXT' AND i.user_login = $1
-ORDER BY created_at DESC
-`
-
-type GetTextsRow struct {
-	ID        pgtype.UUID      `json:"id"`
-	Name      string           `json:"name"`
-	Meta      []byte           `json:"meta"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-	Content   pgtype.Text      `json:"content"`
-}
-
-func (q *Queries) GetTexts(ctx context.Context, userLogin string) ([]GetTextsRow, error) {
-	rows, err := q.db.Query(ctx, getTexts, userLogin)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetTextsRow
-	for rows.Next() {
-		var i GetTextsRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Meta,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.Content,
 		); err != nil {
 			return nil, err
 		}
@@ -550,6 +180,66 @@ func (q *Queries) GetUser(ctx context.Context, login string) (User, error) {
 	var i User
 	err := row.Scan(&i.Login, &i.Password, &i.Salt)
 	return i, err
+}
+
+const getUserItemsWithType = `-- name: GetUserItemsWithType :many
+SELECT 
+    i.id,
+    i.name,
+    i.type,
+    i.encrypted_data_content,
+    i.encrypted_data_nonce,
+    i.meta,
+    i.created_at,
+    i.updated_at
+FROM items i
+WHERE i.user_login = $1 AND i.type = $2
+ORDER BY created_at DESC
+`
+
+type GetUserItemsWithTypeParams struct {
+	UserLogin string   `json:"user_login"`
+	Type      ItemType `json:"type"`
+}
+
+type GetUserItemsWithTypeRow struct {
+	ID                   pgtype.UUID      `json:"id"`
+	Name                 string           `json:"name"`
+	Type                 ItemType         `json:"type"`
+	EncryptedDataContent string           `json:"encrypted_data_content"`
+	EncryptedDataNonce   string           `json:"encrypted_data_nonce"`
+	Meta                 []byte           `json:"meta"`
+	CreatedAt            pgtype.Timestamp `json:"created_at"`
+	UpdatedAt            pgtype.Timestamp `json:"updated_at"`
+}
+
+func (q *Queries) GetUserItemsWithType(ctx context.Context, arg GetUserItemsWithTypeParams) ([]GetUserItemsWithTypeRow, error) {
+	rows, err := q.db.Query(ctx, getUserItemsWithType, arg.UserLogin, arg.Type)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserItemsWithTypeRow
+	for rows.Next() {
+		var i GetUserItemsWithTypeRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Type,
+			&i.EncryptedDataContent,
+			&i.EncryptedDataNonce,
+			&i.Meta,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const signUpUser = `-- name: SignUpUser :exec

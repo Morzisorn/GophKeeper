@@ -1,6 +1,5 @@
 package ui
 
-// Состояния приложения - теперь с отдельными состояниями для sign up/sign in
 type state int
 
 const (
@@ -10,23 +9,53 @@ const (
 	stateItemsList
 	stateAddItem
     stateAddItemName        
-   // stateAddItemType
 	stateAddItemData
 	stateAddCredentialLogin
 	stateAddCredentialPassword 
+	stateAddItemError   
+	stateAddItemSuccess
 	stateEditItem
 	stateDeleteItem
 	stateSignUpLogin
 	stateSignUpPassword
 	stateSignInLogin
 	stateSignInPassword
+	stateItemDetails
+	stateDecryptError     
+	stateConfirmDelete
 	stateProcessing
 	stateSuccess
 	stateError
 	stateFinished
+	stateDeleteSuccess 
+	stateDeleteError
+	stateEditItemName          
+	stateEditItemData          
+	stateEditCredentialLogin   
+	stateEditCredentialPassword
+	stateEditTextContent  
+    stateEditBinaryData
+	stateEditCardNumber        
+	stateEditCardExpiry        
+	stateEditCardCVV           
+	stateEditCardHolder        
+	stateEditSuccess           
+	stateEditError  
+	stateMetadataList           
+    stateAddMetadataKey         
+    stateAddMetadataValue      
+    stateEditMetadataValue      
+    stateConfirmDeleteMetadata  
+    stateMetadataSuccess        
+    stateMetadataError
+    stateAddCardExpiry     
+    stateAddCardCVV       
+    stateAddCardHolder    
+	stateConfirmLogout   
+    stateLogoutSuccess   
+    stateLogoutError         
 )
 
-// Методы для определения типа состояния
 func (s state) IsAuth() bool {
 	return s >= stateSignUpLogin && s <= stateSignInPassword
 }

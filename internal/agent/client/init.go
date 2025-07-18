@@ -25,22 +25,23 @@ type Client interface {
 	GetPublicKeyPEM(ctx context.Context) (string, error)
 
 	//Items
-	AddItem(ctx context.Context, item *models.Item) error
-	EditItem(ctx context.Context, item *models.Item) error
-	DeleteItem(ctx context.Context, login, itemID string) error 
-	GetItems(ctx context.Context, login string, typ models.ItemType) ([]models.Item, error)
-	GetTypesCounts(ctx context.Context, login string) (map[string]int32, error) 
+	AddItem(ctx context.Context, item *models.EncryptedItem) error
+	EditItem(ctx context.Context, item *models.EncryptedItem) error
+	DeleteItem(ctx context.Context, login string, itemID [16]byte) error
+	GetItems(ctx context.Context, login string, typ models.ItemType) ([]models.EncryptedItem, error)
+	GetTypesCounts(ctx context.Context, login string) (map[string]int32, error)
 }
 
-type GRPCClient struct {
-	//pbcr.CryptoControllerClient
+var _ Client = (*GRPCClient)(nil)
 
+type GRPCClient struct {
 	token   string
 	conn    *grpc.ClientConn
 	BaseURL string
-	User    pbus.UserControllerClient
-	Crypto  pbcr.CryptoControllerClient
-	Item    pbit.ItemsControllerClient
+
+	User   pbus.UserControllerClient
+	Crypto pbcr.CryptoControllerClient
+	Item   pbit.ItemsControllerClient
 }
 
 // NewGRPCClient creates new pointer to GRPCClient based on config

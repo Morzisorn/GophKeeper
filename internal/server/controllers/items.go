@@ -27,18 +27,9 @@ func (ic *ItemController) AddItem(ctx context.Context, in *pb.AddItemRequest) (*
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
 
-	item, err := models.ItemPbToModels(in.Item)
-	if err != nil {
-		switch err {
-		case errs.ErrIncorrectItemType:
-			return nil, status.Error(codes.InvalidArgument, err.Error())
-		default:
-			return nil, status.Error(codes.Internal, errs.ErrInternalServerError.Error())
-		}
-	}
+	item := models.EncryptedItemPbToModels(in.Item)
 
-	err = ic.service.AddItem(ctx, item)
-	if err != nil {
+	if err := ic.service.AddItem(ctx, item); err != nil {
 		switch err {
 		case errs.ErrItemAlreadyExists:
 			return nil, status.Error(codes.AlreadyExists, err.Error())
@@ -56,18 +47,9 @@ func (ic *ItemController) EditItem(ctx context.Context, in *pb.EditItemRequest) 
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
 
-	item, err := models.ItemPbToModels(in.Item)
-	if err != nil {
-		switch err {
-		case errs.ErrIncorrectItemType:
-			return nil, status.Error(codes.InvalidArgument, err.Error())
-		default:
-			return nil, status.Error(codes.Internal, errs.ErrInternalServerError.Error())
-		}
-	}
+	item := models.EncryptedItemPbToModels(in.Item)
 
-	err = ic.service.EditItem(ctx, item)
-	if err != nil {
+	if err := ic.service.EditItem(ctx, item); err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	return &pb.EditItemResponse{
@@ -76,16 +58,16 @@ func (ic *ItemController) EditItem(ctx context.Context, in *pb.EditItemRequest) 
 
 }
 
-func isPbItemValid(i *pb.Item) bool {
-	return i.Name != "" && i.Type.String() != "" && i.UserLogin != "" && i.Data != nil
+func isPbItemValid(i *pb.EncryptedItem) bool {
+	return i.Name != "" && i.Type.String() != "" && i.UserLogin != "" && i.EncryptedData.EncryptedContent != "" && i.EncryptedData.Nonce != ""
 }
 
 func (ic *ItemController) DeleteItem(ctx context.Context, in *pb.DeleteItemRequest) (*pb.DeleteItemResponse, error) {
-	if in.ItemId == "" || in.UserLogin == "" {
+	if in.ItemId == nil || in.UserLogin == "" {
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
 
-	err := ic.service.DeleteItem(ctx, in.UserLogin, in.ItemId)
+	err := ic.service.DeleteItem(ctx, in.UserLogin, models.ItemIdPbToModels(in.ItemId))
 	if err != nil {
 		switch err {
 		case errs.ErrUserNotFound:
@@ -102,17 +84,17 @@ func (ic *ItemController) DeleteItem(ctx context.Context, in *pb.DeleteItemReque
 	}, nil
 }
 
-func (ic *ItemController) GetItems(ctx context.Context, in *pb.GetUserItemsRequest) (*pb.GetUserItemsResponse, error) {
+func (ic *ItemController) GetUserItems(ctx context.Context, in *pb.GetUserItemsRequest) (*pb.GetUserItemsResponse, error) {
 	if in.UserLogin == "" {
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
 
-	items, err := ic.service.GetUserItems(ctx, models.ItemType(in.Type.String()), in.UserLogin)
+	items, err := ic.service.GetUserItems(ctx, models.ItemTypePbToModel(in.Type), in.UserLogin)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	pbItems := make([]*pb.Item, len(items))
+	pbItems := make([]*pb.EncryptedItem, len(items))
 	for i, item := range items {
 		pbItem, err := item.ToPb()
 		if err != nil {

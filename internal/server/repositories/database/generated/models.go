@@ -55,38 +55,16 @@ func (ns NullItemType) Value() (driver.Value, error) {
 	return string(ns.ItemType), nil
 }
 
-type BinaryDatum struct {
-	ItemID  pgtype.UUID `json:"item_id"`
-	Content []byte      `json:"content"`
-}
-
-type CardDatum struct {
-	ItemID         pgtype.UUID `json:"item_id"`
-	Number         string      `json:"number"`
-	ExpiryDate     string      `json:"expiry_date"`
-	SecurityCode   string      `json:"security_code"`
-	CardholderName string      `json:"cardholder_name"`
-}
-
-type CredentialsDatum struct {
-	ItemID   pgtype.UUID `json:"item_id"`
-	Login    string      `json:"login"`
-	Password string      `json:"password"`
-}
-
 type Item struct {
-	ID        pgtype.UUID      `json:"id"`
-	UserLogin string           `json:"user_login"`
-	Name      string           `json:"name"`
-	Type      ItemType         `json:"type"`
-	Meta      []byte           `json:"meta"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-}
-
-type TextDatum struct {
-	ItemID  pgtype.UUID `json:"item_id"`
-	Content string      `json:"content"`
+	ID                   pgtype.UUID      `json:"id"`
+	UserLogin            string           `json:"user_login"`
+	Name                 string           `json:"name"`
+	EncryptedDataContent string           `json:"encrypted_data_content"`
+	EncryptedDataNonce   string           `json:"encrypted_data_nonce"`
+	Type                 ItemType         `json:"type"`
+	Meta                 []byte           `json:"meta"`
+	CreatedAt            pgtype.Timestamp `json:"created_at"`
+	UpdatedAt            pgtype.Timestamp `json:"updated_at"`
 }
 
 type User struct {

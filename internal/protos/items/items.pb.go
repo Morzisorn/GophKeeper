@@ -25,28 +25,31 @@ const (
 type ItemType int32
 
 const (
-	ItemType_ITEM_TYPE_UNSPECIFIED ItemType = 0
-	ItemType_ITEM_TYPE_CREDENTIALS ItemType = 1
-	ItemType_ITEM_TYPE_TEXT        ItemType = 2
-	ItemType_ITEM_TYPE_BINARY      ItemType = 3
-	ItemType_ITEM_TYPE_CARD        ItemType = 4
+	ItemType_ITEM_TYPE_EMPTY       ItemType = 0
+	ItemType_ITEM_TYPE_UNSPECIFIED ItemType = 1
+	ItemType_ITEM_TYPE_CREDENTIALS ItemType = 2
+	ItemType_ITEM_TYPE_TEXT        ItemType = 3
+	ItemType_ITEM_TYPE_BINARY      ItemType = 4
+	ItemType_ITEM_TYPE_CARD        ItemType = 5
 )
 
 // Enum value maps for ItemType.
 var (
 	ItemType_name = map[int32]string{
-		0: "ITEM_TYPE_UNSPECIFIED",
-		1: "ITEM_TYPE_CREDENTIALS",
-		2: "ITEM_TYPE_TEXT",
-		3: "ITEM_TYPE_BINARY",
-		4: "ITEM_TYPE_CARD",
+		0: "ITEM_TYPE_EMPTY",
+		1: "ITEM_TYPE_UNSPECIFIED",
+		2: "ITEM_TYPE_CREDENTIALS",
+		3: "ITEM_TYPE_TEXT",
+		4: "ITEM_TYPE_BINARY",
+		5: "ITEM_TYPE_CARD",
 	}
 	ItemType_value = map[string]int32{
-		"ITEM_TYPE_UNSPECIFIED": 0,
-		"ITEM_TYPE_CREDENTIALS": 1,
-		"ITEM_TYPE_TEXT":        2,
-		"ITEM_TYPE_BINARY":      3,
-		"ITEM_TYPE_CARD":        4,
+		"ITEM_TYPE_EMPTY":       0,
+		"ITEM_TYPE_UNSPECIFIED": 1,
+		"ITEM_TYPE_CREDENTIALS": 2,
+		"ITEM_TYPE_TEXT":        3,
+		"ITEM_TYPE_BINARY":      4,
+		"ITEM_TYPE_CARD":        5,
 	}
 )
 
@@ -77,40 +80,34 @@ func (ItemType) EnumDescriptor() ([]byte, []int) {
 	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{0}
 }
 
-type Item struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserLogin string                 `protobuf:"bytes,2,opt,name=user_login,json=userLogin,proto3" json:"user_login,omitempty"`
-	Name      string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Type      ItemType               `protobuf:"varint,4,opt,name=type,proto3,enum=items.ItemType" json:"type,omitempty"`
-	// Types that are valid to be assigned to Data:
-	//
-	//	*Item_Credentials
-	//	*Item_Text
-	//	*Item_Binary
-	//	*Item_Card
-	Data          isItem_Data            `protobuf_oneof:"data"`
-	Meta          map[string]string      `protobuf:"bytes,9,rep,name=meta,proto3" json:"meta,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+type EncryptedItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            []byte                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserLogin     string                 `protobuf:"bytes,2,opt,name=user_login,json=userLogin,proto3" json:"user_login,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Type          ItemType               `protobuf:"varint,4,opt,name=type,proto3,enum=items.ItemType" json:"type,omitempty"`
+	EncryptedData *EncryptedData         `protobuf:"bytes,5,opt,name=encrypted_data,json=encryptedData,proto3" json:"encrypted_data,omitempty"`
+	Meta          map[string]string      `protobuf:"bytes,6,rep,name=meta,proto3" json:"meta,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Item) Reset() {
-	*x = Item{}
+func (x *EncryptedItem) Reset() {
+	*x = EncryptedItem{}
 	mi := &file_internal_protos_items_items_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Item) String() string {
+func (x *EncryptedItem) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Item) ProtoMessage() {}
+func (*EncryptedItem) ProtoMessage() {}
 
-func (x *Item) ProtoReflect() protoreflect.Message {
+func (x *EncryptedItem) ProtoReflect() protoreflect.Message {
 	mi := &file_internal_protos_items_items_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -122,153 +119,89 @@ func (x *Item) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Item.ProtoReflect.Descriptor instead.
-func (*Item) Descriptor() ([]byte, []int) {
+// Deprecated: Use EncryptedItem.ProtoReflect.Descriptor instead.
+func (*EncryptedItem) Descriptor() ([]byte, []int) {
 	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Item) GetId() string {
+func (x *EncryptedItem) GetId() []byte {
 	if x != nil {
 		return x.Id
 	}
-	return ""
+	return nil
 }
 
-func (x *Item) GetUserLogin() string {
+func (x *EncryptedItem) GetUserLogin() string {
 	if x != nil {
 		return x.UserLogin
 	}
 	return ""
 }
 
-func (x *Item) GetName() string {
+func (x *EncryptedItem) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *Item) GetType() ItemType {
+func (x *EncryptedItem) GetType() ItemType {
 	if x != nil {
 		return x.Type
 	}
-	return ItemType_ITEM_TYPE_UNSPECIFIED
+	return ItemType_ITEM_TYPE_EMPTY
 }
 
-func (x *Item) GetData() isItem_Data {
+func (x *EncryptedItem) GetEncryptedData() *EncryptedData {
 	if x != nil {
-		return x.Data
+		return x.EncryptedData
 	}
 	return nil
 }
 
-func (x *Item) GetCredentials() *Credentials {
-	if x != nil {
-		if x, ok := x.Data.(*Item_Credentials); ok {
-			return x.Credentials
-		}
-	}
-	return nil
-}
-
-func (x *Item) GetText() *Text {
-	if x != nil {
-		if x, ok := x.Data.(*Item_Text); ok {
-			return x.Text
-		}
-	}
-	return nil
-}
-
-func (x *Item) GetBinary() *Binary {
-	if x != nil {
-		if x, ok := x.Data.(*Item_Binary); ok {
-			return x.Binary
-		}
-	}
-	return nil
-}
-
-func (x *Item) GetCard() *Card {
-	if x != nil {
-		if x, ok := x.Data.(*Item_Card); ok {
-			return x.Card
-		}
-	}
-	return nil
-}
-
-func (x *Item) GetMeta() map[string]string {
+func (x *EncryptedItem) GetMeta() map[string]string {
 	if x != nil {
 		return x.Meta
 	}
 	return nil
 }
 
-func (x *Item) GetCreatedAt() *timestamppb.Timestamp {
+func (x *EncryptedItem) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *Item) GetUpdatedAt() *timestamppb.Timestamp {
+func (x *EncryptedItem) GetUpdatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
 	}
 	return nil
 }
 
-type isItem_Data interface {
-	isItem_Data()
+type EncryptedData struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	EncryptedContent string                 `protobuf:"bytes,1,opt,name=encrypted_content,json=encryptedContent,proto3" json:"encrypted_content,omitempty"`
+	Nonce            string                 `protobuf:"bytes,2,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
-type Item_Credentials struct {
-	Credentials *Credentials `protobuf:"bytes,5,opt,name=credentials,proto3,oneof"`
-}
-
-type Item_Text struct {
-	Text *Text `protobuf:"bytes,6,opt,name=text,proto3,oneof"`
-}
-
-type Item_Binary struct {
-	Binary *Binary `protobuf:"bytes,7,opt,name=binary,proto3,oneof"`
-}
-
-type Item_Card struct {
-	Card *Card `protobuf:"bytes,8,opt,name=card,proto3,oneof"`
-}
-
-func (*Item_Credentials) isItem_Data() {}
-
-func (*Item_Text) isItem_Data() {}
-
-func (*Item_Binary) isItem_Data() {}
-
-func (*Item_Card) isItem_Data() {}
-
-type Credentials struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Login         string                 `protobuf:"bytes,1,opt,name=login,proto3" json:"login,omitempty"`
-	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Credentials) Reset() {
-	*x = Credentials{}
+func (x *EncryptedData) Reset() {
+	*x = EncryptedData{}
 	mi := &file_internal_protos_items_items_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Credentials) String() string {
+func (x *EncryptedData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Credentials) ProtoMessage() {}
+func (*EncryptedData) ProtoMessage() {}
 
-func (x *Credentials) ProtoReflect() protoreflect.Message {
+func (x *EncryptedData) ProtoReflect() protoreflect.Message {
 	mi := &file_internal_protos_items_items_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -280,191 +213,35 @@ func (x *Credentials) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Credentials.ProtoReflect.Descriptor instead.
-func (*Credentials) Descriptor() ([]byte, []int) {
+// Deprecated: Use EncryptedData.ProtoReflect.Descriptor instead.
+func (*EncryptedData) Descriptor() ([]byte, []int) {
 	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Credentials) GetLogin() string {
+func (x *EncryptedData) GetEncryptedContent() string {
 	if x != nil {
-		return x.Login
+		return x.EncryptedContent
 	}
 	return ""
 }
 
-func (x *Credentials) GetPassword() string {
+func (x *EncryptedData) GetNonce() string {
 	if x != nil {
-		return x.Password
-	}
-	return ""
-}
-
-type Text struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Text) Reset() {
-	*x = Text{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Text) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Text) ProtoMessage() {}
-
-func (x *Text) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Text.ProtoReflect.Descriptor instead.
-func (*Text) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *Text) GetContent() string {
-	if x != nil {
-		return x.Content
-	}
-	return ""
-}
-
-type Binary struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Content       []byte                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"` // []byte в Go
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Binary) Reset() {
-	*x = Binary{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Binary) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Binary) ProtoMessage() {}
-
-func (x *Binary) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Binary.ProtoReflect.Descriptor instead.
-func (*Binary) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *Binary) GetContent() []byte {
-	if x != nil {
-		return x.Content
-	}
-	return nil
-}
-
-type Card struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Number         string                 `protobuf:"bytes,1,opt,name=number,proto3" json:"number,omitempty"`
-	ExpiryDate     string                 `protobuf:"bytes,2,opt,name=expiry_date,json=expiryDate,proto3" json:"expiry_date,omitempty"`
-	SecurityCode   string                 `protobuf:"bytes,3,opt,name=security_code,json=securityCode,proto3" json:"security_code,omitempty"`
-	CardholderName string                 `protobuf:"bytes,4,opt,name=cardholder_name,json=cardholderName,proto3" json:"cardholder_name,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *Card) Reset() {
-	*x = Card{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Card) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Card) ProtoMessage() {}
-
-func (x *Card) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Card.ProtoReflect.Descriptor instead.
-func (*Card) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *Card) GetNumber() string {
-	if x != nil {
-		return x.Number
-	}
-	return ""
-}
-
-func (x *Card) GetExpiryDate() string {
-	if x != nil {
-		return x.ExpiryDate
-	}
-	return ""
-}
-
-func (x *Card) GetSecurityCode() string {
-	if x != nil {
-		return x.SecurityCode
-	}
-	return ""
-}
-
-func (x *Card) GetCardholderName() string {
-	if x != nil {
-		return x.CardholderName
+		return x.Nonce
 	}
 	return ""
 }
 
 type AddItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Item          *Item                  `protobuf:"bytes,1,opt,name=item,proto3" json:"item,omitempty"`
+	Item          *EncryptedItem         `protobuf:"bytes,1,opt,name=item,proto3" json:"item,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AddItemRequest) Reset() {
 	*x = AddItemRequest{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[5]
+	mi := &file_internal_protos_items_items_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -476,7 +253,7 @@ func (x *AddItemRequest) String() string {
 func (*AddItemRequest) ProtoMessage() {}
 
 func (x *AddItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[5]
+	mi := &file_internal_protos_items_items_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -489,10 +266,10 @@ func (x *AddItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddItemRequest.ProtoReflect.Descriptor instead.
 func (*AddItemRequest) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{5}
+	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AddItemRequest) GetItem() *Item {
+func (x *AddItemRequest) GetItem() *EncryptedItem {
 	if x != nil {
 		return x.Item
 	}
@@ -508,7 +285,7 @@ type AddItemResponse struct {
 
 func (x *AddItemResponse) Reset() {
 	*x = AddItemResponse{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[6]
+	mi := &file_internal_protos_items_items_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -520,7 +297,7 @@ func (x *AddItemResponse) String() string {
 func (*AddItemResponse) ProtoMessage() {}
 
 func (x *AddItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[6]
+	mi := &file_internal_protos_items_items_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -533,7 +310,7 @@ func (x *AddItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddItemResponse.ProtoReflect.Descriptor instead.
 func (*AddItemResponse) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{6}
+	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *AddItemResponse) GetSuccess() bool {
@@ -553,7 +330,7 @@ type GetUserItemsRequest struct {
 
 func (x *GetUserItemsRequest) Reset() {
 	*x = GetUserItemsRequest{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[7]
+	mi := &file_internal_protos_items_items_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -565,7 +342,7 @@ func (x *GetUserItemsRequest) String() string {
 func (*GetUserItemsRequest) ProtoMessage() {}
 
 func (x *GetUserItemsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[7]
+	mi := &file_internal_protos_items_items_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -578,7 +355,7 @@ func (x *GetUserItemsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserItemsRequest.ProtoReflect.Descriptor instead.
 func (*GetUserItemsRequest) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{7}
+	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetUserItemsRequest) GetUserLogin() string {
@@ -592,19 +369,19 @@ func (x *GetUserItemsRequest) GetType() ItemType {
 	if x != nil {
 		return x.Type
 	}
-	return ItemType_ITEM_TYPE_UNSPECIFIED
+	return ItemType_ITEM_TYPE_EMPTY
 }
 
 type GetUserItemsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*Item                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Items         []*EncryptedItem       `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetUserItemsResponse) Reset() {
 	*x = GetUserItemsResponse{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[8]
+	mi := &file_internal_protos_items_items_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -616,7 +393,7 @@ func (x *GetUserItemsResponse) String() string {
 func (*GetUserItemsResponse) ProtoMessage() {}
 
 func (x *GetUserItemsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[8]
+	mi := &file_internal_protos_items_items_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -629,10 +406,10 @@ func (x *GetUserItemsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserItemsResponse.ProtoReflect.Descriptor instead.
 func (*GetUserItemsResponse) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{8}
+	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *GetUserItemsResponse) GetItems() []*Item {
+func (x *GetUserItemsResponse) GetItems() []*EncryptedItem {
 	if x != nil {
 		return x.Items
 	}
@@ -641,14 +418,14 @@ func (x *GetUserItemsResponse) GetItems() []*Item {
 
 type EditItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Item          *Item                  `protobuf:"bytes,1,opt,name=item,proto3" json:"item,omitempty"`
+	Item          *EncryptedItem         `protobuf:"bytes,1,opt,name=item,proto3" json:"item,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *EditItemRequest) Reset() {
 	*x = EditItemRequest{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[9]
+	mi := &file_internal_protos_items_items_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -660,7 +437,7 @@ func (x *EditItemRequest) String() string {
 func (*EditItemRequest) ProtoMessage() {}
 
 func (x *EditItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[9]
+	mi := &file_internal_protos_items_items_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -673,10 +450,10 @@ func (x *EditItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditItemRequest.ProtoReflect.Descriptor instead.
 func (*EditItemRequest) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{9}
+	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *EditItemRequest) GetItem() *Item {
+func (x *EditItemRequest) GetItem() *EncryptedItem {
 	if x != nil {
 		return x.Item
 	}
@@ -692,7 +469,7 @@ type EditItemResponse struct {
 
 func (x *EditItemResponse) Reset() {
 	*x = EditItemResponse{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[10]
+	mi := &file_internal_protos_items_items_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -704,7 +481,7 @@ func (x *EditItemResponse) String() string {
 func (*EditItemResponse) ProtoMessage() {}
 
 func (x *EditItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[10]
+	mi := &file_internal_protos_items_items_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -717,7 +494,7 @@ func (x *EditItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EditItemResponse.ProtoReflect.Descriptor instead.
 func (*EditItemResponse) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{10}
+	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *EditItemResponse) GetSuccess() bool {
@@ -730,14 +507,14 @@ func (x *EditItemResponse) GetSuccess() bool {
 type DeleteItemRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserLogin     string                 `protobuf:"bytes,1,opt,name=user_login,json=userLogin,proto3" json:"user_login,omitempty"`
-	ItemId        string                 `protobuf:"bytes,2,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
+	ItemId        []byte                 `protobuf:"bytes,2,opt,name=item_id,json=itemId,proto3" json:"item_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeleteItemRequest) Reset() {
 	*x = DeleteItemRequest{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[11]
+	mi := &file_internal_protos_items_items_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -749,7 +526,7 @@ func (x *DeleteItemRequest) String() string {
 func (*DeleteItemRequest) ProtoMessage() {}
 
 func (x *DeleteItemRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[11]
+	mi := &file_internal_protos_items_items_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -762,7 +539,7 @@ func (x *DeleteItemRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteItemRequest.ProtoReflect.Descriptor instead.
 func (*DeleteItemRequest) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{11}
+	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteItemRequest) GetUserLogin() string {
@@ -772,11 +549,11 @@ func (x *DeleteItemRequest) GetUserLogin() string {
 	return ""
 }
 
-func (x *DeleteItemRequest) GetItemId() string {
+func (x *DeleteItemRequest) GetItemId() []byte {
 	if x != nil {
 		return x.ItemId
 	}
-	return ""
+	return nil
 }
 
 type DeleteItemResponse struct {
@@ -788,7 +565,7 @@ type DeleteItemResponse struct {
 
 func (x *DeleteItemResponse) Reset() {
 	*x = DeleteItemResponse{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[12]
+	mi := &file_internal_protos_items_items_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -800,7 +577,7 @@ func (x *DeleteItemResponse) String() string {
 func (*DeleteItemResponse) ProtoMessage() {}
 
 func (x *DeleteItemResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[12]
+	mi := &file_internal_protos_items_items_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -813,7 +590,7 @@ func (x *DeleteItemResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteItemResponse.ProtoReflect.Descriptor instead.
 func (*DeleteItemResponse) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{12}
+	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteItemResponse) GetSuccess() bool {
@@ -832,7 +609,7 @@ type TypesCountsRequest struct {
 
 func (x *TypesCountsRequest) Reset() {
 	*x = TypesCountsRequest{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[13]
+	mi := &file_internal_protos_items_items_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -844,7 +621,7 @@ func (x *TypesCountsRequest) String() string {
 func (*TypesCountsRequest) ProtoMessage() {}
 
 func (x *TypesCountsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[13]
+	mi := &file_internal_protos_items_items_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -857,7 +634,7 @@ func (x *TypesCountsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TypesCountsRequest.ProtoReflect.Descriptor instead.
 func (*TypesCountsRequest) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{13}
+	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *TypesCountsRequest) GetUserLogin() string {
@@ -876,7 +653,7 @@ type TypesCountsResponse struct {
 
 func (x *TypesCountsResponse) Reset() {
 	*x = TypesCountsResponse{}
-	mi := &file_internal_protos_items_items_proto_msgTypes[14]
+	mi := &file_internal_protos_items_items_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -888,7 +665,7 @@ func (x *TypesCountsResponse) String() string {
 func (*TypesCountsResponse) ProtoMessage() {}
 
 func (x *TypesCountsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_protos_items_items_proto_msgTypes[14]
+	mi := &file_internal_protos_items_items_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -901,7 +678,7 @@ func (x *TypesCountsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TypesCountsResponse.ProtoReflect.Descriptor instead.
 func (*TypesCountsResponse) Descriptor() ([]byte, []int) {
-	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{14}
+	return file_internal_protos_items_items_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *TypesCountsResponse) GetTypes() map[string]int32 {
@@ -915,58 +692,43 @@ var File_internal_protos_items_items_proto protoreflect.FileDescriptor
 
 const file_internal_protos_items_items_proto_rawDesc = "" +
 	"\n" +
-	"!internal/protos/items/items.proto\x12\x05items\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf7\x03\n" +
-	"\x04Item\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"!internal/protos/items/items.proto\x12\x05items\x1a\x1fgoogle/protobuf/timestamp.proto\"\x97\x03\n" +
+	"\rEncryptedItem\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\fR\x02id\x12\x1d\n" +
 	"\n" +
 	"user_login\x18\x02 \x01(\tR\tuserLogin\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12#\n" +
-	"\x04type\x18\x04 \x01(\x0e2\x0f.items.ItemTypeR\x04type\x126\n" +
-	"\vcredentials\x18\x05 \x01(\v2\x12.items.CredentialsH\x00R\vcredentials\x12!\n" +
-	"\x04text\x18\x06 \x01(\v2\v.items.TextH\x00R\x04text\x12'\n" +
-	"\x06binary\x18\a \x01(\v2\r.items.BinaryH\x00R\x06binary\x12!\n" +
-	"\x04card\x18\b \x01(\v2\v.items.CardH\x00R\x04card\x12)\n" +
-	"\x04meta\x18\t \x03(\v2\x15.items.Item.MetaEntryR\x04meta\x129\n" +
+	"\x04type\x18\x04 \x01(\x0e2\x0f.items.ItemTypeR\x04type\x12;\n" +
+	"\x0eencrypted_data\x18\x05 \x01(\v2\x14.items.EncryptedDataR\rencryptedData\x122\n" +
+	"\x04meta\x18\x06 \x03(\v2\x1e.items.EncryptedItem.MetaEntryR\x04meta\x129\n" +
 	"\n" +
-	"created_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a7\n" +
+	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x1a7\n" +
 	"\tMetaEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x06\n" +
-	"\x04data\"?\n" +
-	"\vCredentials\x12\x14\n" +
-	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\" \n" +
-	"\x04Text\x12\x18\n" +
-	"\acontent\x18\x01 \x01(\tR\acontent\"\"\n" +
-	"\x06Binary\x12\x18\n" +
-	"\acontent\x18\x01 \x01(\fR\acontent\"\x8d\x01\n" +
-	"\x04Card\x12\x16\n" +
-	"\x06number\x18\x01 \x01(\tR\x06number\x12\x1f\n" +
-	"\vexpiry_date\x18\x02 \x01(\tR\n" +
-	"expiryDate\x12#\n" +
-	"\rsecurity_code\x18\x03 \x01(\tR\fsecurityCode\x12'\n" +
-	"\x0fcardholder_name\x18\x04 \x01(\tR\x0ecardholderName\"1\n" +
-	"\x0eAddItemRequest\x12\x1f\n" +
-	"\x04item\x18\x01 \x01(\v2\v.items.ItemR\x04item\"+\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"R\n" +
+	"\rEncryptedData\x12+\n" +
+	"\x11encrypted_content\x18\x01 \x01(\tR\x10encryptedContent\x12\x14\n" +
+	"\x05nonce\x18\x02 \x01(\tR\x05nonce\":\n" +
+	"\x0eAddItemRequest\x12(\n" +
+	"\x04item\x18\x01 \x01(\v2\x14.items.EncryptedItemR\x04item\"+\n" +
 	"\x0fAddItemResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"Y\n" +
 	"\x13GetUserItemsRequest\x12\x1d\n" +
 	"\n" +
 	"user_login\x18\x01 \x01(\tR\tuserLogin\x12#\n" +
-	"\x04type\x18\x02 \x01(\x0e2\x0f.items.ItemTypeR\x04type\"9\n" +
-	"\x14GetUserItemsResponse\x12!\n" +
-	"\x05items\x18\x01 \x03(\v2\v.items.ItemR\x05items\"2\n" +
-	"\x0fEditItemRequest\x12\x1f\n" +
-	"\x04item\x18\x01 \x01(\v2\v.items.ItemR\x04item\",\n" +
+	"\x04type\x18\x02 \x01(\x0e2\x0f.items.ItemTypeR\x04type\"B\n" +
+	"\x14GetUserItemsResponse\x12*\n" +
+	"\x05items\x18\x01 \x03(\v2\x14.items.EncryptedItemR\x05items\";\n" +
+	"\x0fEditItemRequest\x12(\n" +
+	"\x04item\x18\x01 \x01(\v2\x14.items.EncryptedItemR\x04item\",\n" +
 	"\x10EditItemResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"K\n" +
 	"\x11DeleteItemRequest\x12\x1d\n" +
 	"\n" +
 	"user_login\x18\x01 \x01(\tR\tuserLogin\x12\x17\n" +
-	"\aitem_id\x18\x02 \x01(\tR\x06itemId\".\n" +
+	"\aitem_id\x18\x02 \x01(\fR\x06itemId\".\n" +
 	"\x12DeleteItemResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"3\n" +
 	"\x12TypesCountsRequest\x12\x1d\n" +
@@ -977,13 +739,14 @@ const file_internal_protos_items_items_proto_rawDesc = "" +
 	"\n" +
 	"TypesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\x05R\x05value:\x028\x01*~\n" +
-	"\bItemType\x12\x19\n" +
-	"\x15ITEM_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
-	"\x15ITEM_TYPE_CREDENTIALS\x10\x01\x12\x12\n" +
-	"\x0eITEM_TYPE_TEXT\x10\x02\x12\x14\n" +
-	"\x10ITEM_TYPE_BINARY\x10\x03\x12\x12\n" +
-	"\x0eITEM_TYPE_CARD\x10\x042\xda\x02\n" +
+	"\x05value\x18\x02 \x01(\x05R\x05value:\x028\x01*\x93\x01\n" +
+	"\bItemType\x12\x13\n" +
+	"\x0fITEM_TYPE_EMPTY\x10\x00\x12\x19\n" +
+	"\x15ITEM_TYPE_UNSPECIFIED\x10\x01\x12\x19\n" +
+	"\x15ITEM_TYPE_CREDENTIALS\x10\x02\x12\x12\n" +
+	"\x0eITEM_TYPE_TEXT\x10\x03\x12\x14\n" +
+	"\x10ITEM_TYPE_BINARY\x10\x04\x12\x12\n" +
+	"\x0eITEM_TYPE_CARD\x10\x052\xda\x02\n" +
 	"\x0fItemsController\x128\n" +
 	"\aAddItem\x12\x15.items.AddItemRequest\x1a\x16.items.AddItemResponse\x12;\n" +
 	"\bEditItem\x12\x16.items.EditItemRequest\x1a\x17.items.EditItemResponse\x12A\n" +
@@ -1006,57 +769,51 @@ func file_internal_protos_items_items_proto_rawDescGZIP() []byte {
 }
 
 var file_internal_protos_items_items_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_internal_protos_items_items_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_internal_protos_items_items_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_internal_protos_items_items_proto_goTypes = []any{
 	(ItemType)(0),                 // 0: items.ItemType
-	(*Item)(nil),                  // 1: items.Item
-	(*Credentials)(nil),           // 2: items.Credentials
-	(*Text)(nil),                  // 3: items.Text
-	(*Binary)(nil),                // 4: items.Binary
-	(*Card)(nil),                  // 5: items.Card
-	(*AddItemRequest)(nil),        // 6: items.AddItemRequest
-	(*AddItemResponse)(nil),       // 7: items.AddItemResponse
-	(*GetUserItemsRequest)(nil),   // 8: items.GetUserItemsRequest
-	(*GetUserItemsResponse)(nil),  // 9: items.GetUserItemsResponse
-	(*EditItemRequest)(nil),       // 10: items.EditItemRequest
-	(*EditItemResponse)(nil),      // 11: items.EditItemResponse
-	(*DeleteItemRequest)(nil),     // 12: items.DeleteItemRequest
-	(*DeleteItemResponse)(nil),    // 13: items.DeleteItemResponse
-	(*TypesCountsRequest)(nil),    // 14: items.TypesCountsRequest
-	(*TypesCountsResponse)(nil),   // 15: items.TypesCountsResponse
-	nil,                           // 16: items.Item.MetaEntry
-	nil,                           // 17: items.TypesCountsResponse.TypesEntry
-	(*timestamppb.Timestamp)(nil), // 18: google.protobuf.Timestamp
+	(*EncryptedItem)(nil),         // 1: items.EncryptedItem
+	(*EncryptedData)(nil),         // 2: items.EncryptedData
+	(*AddItemRequest)(nil),        // 3: items.AddItemRequest
+	(*AddItemResponse)(nil),       // 4: items.AddItemResponse
+	(*GetUserItemsRequest)(nil),   // 5: items.GetUserItemsRequest
+	(*GetUserItemsResponse)(nil),  // 6: items.GetUserItemsResponse
+	(*EditItemRequest)(nil),       // 7: items.EditItemRequest
+	(*EditItemResponse)(nil),      // 8: items.EditItemResponse
+	(*DeleteItemRequest)(nil),     // 9: items.DeleteItemRequest
+	(*DeleteItemResponse)(nil),    // 10: items.DeleteItemResponse
+	(*TypesCountsRequest)(nil),    // 11: items.TypesCountsRequest
+	(*TypesCountsResponse)(nil),   // 12: items.TypesCountsResponse
+	nil,                           // 13: items.EncryptedItem.MetaEntry
+	nil,                           // 14: items.TypesCountsResponse.TypesEntry
+	(*timestamppb.Timestamp)(nil), // 15: google.protobuf.Timestamp
 }
 var file_internal_protos_items_items_proto_depIdxs = []int32{
-	0,  // 0: items.Item.type:type_name -> items.ItemType
-	2,  // 1: items.Item.credentials:type_name -> items.Credentials
-	3,  // 2: items.Item.text:type_name -> items.Text
-	4,  // 3: items.Item.binary:type_name -> items.Binary
-	5,  // 4: items.Item.card:type_name -> items.Card
-	16, // 5: items.Item.meta:type_name -> items.Item.MetaEntry
-	18, // 6: items.Item.created_at:type_name -> google.protobuf.Timestamp
-	18, // 7: items.Item.updated_at:type_name -> google.protobuf.Timestamp
-	1,  // 8: items.AddItemRequest.item:type_name -> items.Item
-	0,  // 9: items.GetUserItemsRequest.type:type_name -> items.ItemType
-	1,  // 10: items.GetUserItemsResponse.items:type_name -> items.Item
-	1,  // 11: items.EditItemRequest.item:type_name -> items.Item
-	17, // 12: items.TypesCountsResponse.types:type_name -> items.TypesCountsResponse.TypesEntry
-	6,  // 13: items.ItemsController.AddItem:input_type -> items.AddItemRequest
-	10, // 14: items.ItemsController.EditItem:input_type -> items.EditItemRequest
-	12, // 15: items.ItemsController.DeleteItem:input_type -> items.DeleteItemRequest
-	8,  // 16: items.ItemsController.GetUserItems:input_type -> items.GetUserItemsRequest
-	14, // 17: items.ItemsController.TypesCounts:input_type -> items.TypesCountsRequest
-	7,  // 18: items.ItemsController.AddItem:output_type -> items.AddItemResponse
-	11, // 19: items.ItemsController.EditItem:output_type -> items.EditItemResponse
-	13, // 20: items.ItemsController.DeleteItem:output_type -> items.DeleteItemResponse
-	9,  // 21: items.ItemsController.GetUserItems:output_type -> items.GetUserItemsResponse
-	15, // 22: items.ItemsController.TypesCounts:output_type -> items.TypesCountsResponse
-	18, // [18:23] is the sub-list for method output_type
-	13, // [13:18] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	0,  // 0: items.EncryptedItem.type:type_name -> items.ItemType
+	2,  // 1: items.EncryptedItem.encrypted_data:type_name -> items.EncryptedData
+	13, // 2: items.EncryptedItem.meta:type_name -> items.EncryptedItem.MetaEntry
+	15, // 3: items.EncryptedItem.created_at:type_name -> google.protobuf.Timestamp
+	15, // 4: items.EncryptedItem.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 5: items.AddItemRequest.item:type_name -> items.EncryptedItem
+	0,  // 6: items.GetUserItemsRequest.type:type_name -> items.ItemType
+	1,  // 7: items.GetUserItemsResponse.items:type_name -> items.EncryptedItem
+	1,  // 8: items.EditItemRequest.item:type_name -> items.EncryptedItem
+	14, // 9: items.TypesCountsResponse.types:type_name -> items.TypesCountsResponse.TypesEntry
+	3,  // 10: items.ItemsController.AddItem:input_type -> items.AddItemRequest
+	7,  // 11: items.ItemsController.EditItem:input_type -> items.EditItemRequest
+	9,  // 12: items.ItemsController.DeleteItem:input_type -> items.DeleteItemRequest
+	5,  // 13: items.ItemsController.GetUserItems:input_type -> items.GetUserItemsRequest
+	11, // 14: items.ItemsController.TypesCounts:input_type -> items.TypesCountsRequest
+	4,  // 15: items.ItemsController.AddItem:output_type -> items.AddItemResponse
+	8,  // 16: items.ItemsController.EditItem:output_type -> items.EditItemResponse
+	10, // 17: items.ItemsController.DeleteItem:output_type -> items.DeleteItemResponse
+	6,  // 18: items.ItemsController.GetUserItems:output_type -> items.GetUserItemsResponse
+	12, // 19: items.ItemsController.TypesCounts:output_type -> items.TypesCountsResponse
+	15, // [15:20] is the sub-list for method output_type
+	10, // [10:15] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_internal_protos_items_items_proto_init() }
@@ -1064,19 +821,13 @@ func file_internal_protos_items_items_proto_init() {
 	if File_internal_protos_items_items_proto != nil {
 		return
 	}
-	file_internal_protos_items_items_proto_msgTypes[0].OneofWrappers = []any{
-		(*Item_Credentials)(nil),
-		(*Item_Text)(nil),
-		(*Item_Binary)(nil),
-		(*Item_Card)(nil),
-	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_internal_protos_items_items_proto_rawDesc), len(file_internal_protos_items_items_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   17,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

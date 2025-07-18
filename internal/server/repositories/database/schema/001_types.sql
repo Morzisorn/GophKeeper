@@ -1,0 +1,1 @@
+CREATE TYPE item_type AS ENUM ('CREDENTIALS', 'TEXT', 'BINARY', 'CARD');

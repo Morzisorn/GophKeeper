@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type ItemType string
 
@@ -9,6 +12,7 @@ func (it *ItemType) String() string {
 }
 
 const (
+	ItemTypeUNSPECIFIED ItemType = "UNSPECIFIED"
 	ItemTypeCREDENTIALS ItemType = "CREDENTIALS"
 	ItemTypeTEXT        ItemType = "TEXT"
 	ItemTypeBINARY      ItemType = "BINARY"
@@ -18,7 +22,7 @@ const (
 var ItemTypes []ItemType = []ItemType{ItemTypeCREDENTIALS, ItemTypeTEXT, ItemTypeBINARY, ItemTypeCARD}
 
 type Item struct {
-	ID        string
+	ID        [16]byte
 	UserLogin string
 	Name      string
 	Type      ItemType
@@ -40,7 +44,6 @@ type Data interface {
 }
 
 type Credentials struct {
-	ItemID   string
 	Login    string
 	Password string
 }
@@ -50,7 +53,6 @@ func (c Credentials) GetType() ItemType {
 }
 
 type Text struct {
-	ItemID  string
 	Content string
 }
 
@@ -59,7 +61,6 @@ func (t Text) GetType() ItemType {
 }
 
 type Binary struct {
-	ItemID  string
 	Content []byte
 }
 
@@ -68,7 +69,6 @@ func (b Binary) GetType() ItemType {
 }
 
 type Card struct {
-	ItemID         string
 	Number         string
 	ExpiryDate     string
 	SecurityCode   string
@@ -77,4 +77,19 @@ type Card struct {
 
 func (c Card) GetType() ItemType {
 	return ItemTypeCARD
+}
+
+func (t ItemType) CreateDataByType() (Data, error) {
+	switch t {
+	case ItemTypeCREDENTIALS:
+		return &Credentials{}, nil
+	case ItemTypeTEXT:
+		return &Text{}, nil
+	case ItemTypeBINARY:
+		return &Binary{}, nil
+	case ItemTypeCARD:
+		return &Card{}, nil
+	default:
+		return nil, fmt.Errorf("unknown item type: %s", t)
+	}
 }

@@ -5,48 +5,29 @@ option go_package = "grpc/proto";
 
 import "google/protobuf/timestamp.proto";
 
-message Item {
-    string id = 1;
+message EncryptedItem {
+    bytes id = 1;
     string user_login = 2;
     string name = 3;
     ItemType type = 4;
-    oneof data {
-        Credentials credentials = 5;
-        Text text = 6;
-        Binary binary = 7;
-        Card card = 8;
-    }
-    map<string, string> meta = 9;
-    google.protobuf.Timestamp created_at = 10;
-    google.protobuf.Timestamp updated_at = 11;
+    EncryptedData encrypted_data = 5;
+    map<string, string> meta = 6;
+    google.protobuf.Timestamp created_at = 7;
+    google.protobuf.Timestamp updated_at = 8;
 }
 
 enum ItemType {
-    ITEM_TYPE_UNSPECIFIED = 0;
-    ITEM_TYPE_CREDENTIALS = 1;
-    ITEM_TYPE_TEXT = 2;
-    ITEM_TYPE_BINARY = 3;
-    ITEM_TYPE_CARD = 4;
+    ITEM_TYPE_EMPTY = 0;
+	ITEM_TYPE_UNSPECIFIED = 1;
+    ITEM_TYPE_CREDENTIALS = 2;
+    ITEM_TYPE_TEXT = 3;
+    ITEM_TYPE_BINARY = 4;
+    ITEM_TYPE_CARD = 5;
 }
 
-message Credentials {
-    string login = 1;
-    string password = 2;
-}
-
-message Text {
-    string content = 1;
-}
-
-message Binary {
-    bytes content = 1;  // []byte в Go
-}
-
-message Card {
-    string number = 1;
-    string expiry_date = 2;
-    string security_code = 3;
-    string cardholder_name = 4;
+message EncryptedData {
+	string encrypted_content = 1;
+	string nonce = 2;
 }
 
 service ItemsController {
@@ -58,7 +39,7 @@ service ItemsController {
 }
 
 message AddItemRequest {
-    Item item = 1;
+    EncryptedItem item = 1;
 }
 
 message AddItemResponse {
@@ -71,11 +52,11 @@ message GetUserItemsRequest {
 }
 
 message GetUserItemsResponse {
-    repeated Item items = 1;
+    repeated EncryptedItem items = 1;
 }
 
 message EditItemRequest {
-    Item item = 1;
+    EncryptedItem item = 1;
 }
 
 message EditItemResponse {
@@ -84,7 +65,7 @@ message EditItemResponse {
 
 message DeleteItemRequest {
     string user_login = 1;
-    string item_id = 2;
+    bytes item_id = 2;
 }
 
 message DeleteItemResponse {

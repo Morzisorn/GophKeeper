@@ -60,7 +60,7 @@ func (cs *CryptoService) SetSalt(salt string) error {
 	}
 
 	if len(cs.config.MasterKey) > 0 {
-		mc := cs.GenerateMasterKey([]byte(cs.GetMasterPassword()))
+		mc := cs.GenerateMasterKey()
 		cs.SetMasterKey(mc)
 	}
 
@@ -74,7 +74,7 @@ func (cs *CryptoService) GetSalt() []byte {
 func (cs *CryptoService) SetMasterPassword(masterPassword string) {
 	cs.config.MasterPassword = masterPassword
 	if len(cs.config.MasterKey) > 0 {
-		mc := cs.GenerateMasterKey([]byte(masterPassword))
+		mc := cs.GenerateMasterKey()
 		cs.SetMasterKey(mc)
 	}
 }
@@ -83,8 +83,8 @@ func (cs *CryptoService) GetMasterPassword() string {
 	return cs.config.MasterPassword
 }
 
-func (cs *CryptoService) GenerateMasterKey(masterPassword []byte) []byte {
-	cs.config.MasterKey = pbkdf2.Key(masterPassword, cs.config.Salt, 10000, 32, sha256.New)
+func (cs *CryptoService) GenerateMasterKey() []byte {
+	cs.config.MasterKey = pbkdf2.Key([]byte(cs.config.MasterPassword), cs.config.Salt, 10000, 32, sha256.New)
 	return cs.config.MasterKey
 }
 

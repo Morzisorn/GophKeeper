@@ -50,7 +50,6 @@ func (ui *UIController) handleLoginInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		ui.login = strings.TrimSpace(ui.input)
 		ui.input = ""
 
-		// Переходим к вводу пароля в зависимости от текущего состояния
 		if ui.state.IsSignUp() {
 			ui.state = stateSignUpPassword
 		} else {
@@ -76,7 +75,6 @@ func (ui *UIController) handlePasswordInput(msg tea.KeyMsg) (tea.Model, tea.Cmd)
 	case "esc":
 		ui.input = ui.login
 
-		// Return to input login depends on state
 		if ui.state.IsSignUp() {
 			ui.state = stateSignUpLogin
 		} else {
@@ -86,10 +84,10 @@ func (ui *UIController) handlePasswordInput(msg tea.KeyMsg) (tea.Model, tea.Cmd)
 	case "enter":
 		password := strings.TrimSpace(ui.input)
 		ui.input = ""
+		isSignUp := ui.state.IsSignUp()
 		ui.state = stateProcessing
 
-		// Choose cmd depends on state
-		if ui.state.IsSignUp() {
+		if isSignUp {
 			return ui, ui.signUpCmd(ui.login, password)
 		} else {
 			return ui, ui.signInCmd(ui.login, password)
@@ -137,7 +135,7 @@ func (ui *UIController) signUpCmd(login, password string) tea.Cmd {
 		return processComplete{
 			success: true,
 			message: "Account successfully registered",
-			context: "auth",
+			context: "auth_to_master",
 		}
 	}
 }
@@ -161,7 +159,7 @@ func (ui *UIController) signInCmd(login, password string) tea.Cmd {
 		return processComplete{
 			success: true,
 			message: "Signed in successfully",
-			context: "auth",
+			context: "auth_to_master",
 		}
 	}
 }
@@ -191,7 +189,7 @@ func (ui *UIController) passwordInputView() string {
 
 	title := titleStyle.Render(fmt.Sprintf("%s - Enter Password", action))
 
-	// Hide password with ***
+
 	hiddenPassword := strings.Repeat("*", len(ui.input))
 	input := inputStyle.Render(hiddenPassword + "█")
 	controls := "\nControls: Esc to go back, Enter to continue"
@@ -200,14 +198,7 @@ func (ui *UIController) passwordInputView() string {
 }
 
 func (ui *UIController) processingView() string {
-	var action string
-	if ui.state.IsSignUp() {
-		action = "Signing up..."
-	} else {
-		action = "Signing in..."
-	}
-
-	return fmt.Sprintf("\n%s\n\nPlease wait...", action)
+	return fmt.Sprintln("\nProcessing...\n\nPlease wait...")
 }
 
 
@@ -248,4 +239,16 @@ func (ui *UIController) setMasterPasswordCmd(masterPassword string) tea.Cmd {
 			context: "master_password",
 		}
 	}
+}
+
+func (ui *UIController) masterPasswordInputView() string {
+	title := titleStyle.Render("Master Password Required")
+	
+	hiddenPassword := strings.Repeat("*", len(ui.input))
+	input := inputStyle.Render(hiddenPassword + "█")
+	controls := "\nControls: Esc to go back, Enter to continue"
+	
+	info := "\nEnter your master password to unlock your vault:"
+
+	return fmt.Sprintf("%s%s\n\nMaster Password: %s%s", title, info, input, controls)
 }

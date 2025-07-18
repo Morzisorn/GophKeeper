@@ -34,7 +34,7 @@ func (us *UserService) SignUpUser(ctx context.Context, user *models.User) error 
 		return fmt.Errorf("failed to encrypt password: %w", err)
 	}
 
-	base64.StdEncoding.Encode(user.Password, encryptedPassword)
+	user.Password = []byte(base64.StdEncoding.EncodeToString(encryptedPassword))
 
 	token, salt, err := us.Client.SignUpUser(ctx, user)
 	if err != nil {
@@ -61,7 +61,7 @@ func (us *UserService) SignInUser(ctx context.Context, user *models.User) error 
 		return fmt.Errorf("failed to encrypt password: %w", err)
 	}
 
-	base64.StdEncoding.Encode(user.Password, encryptedPassword)
+	user.Password = []byte(base64.StdEncoding.EncodeToString(encryptedPassword))
 
 	token, salt, err := us.Client.SignInUser(ctx, user)
 	if err != nil {
@@ -77,8 +77,15 @@ func (us *UserService) SignInUser(ctx context.Context, user *models.User) error 
 	return nil
 }
 
-
 func (us *UserService) SetMasterKey(masterPassword string) {
-	masterKey := us.Crypto.GenerateMasterKey([]byte(masterPassword))
+	us.Crypto.SetMasterPassword(masterPassword)
+	masterKey := us.Crypto.GenerateMasterKey()
 	us.Crypto.SetMasterKey(masterKey)
+}
+
+func (us *UserService) Logout() error {
+	us.config.MasterKey = nil
+	us.config.MasterPassword = ""
+	us.config.Salt = nil
+	return nil
 }

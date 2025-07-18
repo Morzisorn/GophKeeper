@@ -20,7 +20,7 @@ func main() {
 	client := client.NewGRPCClient(cnfg)
 	cs := services.NewCryptoService(client)
 	us := services.NewUserService(client, cs)
-	is := services.NewItemService(client)
+	is := services.NewItemService(client, cs)
 	err = cs.SetPublicKey()
 	if err != nil {
 		logger.Log.Fatal("Set public key error: ", zap.Error(err))

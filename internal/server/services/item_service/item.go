@@ -15,10 +15,10 @@ func NewItemService(repo repositories.Storage) *ItemService {
 	return &ItemService{repo: repo}
 }
 
-func (is *ItemService) GetUserItems(ctx context.Context, typ models.ItemType, login string) ([]models.Item, error) {
-	var sl []models.Item
+func (is *ItemService) GetUserItems(ctx context.Context, typ models.ItemType, login string) ([]models.EncryptedItem, error) {
+	var sl []models.EncryptedItem
 	var err error
-	if typ != "" {
+	if typ != models.ItemTypeUNSPECIFIED {
 		sl, err = is.repo.GetUserItemsWithType(ctx, typ, login)
 	} else {
 		sl, err = is.repo.GetAllUserItems(ctx, login)
@@ -49,14 +49,14 @@ func (is *ItemService) GetTypesCounts(ctx context.Context, login string) (map[mo
 	return typesCount, nil
 }
 
-func (is *ItemService) AddItem(ctx context.Context, item *models.Item) error {
+func (is *ItemService) AddItem(ctx context.Context, item *models.EncryptedItem) error {
 	return is.repo.AddItem(ctx, item)
 }
 
-func (is *ItemService) EditItem(ctx context.Context, item *models.Item) error {
+func (is *ItemService) EditItem(ctx context.Context, item *models.EncryptedItem) error {
 	return is.repo.EditItem(ctx, item)
 }
 
-func (is *ItemService) DeleteItem(ctx context.Context, login string, itemID string) error {
+func (is *ItemService) DeleteItem(ctx context.Context, login string, itemID [16]byte) error {
 	return is.repo.DeleteItem(ctx, login, itemID)
 }
