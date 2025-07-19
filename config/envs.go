@@ -58,10 +58,3 @@ func getEnvString(key string) (string, error) {
 	return "", fmt.Errorf("env %s not found", key)
 }
 
-// func getEnvInt(key string) (int64, error) {
-// 	env := os.Getenv(key)
-// 	if env != "" {
-// 		return strconv.ParseInt(env, 10, 64)
-// 	}
-// 	return 0, fmt.Errorf("env %s not found", key)
-// }

@@ -25,30 +25,6 @@ func ItemIdPbToModels(idPb []byte) [16]byte {
 	return id
 }
 
-// func credentialsPbToModels(cr *pb.Credentials) *Credentials {
-// 	return &Credentials{
-// 		Login:    cr.Login,
-// 		Password: cr.Password,
-// 	}
-// }
-
-// func textPbToModels(t *pb.Text) *Text {
-// 	return &Text{Content: t.Content}
-// }
-
-// func binaryPbToModels(b *pb.Binary) *Binary {
-// 	return &Binary{Content: b.Content}
-// }
-
-// func cardPbToModels(c *pb.Card) *Card {
-// 	return &Card{
-// 		Number:         c.Number,
-// 		ExpiryDate:     c.ExpiryDate,
-// 		SecurityCode:   c.SecurityCode,
-// 		CardholderName: c.CardholderName,
-// 	}
-// }
-
 func (i *EncryptedItem) ToPb() (*pb.EncryptedItem, error) {
 	item := pb.EncryptedItem{
 		Id:            i.ID[:],

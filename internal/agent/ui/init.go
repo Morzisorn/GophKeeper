@@ -13,42 +13,70 @@ type UserInterface interface {
 }
 
 type UIController struct {
-	User              *services.UserService
-	Item              *services.ItemService
-	state             state
-	currentMenu       int
-	input             string
-	login             string
-	messages          Messages
-	isAuthenticated   bool
-	loggedInMenu      int
-	maxLoggedInMenu   int
-	items             []models.EncryptedItem
-	currentItem       int
-	selectedItem      *models.EncryptedItem
-	decryptedItem     *models.Item
-	maxItems          int
-	newItem           models.Item
-	addItemErrorMsg   string 
-	addItemSuccessMsg string
-	itemTypeMenu      int 
-	maxItemTypes      int 
-	confirmChoice     int
-	decryptErrorMsg   string
-	deleteSuccessMsg  string
-	deleteErrorMsg    string
-	editingItem       *models.Item 
-	editStep          int          
-	editSuccessMsg    string       
-	editErrorMsg      string
-	metadataMenu       int  
-	metadataKeys       []string 
-	currentMetaKey     string   
-	currentMetaValue   string   
-	metadataSuccessMsg string   
-	metadataErrorMsg   string
+	User *services.UserService
+	Item *services.ItemService
 
-	logoutSuccessMsg string 
+	state           state
+	input           string
+	messages        Messages
+	loggedInMenu    int
+	maxLoggedInMenu int
+
+	confirmChoice int
+
+	menuCtrl
+	userCtrl
+	itemCtrl
+	logoutCtrl
+}
+
+type menuCtrl struct {
+	currentMenu int
+}
+
+type userCtrl struct {
+	login           string
+	isAuthenticated bool
+}
+
+type itemCtrl struct {
+	items    []models.EncryptedItem
+	maxItems int
+
+	currentItem     int
+	selectedItem    *models.EncryptedItem
+	decryptedItem   *models.Item
+	decryptErrorMsg string
+
+	itemTypeMenu int
+	maxItemTypes int
+
+	newItem           models.Item
+	addItemErrorMsg   string
+	addItemSuccessMsg string
+
+	editingItem    *models.Item
+	editStep       int
+	editSuccessMsg string
+	editErrorMsg   string
+
+	deleteSuccessMsg string
+	deleteErrorMsg   string
+
+	itemMetaCtrl
+}
+
+type itemMetaCtrl struct {
+	metadataMenu       int
+	metadataKeys       []string
+	currentMetaKey     string
+	currentMetaValue   string
+	metadataSuccessMsg string
+	metadataErrorMsg   string
+}
+
+type logoutCtrl struct {
+	logoutSuccessMsg string
 	logoutErrorMsg   string
 }
 

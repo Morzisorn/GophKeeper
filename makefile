@@ -7,7 +7,7 @@ proto:
 .PHONY: testcoverage
 testcoverage:
 	go test -coverprofile=coverage.out ./...
-	go tool cover -func=coverage.out   
+	@./scripts/filter-coverage.sh coverage.out
 
 .PHONY: agent
 run-agent:
