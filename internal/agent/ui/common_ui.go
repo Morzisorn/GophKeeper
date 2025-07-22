@@ -65,6 +65,20 @@ func (ui *UIController) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		ui.currentItem = 0
 		ui.state = stateItemsList
 		return ui, nil
+	case itemTypesLoaded:  // <- ДОБАВИТЬ
+		ui.itemTypes = msg.itemTypes
+		ui.maxItemTypes = len(ui.itemTypes) - 1
+		if len(ui.itemTypes) == 0 {
+			ui.addItemErrorMsg = "No items with types found"
+			ui.state = stateMenuLoggedIn
+		}
+		return ui, nil
+	case itemsByTypeLoaded:  // <- ДОБАВИТЬ
+		ui.items = msg.items
+		ui.maxItems = len(ui.items) - 1
+		ui.currentItem = 0
+		ui.selectedType = msg.itemType
+		return ui, nil
 	case errorMsg:
 		ui.state = stateItemsList
 		return ui, nil
@@ -82,6 +96,10 @@ func (ui *UIController) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return ui.handleMasterPasswordInput(msg)
 	case ui.state == stateItemsList:
 		return ui.handleItemsListInput(msg)
+	case ui.state == stateItemTypeSelection:  
+		return ui.handleItemTypeSelectionInput(msg)
+	case ui.state == stateViewItemsByType:   
+		return ui.handleViewItemsByTypeInput(msg)
 	case ui.state == stateItemDetails:
 		return ui.handleItemDetailsInput(msg)
 	case ui.state == stateConfirmDelete:
@@ -167,8 +185,14 @@ func (ui *UIController) View() string {
 		return ui.menuLoggedOutView()
 	case ui.state == stateMenuLoggedIn:
 		return ui.menuLoggedInView()
+	case ui.state == stateMasterPassword:
+		return ui.masterPasswordInputView()
 	case ui.state == stateItemsList:
 		return ui.itemsListView()
+	case ui.state == stateItemTypeSelection:  
+		return ui.itemTypeSelectionView()
+	case ui.state == stateViewItemsByType:   
+		return ui.viewItemsByTypeView()
 	case ui.state == stateItemDetails:
 		return ui.itemDetailsView()
 	case ui.state == stateConfirmDelete:
@@ -203,8 +227,6 @@ func (ui *UIController) View() string {
 		return ui.loginInputView()
 	case ui.state.IsPasswordInput():
 		return ui.passwordInputView()
-	case ui.state == stateMasterPassword:
-		return ui.masterPasswordInputView()
 	case ui.state == stateProcessing:
 		return ui.processingView()
 	case ui.state == stateSuccess:

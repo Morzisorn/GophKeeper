@@ -17,7 +17,7 @@ func TestUIController_handleViewItems(t *testing.T) {
 		state: stateMenuLoggedIn,
 	}
 
-	result, cmd := ui.handleViewItems()
+	result, cmd := ui.handleViewAllItems()
 
 	assert.Equal(t, ui, result)
 	assert.NotNil(t, cmd) // Should return loadItemsCmd

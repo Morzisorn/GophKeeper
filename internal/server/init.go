@@ -54,7 +54,9 @@ func createGRPCServer(us *userv.UserService, cs *cserv.CryptoService, is *iserv.
 		logger.Log.Fatal("create listener error", zap.Error(err))
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(controllers.AuthInterceptor),
+	)
 	pbus.RegisterUserControllerServer(s, uc)
 	pbcs.RegisterCryptoControllerServer(s, cc)
 	pbit.RegisterItemsControllerServer(s, ic)

@@ -32,6 +32,8 @@ type UIController struct {
 
 type menuCtrl struct {
 	currentMenu int
+	typeMenu     int      
+	itemTypes    map[string]int32
 }
 
 type userCtrl struct {
@@ -49,6 +51,7 @@ type itemCtrl struct {
 	decryptErrorMsg string
 
 	itemTypeMenu int
+	selectedType string
 	maxItemTypes int
 
 	newItem           models.Item
