@@ -8,8 +8,9 @@ import (
 	"gophkeeper/models"
 	"strings"
 
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type ItemDatabase interface {
@@ -21,12 +22,18 @@ type ItemDatabase interface {
 	DeleteItem(ctx context.Context, login string, itemID [16]byte) error
 }
 
-type ItemDB struct {
-	q    *gen.Queries
-	pool *pgxpool.Pool
+type PoolInterface interface {
+	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
+	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
+	QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
 }
 
-func NewItemDB(q *gen.Queries, pool *pgxpool.Pool) ItemDatabase {
+type ItemDB struct {
+	q    *gen.Queries
+	pool PoolInterface
+}
+
+func NewItemDB(q *gen.Queries, pool PoolInterface) ItemDatabase {
 	return &ItemDB{
 		q:    q,
 		pool: pool,
@@ -171,4 +178,3 @@ func (db *ItemDB) DeleteItem(ctx context.Context, login string, itemID [16]byte)
 		ID:        pgtype.UUID{Bytes: itemID, Valid: true},
 	})
 }
-

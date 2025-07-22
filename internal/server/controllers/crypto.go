@@ -8,7 +8,6 @@ import (
 
 type CryptoController struct {
 	pb.UnimplementedCryptoControllerServer
-	// service *crypto.CryptoService
 }
 
 func NewCryptoController() *CryptoController {

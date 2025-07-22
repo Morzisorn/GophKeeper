@@ -44,19 +44,25 @@ type GRPCClient struct {
 	Item   pbit.ItemsControllerClient
 }
 
-// NewGRPCClient creates new pointer to GRPCClient based on config
 func NewGRPCClient(c *config.Config) *GRPCClient {
+	client := &GRPCClient{
+		BaseURL: c.Addr,
+	}
+
 	conn, err := grpc.NewClient(c.Addr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(client.authInterceptor),
 	)
 	if err != nil {
 		logger.Log.Fatal("create grpc client error: ", zap.Error(err))
 	}
-	return &GRPCClient{
-		conn:    conn,
-		BaseURL: c.Addr,
-		User:    pbus.NewUserControllerClient(conn),
-		Crypto:  pbcr.NewCryptoControllerClient(conn),
-		Item:    pbit.NewItemsControllerClient(conn),
-	}
+
+	client.conn = conn
+	client.User = pbus.NewUserControllerClient(conn)
+	client.Crypto = pbcr.NewCryptoControllerClient(conn)
+	client.Item = pbit.NewItemsControllerClient(conn)
+
+	return client
+
 }
+

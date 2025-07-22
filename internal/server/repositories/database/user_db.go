@@ -6,8 +6,6 @@ import (
 	"gophkeeper/models"
 
 	gen "gophkeeper/internal/server/repositories/database/generated"
-
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type UserDatabase interface {
@@ -17,10 +15,10 @@ type UserDatabase interface {
 
 type UserDB struct {
 	q    *gen.Queries
-	pool *pgxpool.Pool
+	pool PoolInterface
 }
 
-func NewUserDB(q *gen.Queries, pool *pgxpool.Pool) UserDatabase {
+func NewUserDB(q *gen.Queries, pool PoolInterface) UserDatabase {
 	return &UserDB{
 		q:    q,
 		pool: pool,

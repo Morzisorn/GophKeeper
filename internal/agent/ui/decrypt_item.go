@@ -85,3 +85,4 @@ func (ui *UIController) decryptErrorView() string {
 		return fmt.Sprintf("%s\n\n%s%s", title, message, controls)
 	}
 }
+

@@ -23,6 +23,14 @@ func NewItemController(service *iserv.ItemService) *ItemController {
 }
 
 func (ic *ItemController) AddItem(ctx context.Context, in *pb.AddItemRequest) (*pb.AddItemResponse, error) {
+	login, ok := ctx.Value("login").(string)
+	if !ok {
+		return nil, status.Errorf(codes.Internal, "login not found in context")
+	}
+	if login != in.Item.UserLogin {
+		return nil, status.Error(codes.Unauthenticated, "login in JWT differ from item user login")
+	}
+
 	if !isPbItemValid(in.Item) {
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
@@ -43,6 +51,14 @@ func (ic *ItemController) AddItem(ctx context.Context, in *pb.AddItemRequest) (*
 }
 
 func (ic *ItemController) EditItem(ctx context.Context, in *pb.EditItemRequest) (*pb.EditItemResponse, error) {
+	login, ok := ctx.Value("login").(string)
+	if !ok {
+		return nil, status.Errorf(codes.Internal, "login not found in context")
+	}
+	if login != in.Item.UserLogin {
+		return nil, status.Error(codes.Unauthenticated, "login in JWT differ from item user login")
+	}
+
 	if !isPbItemValid(in.Item) {
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
@@ -63,6 +79,14 @@ func isPbItemValid(i *pb.EncryptedItem) bool {
 }
 
 func (ic *ItemController) DeleteItem(ctx context.Context, in *pb.DeleteItemRequest) (*pb.DeleteItemResponse, error) {
+	login, ok := ctx.Value("login").(string)
+	if !ok {
+		return nil, status.Errorf(codes.Internal, "login not found in context")
+	}
+	if login != in.UserLogin {
+		return nil, status.Error(codes.Unauthenticated, "login in JWT differ from item user login")
+	}
+
 	if in.ItemId == nil || in.UserLogin == "" {
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
@@ -85,8 +109,12 @@ func (ic *ItemController) DeleteItem(ctx context.Context, in *pb.DeleteItemReque
 }
 
 func (ic *ItemController) GetUserItems(ctx context.Context, in *pb.GetUserItemsRequest) (*pb.GetUserItemsResponse, error) {
-	if in.UserLogin == "" {
-		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
+	login, ok := ctx.Value("login").(string)
+	if !ok {
+		return nil, status.Errorf(codes.Internal, "login not found in context")
+	}
+	if login != in.UserLogin {
+		return nil, status.Error(codes.Unauthenticated, "login in JWT differ from item user login")
 	}
 
 	items, err := ic.service.GetUserItems(ctx, models.ItemTypePbToModel(in.Type), in.UserLogin)
@@ -109,6 +137,14 @@ func (ic *ItemController) GetUserItems(ctx context.Context, in *pb.GetUserItemsR
 }
 
 func (ic *ItemController) GetItemTypesCounters(ctx context.Context, in *pb.TypesCountsRequest) (*pb.TypesCountsResponse, error) {
+	login, ok := ctx.Value("login").(string)
+	if !ok {
+		return nil, status.Errorf(codes.Internal, "login not found in context")
+	}
+	if login != in.UserLogin {
+		return nil, status.Error(codes.Unauthenticated, "login in JWT differ from item user login")
+	}
+	
 	counters, err := ic.service.GetTypesCounts(ctx, in.UserLogin)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
