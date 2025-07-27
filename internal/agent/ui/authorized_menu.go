@@ -11,13 +11,10 @@ func (ui *UIController) menuLoggedInView() string {
 	subtitle := "Choose an option - enter number or use arrow keys:"
 
 	options := []string{
-		"View All Items",
-		"View Items With Type",
+		"View Items",
 		"Add Item",
 		"Logout",
 	}
-
-	ui.maxLoggedInMenu = len(options) - 1 
 
 	menu := ""
 	for i, option := range options {
@@ -42,30 +39,25 @@ func (ui *UIController) handleMenuLoggedInInput(msg tea.KeyMsg) (tea.Model, tea.
 			ui.loggedInMenu--
 		}
 	case "down", "j":
-		if ui.loggedInMenu < ui.maxLoggedInMenu {
+		if ui.loggedInMenu < 2 {
 			ui.loggedInMenu++
 		}
 	case "1":
 		ui.loggedInMenu = 0
-		return ui.handleViewAllItems()
+		return ui.handleViewItems()
 	case "2":
 		ui.loggedInMenu = 1
-		return ui.handleViewItemsWithType()
+		return ui.handleAddItem()
 	case "3":
 		ui.loggedInMenu = 2
-		return ui.handleAddItem()
-	case "4":
-		ui.loggedInMenu = 3
 		return ui.handleLogout()
 	case "enter":
 		switch ui.loggedInMenu {
 		case 0:
-			return ui.handleViewAllItems()
+			return ui.handleViewItems()
 		case 1:
-			return ui.handleViewItemsWithType()
-		case 2:
 			return ui.handleAddItem()
-		case 3:
+		case 2:
 			return ui.handleLogout()
 		}
 	}

@@ -22,8 +22,8 @@ type UserService struct {
 	repo repositories.Storage
 }
 
-func NewUserService(repo repositories.Storage) (*UserService, error) {
-	return &UserService{repo: repo}, nil
+func NewUserService(repo repositories.Storage) *UserService {
+	return &UserService{repo: repo}
 }
 
 func (us *UserService) GetUser(ctx context.Context, user *models.User) (*models.User, error) {
@@ -111,15 +111,10 @@ func decryptPassword(encryptedPassword string) ([]byte, error) {
 		return nil, fmt.Errorf("decode password from base64 error: %v", err)
 	}
 
-	cnfg, err := config.GetServerConfig()
-	if err != nil {
-		return nil, fmt.Errorf("get server config error: %v", err)
-	}
-
 	decryptedPassword, err := rsa.DecryptOAEP(
 		sha256.New(),
 		rand.Reader,
-		cnfg.PrivateKey,
+		config.GetServerConfig().PrivateKey,
 		encryptedBytes,
 		nil,
 	)

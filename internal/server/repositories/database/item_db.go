@@ -3,15 +3,13 @@ package database
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/jackc/pgx/v5/pgxpool"
 	gen "gophkeeper/internal/server/repositories/database/generated"
 	"gophkeeper/models"
 	"strings"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -30,23 +28,16 @@ type PoolInterface interface {
 	QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
 }
 
-var _ PoolInterface = (*pgxpool.Pool)(nil)
-
 type ItemDB struct {
 	q    *gen.Queries
 	pool PoolInterface
 }
 
-var _ ItemDatabase = (*ItemDB)(nil)
-
-func NewItemDB(q *gen.Queries, pool PoolInterface) (ItemDatabase, error) {
-	if pool == nil || q == nil {
-		return nil, errors.New("create user database error: pool or quaries is nil")
-	}
+func NewItemDB(q *gen.Queries, pool PoolInterface) ItemDatabase {
 	return &ItemDB{
 		q:    q,
 		pool: pool,
-	}, nil
+	}
 }
 
 func (db *ItemDB) GetAllUserItems(ctx context.Context, login string) ([]models.EncryptedItem, error) {

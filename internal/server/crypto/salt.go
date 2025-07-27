@@ -9,7 +9,8 @@ import (
 func GenerateSalt() (string, error) {
 	salt := make([]byte, 32)
 
-	if _, err := rand.Read(salt); err != nil {
+	_, err := rand.Read(salt)
+	if err != nil {
 		return "", fmt.Errorf("failed to generate salt: %w", err)
 	}
 

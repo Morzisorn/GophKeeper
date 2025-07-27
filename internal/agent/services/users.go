@@ -16,16 +16,12 @@ type UserService struct {
 	config *config.Config
 }
 
-func NewUserService(client client.Client, cr *CryptoService) (*UserService, error) {
-	cnfg, err := config.GetAgentConfig()
-	if err != nil {
-		return nil, fmt.Errorf("get agent config error: %w", err)
-	}
+func NewUserService(client client.Client, cr *CryptoService) *UserService {
 	return &UserService{
 		Client: client,
 		Crypto: cr,
-		config: cnfg,
-	}, nil
+		config: config.GetAgentConfig(),
+	}
 }
 
 func (us *UserService) SignUpUser(ctx context.Context, user *models.User) error {

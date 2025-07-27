@@ -34,10 +34,7 @@ func LoadRSAKeyPair() error {
 		return fmt.Errorf("get public key pem from file error: %w", err)
 	}
 
-	cnfg, err := config.GetServerConfig()
-	if err != nil {
-		return fmt.Errorf("get server config error: %w", err)
-	}
+	cnfg := config.GetServerConfig()
 
 	switch {
 	// Convert private key from PEM and load private and public keys to config
@@ -56,7 +53,8 @@ func LoadRSAKeyPair() error {
 			return fmt.Errorf("generate rsa keys error: %w", err)
 		}
 
-		if err = pair.saveKeysInFile(); err != nil {
+		err = pair.saveKeysInFile()
+		if err != nil {
 			return fmt.Errorf("save rsa keys to file error: %w", err)
 		}
 
@@ -126,7 +124,8 @@ func (kp *RSAKeyPair) getPrivateKeyPEM() []byte {
 
 func (kp *RSAKeyPair) saveKeysInFile() error {
 	privatePEM := kp.getPrivateKeyPEM()
-	if err := saveKeyInFile(privatePEM, privateKeyFilename); err != nil {
+	err := saveKeyInFile(privatePEM, privateKeyFilename)
+	if err != nil {
 		return fmt.Errorf("write private key pem to file error: %w", err)
 	}
 
@@ -134,8 +133,8 @@ func (kp *RSAKeyPair) saveKeysInFile() error {
 	if err != nil {
 		return fmt.Errorf("get public key PEM error: %w", err)
 	}
-
-	if err = saveKeyInFile(publicPEM, publicKeyFilename); err != nil {
+	err = saveKeyInFile(publicPEM, publicKeyFilename)
+	if err != nil {
 		return fmt.Errorf("write public key pem to file error: %w", err)
 	}
 
@@ -148,21 +147,24 @@ func saveKeyInFile(key []byte, filename string) error {
 		return fmt.Errorf("get keys path error: %w", err)
 	}
 
-	filePath := filepath.Join(keysPath, filename)
-	file, err := os.Create(filePath)
+	filepath := filepath.Join(keysPath, filename)
+	file, err := os.Create(filepath)
 	if err != nil {
 		return fmt.Errorf("create file for key pem error: %w", err)
 	}
-	defer file.Close()
-
-	if _, err = file.Write(key); err != nil {
+	_, err = file.Write(key)
+	if err != nil {
 		return fmt.Errorf("write key pem to file error: %w", err)
 	}
 	return nil
 }
 
 func getKeysPath() (string, error) {
-	return config.GetProjectRoot()
+	root, err := config.GetProjectRoot()
+	if err != nil {
+		return "", fmt.Errorf("get project root error: %w", err)
+	}
+	return filepath.Join(root, "internal", "server", "crypto", "keys"), nil
 }
 
 func GetPublicKeyFromPEM(pemData []byte) (*rsa.PublicKey, error) {

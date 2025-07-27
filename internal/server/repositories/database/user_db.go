@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"gophkeeper/models"
 
@@ -19,15 +18,11 @@ type UserDB struct {
 	pool PoolInterface
 }
 
-func NewUserDB(q *gen.Queries, pool PoolInterface) (UserDatabase, error) {
-	if pool == nil || q == nil {
-		return nil, errors.New("create user database error: pool or quaries is nil")
-	}
-
+func NewUserDB(q *gen.Queries, pool PoolInterface) UserDatabase {
 	return &UserDB{
 		q:    q,
 		pool: pool,
-	}, nil
+	}
 }
 
 func (db *UserDB) SignUpUser(ctx context.Context, user *models.User) error {

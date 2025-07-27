@@ -1,62 +1,30 @@
 package main
 
 import (
-	"fmt"
 	"gophkeeper/config"
 	"gophkeeper/internal/agent/client"
 	"gophkeeper/internal/agent/services"
 	"gophkeeper/internal/agent/ui"
 	"gophkeeper/internal/logger"
-	"os"
+
+	"go.uber.org/zap"
 )
 
+
 func main() {
-	if err := runAgent(); err != nil {
-		fmt.Printf("run agent error: %v\n", err)
-		os.Exit(1)
-	}
-}
-
-func runAgent() error {
-	if err := logger.Init(); err != nil {
-		return fmt.Errorf("init logger error: %w\n", err)
-	}
-
-	cnfg, err := config.GetAgentConfig()
+	err := logger.Init()
 	if err != nil {
-		return fmt.Errorf("get agent config error: %w\n", err)
+		panic(err)
 	}
-
-	clnt, err := client.NewGRPCClient(cnfg)
+	cnfg := config.GetAgentConfig()
+	client := client.NewGRPCClient(cnfg)
+	cs := services.NewCryptoService(client)
+	us := services.NewUserService(client, cs)
+	is := services.NewItemService(client, cs)
+	err = cs.SetPublicKey()
 	if err != nil {
-		return fmt.Errorf("new grpc client error: %w\n", err)
+		logger.Log.Fatal("Set public key error: ", zap.Error(err))
 	}
-
-	cs, err := services.NewCryptoService(clnt)
-	if err != nil {
-		return fmt.Errorf("new crypto service error: %w\n", err)
-	}
-
-	us, err := services.NewUserService(clnt, cs)
-	if err != nil {
-		return fmt.Errorf("new user service error: %w\n", err)
-	}
-
-	is, err := services.NewItemService(clnt, cs)
-	if err != nil {
-		return fmt.Errorf("new item service error: %w\n", err)
-	}
-
-	if err = cs.SetPublicKey(); err != nil {
-		return fmt.Errorf("set public key error: %w\n", err)
-	}
-
-	uiContr, err := ui.NewUIController(us, is)
-	if err != nil {
-		return fmt.Errorf("new ui controller error: %w\n", err)
-	}
-	if err := uiContr.Run(); err != nil {
-		return fmt.Errorf("run ui controller error: %w\n", err)
-	}
-	return nil
+	uiContr := ui.NewUIController(us, is)
+	uiContr.Run()
 }

@@ -6,6 +6,7 @@ type CryptoService struct {
 	repo repositories.Storage
 }
 
-func NewCryptoService(repo repositories.Storage) (*CryptoService, error) {
-	return &CryptoService{repo: repo}, nil
+func NewCryptoService(repo repositories.Storage) *CryptoService {
+	return &CryptoService{repo: repo}
 }
+

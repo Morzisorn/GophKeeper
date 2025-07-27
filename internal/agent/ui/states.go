@@ -7,8 +7,6 @@ const (
 	stateMenuLoggedIn
 	stateMasterPassword
 	stateItemsList
-	stateItemTypeSelection
-	stateViewItemsByType
 	stateAddItem
     stateAddItemName        
 	stateAddItemData

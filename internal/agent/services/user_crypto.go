@@ -19,15 +19,11 @@ type CryptoService struct {
 	config *config.Config
 }
 
-func NewCryptoService(client client.Client) (*CryptoService, error) {
-	cnfg, err := config.GetAgentConfig()
-	if err != nil {
-		return nil, fmt.Errorf("get agent config: %w", err)
-	}
+func NewCryptoService(client client.Client) *CryptoService {
 	return &CryptoService{
 		Client: client,
-		config: cnfg,
-	}, nil
+		config: config.GetAgentConfig(),
+	}
 }
 
 func (cs *CryptoService) SetPublicKey() error {
@@ -47,14 +43,10 @@ func (cs *CryptoService) SetPublicKey() error {
 }
 
 func encryptData(data []byte) ([]byte, error) {
-	cnfg, err := config.GetAgentConfig()
-	if err != nil {
-		return nil, fmt.Errorf("get agent config: %w", err)
-	}
 	return rsa.EncryptOAEP(
 		sha256.New(),
 		rand.Reader,
-		cnfg.PublicKey,
+		config.GetAgentConfig().PublicKey,
 		data,
 		nil,
 	)

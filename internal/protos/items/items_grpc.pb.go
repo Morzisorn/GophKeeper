@@ -41,8 +41,8 @@ type itemsControllerClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewItemsControllerClient(cc grpc.ClientConnInterface) (ItemsControllerClient, error) {
-	return &itemsControllerClient{cc}, nil
+func NewItemsControllerClient(cc grpc.ClientConnInterface) ItemsControllerClient {
+	return &itemsControllerClient{cc}
 }
 
 func (c *itemsControllerClient) AddItem(ctx context.Context, in *AddItemRequest, opts ...grpc.CallOption) (*AddItemResponse, error) {

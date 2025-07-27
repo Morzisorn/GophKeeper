@@ -33,8 +33,8 @@ type cryptoControllerClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewCryptoControllerClient(cc grpc.ClientConnInterface) (CryptoControllerClient, error) {
-	return &cryptoControllerClient{cc}, nil
+func NewCryptoControllerClient(cc grpc.ClientConnInterface) CryptoControllerClient {
+	return &cryptoControllerClient{cc}
 }
 
 func (c *cryptoControllerClient) GetPublicKeyPEM(ctx context.Context, in *GetPublicKeyPEMRequest, opts ...grpc.CallOption) (*GetPublicKeyPEMResponse, error) {
