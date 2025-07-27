@@ -45,10 +45,10 @@ func (g *GRPCClient) SignInUser(ctx context.Context, user *models.User) (token s
 	return resp.Token, resp.Salt, nil
 }
 
-func (c *GRPCClient) SetJWTToken(token string) {
-	c.token = token
+func (g *GRPCClient) SetJWTToken(token string) {
+	g.token = token
 }
 
-func (c *GRPCClient) GetJWTToken() string {
-	return c.token
+func (g *GRPCClient) GetJWTToken() string {
+	return g.token
 }

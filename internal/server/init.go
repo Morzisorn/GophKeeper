@@ -96,7 +96,7 @@ func (s *GRPCServer) Run() error {
 
 	if err := s.Server.Serve(s.Listen); err != nil {
 
-		return fmt.Errorf("Failed to run grpc server: %w", err)
+		return fmt.Errorf("failed to run grpc server: %w", err)
 	}
 
 	<-idleConnsClosed
@@ -107,6 +107,8 @@ func (s *GRPCServer) Run() error {
 
 func (s *GRPCServer) Shutdown(ctx context.Context, idleConnsClosed chan struct{}) {
 	logger.Log.Info("Shutdown server")
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 
 	//(*s.Storage).Close()
 
