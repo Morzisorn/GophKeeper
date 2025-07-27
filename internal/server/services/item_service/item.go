@@ -11,8 +11,8 @@ type ItemService struct {
 	repo repositories.Storage
 }
 
-func NewItemService(repo repositories.Storage) *ItemService {
-	return &ItemService{repo: repo}
+func NewItemService(repo repositories.Storage) (*ItemService, error) {
+	return &ItemService{repo: repo}, nil
 }
 
 func (is *ItemService) GetUserItems(ctx context.Context, typ models.ItemType, login string) ([]models.EncryptedItem, error) {

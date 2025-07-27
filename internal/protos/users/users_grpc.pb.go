@@ -35,8 +35,8 @@ type userControllerClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserControllerClient(cc grpc.ClientConnInterface) UserControllerClient {
-	return &userControllerClient{cc}
+func NewUserControllerClient(cc grpc.ClientConnInterface) (UserControllerClient, error) {
+	return &userControllerClient{cc}, nil
 }
 
 func (c *userControllerClient) SignUpUser(ctx context.Context, in *SignUpUserRequest, opts ...grpc.CallOption) (*SignUpUserResponse, error) {

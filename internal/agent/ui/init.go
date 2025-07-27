@@ -32,6 +32,8 @@ type UIController struct {
 
 type menuCtrl struct {
 	currentMenu int
+	typeMenu    int
+	itemTypes   []itemTypeLoaded
 }
 
 type userCtrl struct {
@@ -49,6 +51,7 @@ type itemCtrl struct {
 	decryptErrorMsg string
 
 	itemTypeMenu int
+	selectedType string
 	maxItemTypes int
 
 	newItem           models.Item
@@ -80,7 +83,7 @@ type logoutCtrl struct {
 	logoutErrorMsg   string
 }
 
-func NewUIController(us *services.UserService, is *services.ItemService) UserInterface {
+func NewUIController(us *services.UserService, is *services.ItemService) (UserInterface, error) {
 	ui := &UIController{
 		User:            us,
 		Item:            is,
@@ -88,7 +91,7 @@ func NewUIController(us *services.UserService, is *services.ItemService) UserInt
 		maxLoggedInMenu: 4,
 	}
 	ui.messages.init()
-	return ui
+	return ui, nil
 }
 
 func (ui *UIController) Run() error {

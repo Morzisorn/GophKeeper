@@ -12,11 +12,11 @@ type ItemService struct {
 	Crypto *CryptoService
 }
 
-func NewItemService(client client.Client, cs *CryptoService) *ItemService {
+func NewItemService(client client.Client, cs *CryptoService) (*ItemService, error) {
 	return &ItemService{
 		Client: client,
 		Crypto: cs,
-	}
+	}, nil
 }
 
 func (ic *ItemService) AddItem(ctx context.Context, item *models.Item) error {

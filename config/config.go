@@ -45,15 +45,21 @@ var (
 	onceAgent     sync.Once
 )
 
-func GetServerConfig() *Config {
+func GetServerConfig() (*Config, error) {
+	var initErr error
+
 	onceServer.Do(func() {
 		var err error
 		instanceServer, err = newServerConfig()
 		if err != nil {
-			logger.Log.Error("Error getting service", zap.Error(err))
+			initErr = fmt.Errorf("get server config error: %w", err)
 		}
 	})
-	return instanceServer
+
+	if initErr != nil {
+		return nil, initErr
+	}
+	return instanceServer, nil
 }
 
 var getEnvPath = getEncFilePath
@@ -69,20 +75,25 @@ func newServerConfig() (*Config, error) {
 	c.parseCommonEnvs()
 	c.parseServerEnvs()
 
-	//c.AppType = "server"
-
 	return c, nil
 }
 
-func GetAgentConfig() *Config {
+func GetAgentConfig() (*Config, error) {
+	var initErr error
+
 	onceAgent.Do(func() {
 		var err error
 		instanceAgent, err = newAgentConfig()
 		if err != nil {
-			logger.Log.Error("Error getting service", zap.Error(err))
+			initErr = fmt.Errorf("get agent config error: %w", err)
 		}
 	})
-	return instanceAgent
+
+	if initErr != nil {
+		return nil, initErr
+	}
+
+	return instanceAgent, nil
 }
 
 func newAgentConfig() (*Config, error) {
@@ -95,8 +106,6 @@ func newAgentConfig() (*Config, error) {
 
 	c.parseCommonEnvs()
 	c.parseAgentEnvs()
-
-	//c.AppType = "agent"
 
 	return c, nil
 }

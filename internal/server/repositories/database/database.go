@@ -23,22 +23,31 @@ type PGDB struct {
 	items ItemDatabase
 }
 
+var _ Database = (*PGDB)(nil)
+
 func NewPGDB(cfg *config.Config) (Database, error) {
 	pool, err := pgxpool.New(context.Background(), cfg.DBConnStr)
 	if err != nil {
 		return nil, fmt.Errorf("create new db error: %v", err)
 	}
 
-	err = createTables(pool)
-	if err != nil {
+	if err := createTables(pool); err != nil {
 		return nil, fmt.Errorf("create db tables error: %v", err)
 	}
 
 	q := gen.New(pool)
 
+	userDB, err := NewUserDB(q, pool)
+	if err != nil {
+		return nil, fmt.Errorf("create user db error: %v", err)
+	}
+	itemDB, err := NewItemDB(q, pool)
+	if err != nil {
+		return nil, fmt.Errorf("create item db error: %v", err)
+	}
 	return &PGDB{
-		users: NewUserDB(q, pool),
-		items: NewItemDB(q, pool),
+		users: userDB,
+		items: itemDB,
 	}, nil
 }
 
@@ -78,8 +87,7 @@ func createTable(db *pgxpool.Pool, filepath string) error {
 		return err
 	}
 
-	_, err = db.Exec(context.Background(), string(script))
-	if err != nil {
+	if _, err := db.Exec(context.Background(), string(script)); err != nil {
 		return err
 	}
 	return nil
@@ -116,7 +124,3 @@ func (pg *PGDB) DeleteItem(ctx context.Context, login string, itemID [16]byte) e
 func (pg *PGDB) GetTypesCounts(ctx context.Context, login string) (map[models.ItemType]int32, error) {
 	return pg.items.GetTypesCounts(ctx, login)
 }
-
-// func (db *PGDB) Close() error {
-
-// }
