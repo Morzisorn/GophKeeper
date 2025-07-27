@@ -83,7 +83,7 @@ type logoutCtrl struct {
 	logoutErrorMsg   string
 }
 
-func NewUIController(us *services.UserService, is *services.ItemService) UserInterface {
+func NewUIController(us *services.UserService, is *services.ItemService) (UserInterface, error) {
 	ui := &UIController{
 		User:            us,
 		Item:            is,
@@ -91,7 +91,7 @@ func NewUIController(us *services.UserService, is *services.ItemService) UserInt
 		maxLoggedInMenu: 4,
 	}
 	ui.messages.init()
-	return ui
+	return ui, nil
 }
 
 func (ui *UIController) Run() error {

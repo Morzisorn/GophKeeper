@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"gophkeeper/config"
 	"gophkeeper/internal/logger"
 	pbcr "gophkeeper/internal/protos/crypto"
@@ -44,7 +45,7 @@ type GRPCClient struct {
 	Item   pbit.ItemsControllerClient
 }
 
-func NewGRPCClient(c *config.Config) *GRPCClient {
+func NewGRPCClient(c *config.Config) (*GRPCClient, error) {
 	client := &GRPCClient{
 		BaseURL: c.Addr,
 	}
@@ -58,11 +59,19 @@ func NewGRPCClient(c *config.Config) *GRPCClient {
 	}
 
 	client.conn = conn
-	client.User = pbus.NewUserControllerClient(conn)
-	client.Crypto = pbcr.NewCryptoControllerClient(conn)
-	client.Item = pbit.NewItemsControllerClient(conn)
+	client.User, err = pbus.NewUserControllerClient(conn)
+	if err != nil {
+		return nil, fmt.Errorf("create grpc client error: %w", err)
+	}
+	client.Crypto, err = pbcr.NewCryptoControllerClient(conn)
+	if err != nil {
+		return nil, fmt.Errorf("create grpc client error: %w", err)
+	}
+	client.Item, err = pbit.NewItemsControllerClient(conn)
+	if err != nil {
+		return nil, fmt.Errorf("create grpc client error: %w", err)
+	}
 
-	return client
+	return client, nil
 
 }
-

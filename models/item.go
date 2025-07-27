@@ -7,8 +7,8 @@ import (
 
 type ItemType string
 
-func (it *ItemType) String() string {
-	return string(*it)
+func (it ItemType) String() string {
+	return string(it)
 }
 
 const (
@@ -38,10 +38,9 @@ type Meta struct {
 
 type Data interface {
 	GetType() ItemType
-	//Edit() error
-	//Encrypt() interface{}
-	//Decrypt() interface{}
 }
+
+var _ Data = (*Credentials)(nil)
 
 type Credentials struct {
 	Login    string
@@ -52,6 +51,8 @@ func (c Credentials) GetType() ItemType {
 	return ItemTypeCREDENTIALS
 }
 
+var _ Data = (*Text)(nil)
+
 type Text struct {
 	Content string
 }
@@ -60,6 +61,8 @@ func (t Text) GetType() ItemType {
 	return ItemTypeTEXT
 }
 
+var _ Data = (*Binary)(nil)
+
 type Binary struct {
 	Content []byte
 }
@@ -67,6 +70,8 @@ type Binary struct {
 func (b Binary) GetType() ItemType {
 	return ItemTypeBINARY
 }
+
+var _ Data = (*Card)(nil)
 
 type Card struct {
 	Number         string

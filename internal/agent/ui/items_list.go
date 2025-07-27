@@ -175,7 +175,6 @@ func (ui *UIController) itemTypeSelectionView() string {
 }
 
 func (ui *UIController) handleItemTypeSelectionInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	// Если есть ошибка, любая клавиша возвращает в меню
 	if ui.addItemErrorMsg != "" {
 		ui.addItemErrorMsg = ""
 		ui.state = stateMenuLoggedIn
@@ -199,7 +198,6 @@ func (ui *UIController) handleItemTypeSelectionInput(msg tea.KeyMsg) (tea.Model,
 	case "enter":
 		return ui.handleViewItemsByType()
 	default:
-		// Обработка числовых клавиш
 		if num := msg.String(); num >= "1" && num <= "9" {
 			index := int(num[0] - '1')
 			if index <= ui.maxItemTypes {
@@ -212,7 +210,6 @@ func (ui *UIController) handleItemTypeSelectionInput(msg tea.KeyMsg) (tea.Model,
 }
 
 func (ui *UIController) getSelectedType() string {
-	// Создать слайс для получения типа по индексу (в том же порядке, что и в представлении)
 	types := make([]string, 0, len(ui.itemTypes))
 	for _, itemType := range ui.itemTypes {
 		types = append(types, itemType.typ)
@@ -263,7 +260,6 @@ func (ui *UIController) viewItemsByTypeView() string {
 }
 
 func (ui *UIController) handleViewItemsByTypeInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	// Если есть ошибка, вернуться к выбору типа
 	if ui.addItemErrorMsg != "" {
 		ui.addItemErrorMsg = ""
 		ui.state = stateItemTypeSelection
@@ -290,7 +286,6 @@ func (ui *UIController) handleViewItemsByTypeInput(msg tea.KeyMsg) (tea.Model, t
 			return ui.handleViewItemDetails()
 		}
 	default:
-		// Обработка числовых клавиш для быстрого выбора
 		if num := msg.String(); num >= "1" && num <= "9" {
 			index := int(num[0] - '1')
 			if index <= ui.maxItems {

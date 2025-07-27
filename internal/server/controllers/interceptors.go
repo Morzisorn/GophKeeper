@@ -68,7 +68,10 @@ type Claims struct {
 }
 
 func validateJWT(tokenString string) (jwt.MapClaims, error) {
-	cnfg := config.GetServerConfig()
+	cnfg, err := config.GetServerConfig()
+	if err != nil {
+		return nil, fmt.Errorf("GetPublicKeyPEM: failed to get config: %w", err)
+	}
 	secretKey := []byte(cnfg.SecretKey)
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
