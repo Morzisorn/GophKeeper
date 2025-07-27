@@ -14,51 +14,51 @@ import (
 )
 
 func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-    if isPublicMethod(info.FullMethod) {
-        return handler(ctx, req)
-    }
-    
-    md, ok := metadata.FromIncomingContext(ctx)
-    if !ok {
-        return nil, status.Errorf(codes.Unauthenticated, "missing metadata")
-    }
-    
-    authHeader := md.Get("authorization")
-    if len(authHeader) == 0 {
-        return nil, status.Errorf(codes.Unauthenticated, "missing authorization header")
-    }
-    
-    token := strings.TrimPrefix(authHeader[0], "Bearer ")
+	if isPublicMethod(info.FullMethod) {
+		return handler(ctx, req)
+	}
 
-    claims, err := validateJWT(token)
-    if err != nil {
-        return nil, status.Errorf(codes.Unauthenticated, "invalid token: %v", err)
-    }
- 
-    login, ok := claims["login"].(string)
-    if !ok {
-        return nil, status.Errorf(codes.Unauthenticated, "invalid token: missing login")
-    }
-    
-    ctx = context.WithValue(ctx, "user_claims", claims)
-    ctx = context.WithValue(ctx, "login", login)
-    
-    return handler(ctx, req)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, status.Errorf(codes.Unauthenticated, "missing metadata")
+	}
+
+	authHeader := md.Get("authorization")
+	if len(authHeader) == 0 {
+		return nil, status.Errorf(codes.Unauthenticated, "missing authorization header")
+	}
+
+	token := strings.TrimPrefix(authHeader[0], "Bearer ")
+
+	claims, err := validateJWT(token)
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "invalid token: %v", err)
+	}
+
+	login, ok := claims["login"].(string)
+	if !ok {
+		return nil, status.Errorf(codes.Unauthenticated, "invalid token: missing login")
+	}
+
+	ctx = context.WithValue(ctx, "user_claims", claims)
+	ctx = context.WithValue(ctx, "login", login)
+
+	return handler(ctx, req)
 }
 
 func isPublicMethod(method string) bool {
-    publicMethods := []string{
-        "/users.UserController/SignUp",
-        "/users.UserController/SignIn", 
-        "/crypto.CryptoController/GetPublicKeyPEM",
-    }
-    
-    for _, publicMethod := range publicMethods {
-        if method == publicMethod {
-            return true
-        }
-    }
-    return false
+	publicMethods := []string{
+		"/users.UserController/SignUpUser",
+		"/users.UserController/SignInUser",
+		"/crypto.CryptoController/GetPublicKeyPEM",
+	}
+
+	for _, publicMethod := range publicMethods {
+		if method == publicMethod {
+			return true
+		}
+	}
+	return false
 }
 
 type Claims struct {
