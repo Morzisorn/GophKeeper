@@ -32,8 +32,8 @@ type UIController struct {
 
 type menuCtrl struct {
 	currentMenu int
-	typeMenu     int      
-	itemTypes    map[string]int32
+	typeMenu    int
+	itemTypes   []itemTypeLoaded
 }
 
 type userCtrl struct {

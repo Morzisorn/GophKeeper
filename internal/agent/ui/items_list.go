@@ -99,16 +99,22 @@ func (ui *UIController) loadItemTypesCmd() tea.Cmd {
 				context: "load_items_types_counts",
 			}
 		}
-		
-		// Убрать типы с нулевым количеством
+
+		itemTypesSlice := make([]itemTypeLoaded, len(itemTypes))
+		var i int
 		for itemType, count := range itemTypes {
 			if count == 0 {
-				delete(itemTypes, itemType)
+				continue
 			}
+			itemTypesSlice[i] = itemTypeLoaded{
+				typ:   itemType,
+				count: count,
+			}
+			i++
 		}
 
-		return itemTypesLoaded{
-			itemTypes: itemTypes,
+		return typesLoaded{
+			types: itemTypesSlice,
 		}
 	}
 }
@@ -130,8 +136,12 @@ func (ui *UIController) loadItemsByTypeCmd(itemType string) tea.Cmd {
 	}
 }
 
-type itemTypesLoaded struct {
-	itemTypes map[string]int32
+type typesLoaded struct {
+	types []itemTypeLoaded
+}
+type itemTypeLoaded struct {
+	typ   string
+	count int32
 }
 
 type itemsByTypeLoaded struct {
@@ -148,17 +158,10 @@ func (ui *UIController) itemTypeSelectionView() string {
 		return fmt.Sprintf("%s\n\n%s\n\nPress any key to continue", title, errorMsg)
 	}
 
-	// Создать слайс для сортированного отображения (сохраняем порядок появления)
-	types := make([]string, 0, len(ui.itemTypes))
-	for itemType := range ui.itemTypes {
-		types = append(types, itemType)
-	}
-
 	menu := ""
-	for i, itemType := range types {
-		count := ui.itemTypes[itemType]
+	for i, itemType := range ui.itemTypes {
 		prefix := fmt.Sprintf("%d. ", i+1)
-		option := fmt.Sprintf("%s (%d)", itemType, count)
+		option := fmt.Sprintf("%s (%d)", itemType.typ, itemType.count)
 
 		if i == ui.itemTypeMenu {
 			menu += selectedStyle.Render(prefix+option) + "\n"
@@ -211,8 +214,8 @@ func (ui *UIController) handleItemTypeSelectionInput(msg tea.KeyMsg) (tea.Model,
 func (ui *UIController) getSelectedType() string {
 	// Создать слайс для получения типа по индексу (в том же порядке, что и в представлении)
 	types := make([]string, 0, len(ui.itemTypes))
-	for itemType := range ui.itemTypes {
-		types = append(types, itemType)
+	for _, itemType := range ui.itemTypes {
+		types = append(types, itemType.typ)
 	}
 
 	if ui.itemTypeMenu < len(types) {
@@ -240,7 +243,6 @@ func (ui *UIController) viewItemsByTypeView() string {
 			title, ui.selectedType)
 	}
 
-	// Отображение списка айтемов
 	menu := ""
 	for i, item := range ui.items {
 		prefix := fmt.Sprintf("%d. ", i+1)

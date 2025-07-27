@@ -104,7 +104,7 @@ func (ic *ItemController) GetUserItems(ctx context.Context, in *pb.GetUserItemsR
 	}, nil
 }
 
-func (ic *ItemController) GetItemTypesCounters(ctx context.Context, in *pb.TypesCountsRequest) (*pb.TypesCountsResponse, error) {
+func (ic *ItemController) TypesCounts(ctx context.Context, in *pb.TypesCountsRequest) (*pb.TypesCountsResponse, error) {
 	counters, err := ic.service.GetTypesCounts(ctx, in.UserLogin)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())

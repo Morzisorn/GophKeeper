@@ -65,15 +65,15 @@ func (ui *UIController) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		ui.currentItem = 0
 		ui.state = stateItemsList
 		return ui, nil
-	case itemTypesLoaded:  // <- ДОБАВИТЬ
-		ui.itemTypes = msg.itemTypes
+	case typesLoaded:
+		ui.itemTypes = msg.types
 		ui.maxItemTypes = len(ui.itemTypes) - 1
 		if len(ui.itemTypes) == 0 {
 			ui.addItemErrorMsg = "No items with types found"
 			ui.state = stateMenuLoggedIn
 		}
 		return ui, nil
-	case itemsByTypeLoaded:  // <- ДОБАВИТЬ
+	case itemsByTypeLoaded:
 		ui.items = msg.items
 		ui.maxItems = len(ui.items) - 1
 		ui.currentItem = 0
@@ -96,9 +96,9 @@ func (ui *UIController) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return ui.handleMasterPasswordInput(msg)
 	case ui.state == stateItemsList:
 		return ui.handleItemsListInput(msg)
-	case ui.state == stateItemTypeSelection:  
+	case ui.state == stateItemTypeSelection:
 		return ui.handleItemTypeSelectionInput(msg)
-	case ui.state == stateViewItemsByType:   
+	case ui.state == stateViewItemsByType:
 		return ui.handleViewItemsByTypeInput(msg)
 	case ui.state == stateItemDetails:
 		return ui.handleItemDetailsInput(msg)
@@ -189,9 +189,9 @@ func (ui *UIController) View() string {
 		return ui.masterPasswordInputView()
 	case ui.state == stateItemsList:
 		return ui.itemsListView()
-	case ui.state == stateItemTypeSelection:  
+	case ui.state == stateItemTypeSelection:
 		return ui.itemTypeSelectionView()
-	case ui.state == stateViewItemsByType:   
+	case ui.state == stateViewItemsByType:
 		return ui.viewItemsByTypeView()
 	case ui.state == stateItemDetails:
 		return ui.itemDetailsView()
