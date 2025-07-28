@@ -7,9 +7,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (ui *UIController) handleLogout() (*UIController, tea.Cmd) {
+func (ui *UIController) handleLogout() (tea.Model, tea.Cmd) {
 	ui.state = stateConfirmLogout
-	ui.confirmChoice = 0 
+	ui.confirmChoice = 0
 	return ui, nil
 }
 
@@ -19,12 +19,12 @@ func (ui *UIController) handleConfirmLogoutInput(msg tea.KeyMsg) (tea.Model, tea
 		return ui, tea.Quit
 	case "esc":
 		ui.state = stateMenuLoggedIn
-		ui.loggedInMenu = 2 
+		ui.loggedInMenu = 2
 		return ui, nil
 	case "left", "h":
-		ui.confirmChoice = 0 
+		ui.confirmChoice = 0
 	case "right", "l":
-		ui.confirmChoice = 1 
+		ui.confirmChoice = 1
 	case "y":
 		ui.confirmChoice = 1
 		return ui.executeLogout()

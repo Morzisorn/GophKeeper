@@ -12,9 +12,9 @@ var (
 	ErrIncorrectCredentials  = errors.New("incorrect login or password")
 
 	//Item errors
-	ErrIncorrectItemType = errors.New("incorrect item type")
+	//ErrIncorrectItemType = errors.New("incorrect item type")
 	ErrItemAlreadyExists = errors.New("item already exists")
-	ErrItemNotFound = errors.New("item not found")
+	ErrItemNotFound      = errors.New("item not found")
 
 	//Other errors
 	ErrInternalServerError = errors.New("internal server error")

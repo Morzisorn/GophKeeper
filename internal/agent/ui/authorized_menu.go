@@ -17,7 +17,7 @@ func (ui *UIController) menuLoggedInView() string {
 		"Logout",
 	}
 
-	ui.maxLoggedInMenu = len(options) - 1 
+	ui.maxLoggedInMenu = len(options) - 1
 
 	menu := ""
 	for i, option := range options {

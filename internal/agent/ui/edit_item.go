@@ -307,7 +307,7 @@ func (ui *UIController) handleEditTextContentInput(msg tea.KeyMsg) (tea.Model, t
 	case "enter":
 		content := strings.TrimSpace(ui.input)
 		if content == "" {
-			return ui, nil 
+			return ui, nil
 		}
 
 		ui.editingItem.Data.(*models.Text).Content = content
@@ -345,7 +345,7 @@ func (ui *UIController) handleEditBinaryDataInput(msg tea.KeyMsg) (tea.Model, te
 	case "enter":
 		data := strings.TrimSpace(ui.input)
 		if data == "" {
-			return ui, nil 
+			return ui, nil
 		}
 
 		ui.editingItem.Data.(*models.Binary).Content = []byte(data)

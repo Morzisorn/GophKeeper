@@ -34,9 +34,9 @@ func (ui *UIController) handleConfirmDeleteInput(msg tea.KeyMsg) (tea.Model, tea
 		ui.state = stateItemDetails
 		return ui, nil
 	case "left", "h":
-		ui.confirmChoice = 0 
+		ui.confirmChoice = 0
 	case "right", "l":
-		ui.confirmChoice = 1 
+		ui.confirmChoice = 1
 	case "y":
 		ui.confirmChoice = 1
 		return ui.handleConfirmDelete()

@@ -39,7 +39,7 @@ func (us *UserController) SignUpUser(ctx context.Context, in *pb.SignUpUserReque
 
 	return &pb.SignUpUserResponse{
 		Token: token,
-		Salt: salt,
+		Salt:  salt,
 	}, nil
 }
 
@@ -64,6 +64,6 @@ func (us *UserController) SignInUser(ctx context.Context, in *pb.SignInUserReque
 
 	return &pb.SignInUserResponse{
 		Token: token,
-		Salt: salt,
+		Salt:  salt,
 	}, nil
 }

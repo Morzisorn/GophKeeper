@@ -237,7 +237,7 @@ func (ui *UIController) editMetadataValueView() string {
 func (ui *UIController) startDeleteMetadata(key string) (*UIController, tea.Cmd) {
 	ui.currentMetaKey = key
 	ui.state = stateConfirmDeleteMetadata
-	ui.confirmChoice = 0 
+	ui.confirmChoice = 0
 	return ui, nil
 }
 
@@ -249,9 +249,9 @@ func (ui *UIController) handleConfirmDeleteMetadataInput(msg tea.KeyMsg) (tea.Mo
 		ui.state = stateMetadataList
 		return ui, nil
 	case "left", "h":
-		ui.confirmChoice = 0 
+		ui.confirmChoice = 0
 	case "right", "l":
-		ui.confirmChoice = 1 
+		ui.confirmChoice = 1
 	case "y":
 		ui.confirmChoice = 1
 		return ui.handleConfirmDeleteMetadata()

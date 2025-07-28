@@ -72,7 +72,8 @@ func (m *MockStorage) GetTypesCounts(ctx context.Context, login string) (map[mod
 
 func TestNewItemService(t *testing.T) {
 	repo := &MockStorage{}
-	service := NewItemService(repo)
+	service, err := NewItemService(repo)
+	assert.NoError(t, err)
 
 	assert.NotNil(t, service)
 }
@@ -120,7 +121,8 @@ func TestItemService_GetUserItems(t *testing.T) {
 				shouldFail: tt.wantErr,
 				items:      tt.mockData,
 			}
-			service := NewItemService(mockRepo)
+			service, err := NewItemService(mockRepo)
+			assert.NoError(t, err)
 
 			items, err := service.GetUserItems(context.Background(), tt.typ, tt.login)
 
@@ -165,7 +167,8 @@ func TestItemService_GetTypesCounts(t *testing.T) {
 				shouldFail: tt.wantErr,
 				counts:     tt.mockCounts,
 			}
-			service := NewItemService(mockRepo)
+			service, err := NewItemService(mockRepo)
+			assert.NoError(t, err)
 
 			counts, err := service.GetTypesCounts(context.Background(), tt.login)
 
@@ -207,9 +210,10 @@ func TestItemService_AddItem(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &MockStorage{shouldFail: tt.wantErr}
-			service := NewItemService(mockRepo)
+			service, err := NewItemService(mockRepo)
+			assert.NoError(t, err)
 
-			err := service.AddItem(context.Background(), tt.item)
+			err = service.AddItem(context.Background(), tt.item)
 
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -247,9 +251,10 @@ func TestItemService_EditItem(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &MockStorage{shouldFail: tt.wantErr}
-			service := NewItemService(mockRepo)
+			service, err := NewItemService(mockRepo)
+			assert.NoError(t, err)
 
-			err := service.EditItem(context.Background(), tt.item)
+			err = service.EditItem(context.Background(), tt.item)
 
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -284,9 +289,10 @@ func TestItemService_DeleteItem(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &MockStorage{shouldFail: tt.wantErr}
-			service := NewItemService(mockRepo)
+			service, err := NewItemService(mockRepo)
+			assert.NoError(t, err)
 
-			err := service.DeleteItem(context.Background(), tt.login, tt.itemID)
+			err = service.DeleteItem(context.Background(), tt.login, tt.itemID)
 
 			if tt.wantErr {
 				assert.Error(t, err)

@@ -20,7 +20,7 @@ func TestEncryptedItemPbToModels(t *testing.T) {
 		Type:      pb.ItemType_ITEM_TYPE_CREDENTIALS,
 		EncryptedData: &pb.EncryptedData{
 			EncryptedContent: "encrypted_content",
-			Nonce:           "test_nonce",
+			Nonce:            "test_nonce",
 		},
 		Meta:      map[string]string{"key": "value"},
 		CreatedAt: timestamppb.New(now),
@@ -86,7 +86,7 @@ func TestEncryptedItem_ToPb(t *testing.T) {
 		Type:      ItemTypeCREDENTIALS,
 		EncryptedData: EncryptedData{
 			EncryptedContent: "encrypted_content",
-			Nonce:           "test_nonce",
+			Nonce:            "test_nonce",
 		},
 		Meta:      Meta{Map: map[string]string{"key": "value"}},
 		CreatedAt: now,
@@ -111,7 +111,7 @@ func TestEncryptedItem_ToPb(t *testing.T) {
 func TestEncryptedData_ToPb(t *testing.T) {
 	ed := &EncryptedData{
 		EncryptedContent: "test_content",
-		Nonce:           "test_nonce",
+		Nonce:            "test_nonce",
 	}
 
 	result := ed.ToPb()
@@ -124,7 +124,7 @@ func TestEncryptedData_ToPb(t *testing.T) {
 func TestEncryptedDataPbToModel(t *testing.T) {
 	pbData := &pb.EncryptedData{
 		EncryptedContent: "test_content",
-		Nonce:           "test_nonce",
+		Nonce:            "test_nonce",
 	}
 
 	result := EncryptedDataPbToModel(pbData)
@@ -234,7 +234,7 @@ func TestRoundTripConversion(t *testing.T) {
 		Type:      ItemTypeCREDENTIALS,
 		EncryptedData: EncryptedData{
 			EncryptedContent: "encrypted_content",
-			Nonce:           "test_nonce",
+			Nonce:            "test_nonce",
 		},
 		Meta:      Meta{Map: map[string]string{"key": "value"}},
 		CreatedAt: time.Now().Truncate(time.Second), // Обрезаем до секунд для сравнения

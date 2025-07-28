@@ -24,4 +24,3 @@ func Init() error {
 	Log = zl
 	return nil
 }
-

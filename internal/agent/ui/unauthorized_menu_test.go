@@ -12,9 +12,9 @@ func TestUIController_menuLoggedOutView(t *testing.T) {
 			currentMenu: 0,
 		},
 	}
-	
+
 	view := ui.menuLoggedOutView()
-	
+
 	assert.Contains(t, view, "Welcome to GophKeeper")
 	assert.Contains(t, view, "Sign up")
 	assert.Contains(t, view, "Sign in")

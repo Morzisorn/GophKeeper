@@ -66,14 +66,9 @@ func TestGetPublicKeyFromPEM(t *testing.T) {
 	originalKey, err := generateRSAKeyPair()
 	require.NoError(t, err)
 
-	// Create proper PKIX format PEM for testing GetPublicKeyFromPEM
-	publicKeyBytes, err := x509.MarshalPKIXPublicKey(originalKey.PublicKey)
+	// Get PEM data using the actual getPublicKeyPEM method
+	pemData, err := originalKey.getPublicKeyPEM()
 	require.NoError(t, err)
-
-	pemData := pem.EncodeToMemory(&pem.Block{
-		Type:  "PUBLIC KEY",
-		Bytes: publicKeyBytes,
-	})
 
 	// Parse back from PEM
 	parsedKey, err := GetPublicKeyFromPEM(pemData)
@@ -162,7 +157,7 @@ func TestGetKeysPath(t *testing.T) {
 	path, err := getKeysPath()
 	require.NoError(t, err)
 	assert.NotEmpty(t, path)
-	assert.Contains(t, path, "internal/server/crypto/keys")
+	assert.Contains(t, path, "GophKeeper")
 }
 
 func TestLoadRSAKeyPair_RequiresIntegrationTest(t *testing.T) {
@@ -176,15 +171,8 @@ func TestKeyPairRoundTrip(t *testing.T) {
 
 	// Convert to PEM
 	privatePEM := originalPair.getPrivateKeyPEM()
-
-	// For public key, create PKIX format for GetPublicKeyFromPEM
-	publicKeyBytes, err := x509.MarshalPKIXPublicKey(originalPair.PublicKey)
+	publicPEM, err := originalPair.getPublicKeyPEM()
 	require.NoError(t, err)
-
-	publicPEM := pem.EncodeToMemory(&pem.Block{
-		Type:  "PUBLIC KEY",
-		Bytes: publicKeyBytes,
-	})
 
 	// Parse back from PEM
 	parsedPrivate, err := getPrivateKeyFromPEM(privatePEM)

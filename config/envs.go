@@ -57,4 +57,3 @@ func getEnvString(key string) (string, error) {
 	}
 	return "", fmt.Errorf("env %s not found", key)
 }
-

@@ -175,12 +175,8 @@ func GetPublicKeyFromPEM(pemData []byte) (*rsa.PublicKey, error) {
 		}
 
 		if _, isPub := any(zero).(*rsa.PublicKey); isPub && block.Type == "PUBLIC KEY" {
-			pubkix, err := x509.ParsePKIXPublicKey(block.Bytes)
+			pub, err := x509.ParsePKCS1PublicKey(block.Bytes)
 			if err != nil {
-				return nil, err
-			}
-			pub, ok := pubkix.(*rsa.PublicKey)
-			if !ok {
 				return nil, err
 			}
 			return pub, nil

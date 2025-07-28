@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	keySize   = 32 // AES-256
+	//keySize   = 32 // AES-256
 	nonceSize = 12 // GCM nonce size
-	saltSize  = 16 // Salt size for PBKDF2
+	//saltSize  = 16 // Salt size for PBKDF2
 )
 
 // EncryptItem шифрует клиентский Item в EncryptedItem
@@ -114,8 +114,8 @@ func (c *CryptoService) encryptData(data models.Data) (*models.EncryptedData, er
 
 	// Возвращаем EncryptedData с Base64 кодированием
 	return &models.EncryptedData{
-		EncryptedContent:  base64.StdEncoding.EncodeToString(ciphertext),
-		Nonce: base64.StdEncoding.EncodeToString(nonce),
+		EncryptedContent: base64.StdEncoding.EncodeToString(ciphertext),
+		Nonce:            base64.StdEncoding.EncodeToString(nonce),
 	}, nil
 }
 

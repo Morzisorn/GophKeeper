@@ -12,7 +12,7 @@ func (ui *UIController) handleViewItemDetails() (*UIController, tea.Cmd) {
 		ui.selectedItem = &ui.items[ui.currentItem]
 		ui.state = stateItemDetails
 		ui.input = ""
-		ui.decryptedItem = nil 
+		ui.decryptedItem = nil
 
 		return ui, ui.decryptItemCmd(ui.selectedItem)
 	}
@@ -90,4 +90,3 @@ func (ui *UIController) itemDetailsView() string {
 	controls := "\nControls: e to edit, m to manage metadata, d to delete, b/Esc to go back"
 	return fmt.Sprintf("%s\n\n%s%s", title, details, controls)
 }
-

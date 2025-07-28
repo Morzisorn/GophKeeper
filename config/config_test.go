@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/stretchr/testify/require"
 	"os"
 	"path/filepath"
 	"testing"
@@ -9,41 +10,43 @@ import (
 )
 
 func TestGetServerConfig_NotNil(t *testing.T) {
-	config := GetServerConfig()
-	
+	config, err := GetServerConfig()
+	require.NoError(t, err)
+
 	assert.NotNil(t, config)
 }
 
 func TestGetAgentConfig_NotNil(t *testing.T) {
-	config := GetAgentConfig()
-	
+	config, err := GetAgentConfig()
+	require.NoError(t, err)
+
 	assert.NotNil(t, config)
 }
 
 func TestGetServerConfig_Singleton(t *testing.T) {
-	config1 := GetServerConfig()
-	config2 := GetServerConfig()
-	
-	// Должны быть одним и тем же экземпляром (singleton)
+	config1, err := GetServerConfig()
+	require.NoError(t, err)
+	config2, err := GetServerConfig()
+	require.NoError(t, err)
+
 	assert.Same(t, config1, config2)
 }
 
 func TestGetAgentConfig_Singleton(t *testing.T) {
-	config1 := GetAgentConfig()
-	config2 := GetAgentConfig()
-	
-	// Должны быть одним и тем же экземпляром (singleton)
+	config1, err := GetAgentConfig()
+	require.NoError(t, err)
+	config2, err := GetAgentConfig()
+	require.NoError(t, err)
+
 	assert.Same(t, config1, config2)
 }
 
 func TestGetProjectRoot_ValidProject(t *testing.T) {
-	// Этот тест работает, если запускается из проекта с go.mod
 	root, err := GetProjectRoot()
-	
+
 	assert.NoError(t, err)
 	assert.NotEmpty(t, root)
-	
-	// Проверяем, что в корне есть go.mod
+
 	goModPath := filepath.Join(root, "go.mod")
 	_, err = os.Stat(goModPath)
 	assert.NoError(t, err)
@@ -52,20 +55,20 @@ func TestGetProjectRoot_ValidProject(t *testing.T) {
 func TestGetProjectRoot_FromTempDir(t *testing.T) {
 	// Создаем временную директорию без go.mod
 	tempDir := t.TempDir()
-	
+
 	// Сохраняем текущую директорию
 	originalWd, err := os.Getwd()
 	assert.NoError(t, err)
-	
+
 	// Переходим во временную директорию
 	err = os.Chdir(tempDir)
 	assert.NoError(t, err)
-	
+
 	// Восстанавливаем оригинальную директорию после теста
 	defer func() {
 		os.Chdir(originalWd)
 	}()
-	
+
 	// Пытаемся найти корень проекта - должна быть ошибка
 	_, err = GetProjectRoot()
 	assert.Error(t, err)
@@ -74,7 +77,7 @@ func TestGetProjectRoot_FromTempDir(t *testing.T) {
 
 func TestGetEncFilePath_NotEmpty(t *testing.T) {
 	path := getEncFilePath()
-	
+
 	assert.NotEmpty(t, path)
 	assert.Contains(t, path, ".env")
 }
@@ -82,17 +85,17 @@ func TestGetEncFilePath_NotEmpty(t *testing.T) {
 func TestGetEncFilePath_WithMockedGetEnvPath(t *testing.T) {
 	// Сохраняем оригинальную функцию
 	originalGetEnvPath := getEnvPath
-	
+
 	// Мокаем функцию
 	getEnvPath = func() string {
 		return "/mock/path/.env"
 	}
-	
+
 	// Восстанавливаем после теста
 	defer func() {
 		getEnvPath = originalGetEnvPath
 	}()
-	
+
 	path := getEnvPath()
 	assert.Equal(t, "/mock/path/.env", path)
 }
@@ -106,9 +109,9 @@ func TestNewServerConfig_NotNil(t *testing.T) {
 	defer func() {
 		getEnvPath = originalGetEnvPath
 	}()
-	
+
 	config, err := newServerConfig()
-	
+
 	assert.NoError(t, err)
 	assert.NotNil(t, config)
 }
@@ -122,45 +125,45 @@ func TestNewAgentConfig_NotNil(t *testing.T) {
 	defer func() {
 		getEnvPath = originalGetEnvPath
 	}()
-	
+
 	config, err := newAgentConfig()
-	
+
 	assert.NoError(t, err)
 	assert.NotNil(t, config)
 }
 
 func TestConfig_StructFields(t *testing.T) {
 	config := &Config{}
-	
+
 	// Проверяем, что все поля доступны
 	assert.NotNil(t, &config.CommonConfig)
 	assert.NotNil(t, &config.AgentConfig)
 	assert.NotNil(t, &config.ServerConfig)
-	
+
 	// Проверяем поля CommonConfig
 	config.AppType = "test"
 	config.Addr = "localhost:8080"
 	config.CryptoKeyPath = "/path/to/key"
 	config.SecretKey = "secret"
-	
+
 	assert.Equal(t, "test", config.AppType)
 	assert.Equal(t, "localhost:8080", config.Addr)
 	assert.Equal(t, "/path/to/key", config.CryptoKeyPath)
 	assert.Equal(t, "secret", config.SecretKey)
-	
+
 	// Проверяем поля AgentConfig
 	config.MasterPassword = "master"
 	config.MasterKey = []byte("key")
 	config.Salt = []byte("salt")
-	
+
 	assert.Equal(t, "master", config.MasterPassword)
 	assert.Equal(t, []byte("key"), config.MasterKey)
 	assert.Equal(t, []byte("salt"), config.Salt)
-	
+
 	// Проверяем поля ServerConfig
 	config.DBConnStr = "postgres://..."
 	config.PublicKeyPEM = []byte("pem")
-	
+
 	assert.Equal(t, "postgres://...", config.DBConnStr)
 	assert.Equal(t, []byte("pem"), config.PublicKeyPEM)
 }
@@ -172,13 +175,13 @@ func TestConfigTypes_ZeroValues(t *testing.T) {
 	assert.Empty(t, common.Addr)
 	assert.Empty(t, common.CryptoKeyPath)
 	assert.Empty(t, common.SecretKey)
-	
+
 	agent := AgentConfig{}
 	assert.Nil(t, agent.PublicKey)
 	assert.Empty(t, agent.MasterPassword)
 	assert.Nil(t, agent.MasterKey)
 	assert.Nil(t, agent.Salt)
-	
+
 	server := ServerConfig{}
 	assert.Empty(t, server.DBConnStr)
 	assert.Nil(t, server.PrivateKey)

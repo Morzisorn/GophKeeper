@@ -17,9 +17,9 @@ func TestNewCryptoController(t *testing.T) {
 func TestCryptoController_GetPublicKeyPEM(t *testing.T) {
 	controller := NewCryptoController()
 	request := &pb.GetPublicKeyPEMRequest{}
-	
+
 	response, err := controller.GetPublicKeyPEM(context.Background(), request)
-	
+
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 }

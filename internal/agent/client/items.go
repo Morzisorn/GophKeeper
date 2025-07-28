@@ -48,9 +48,9 @@ func (g *GRPCClient) DeleteItem(ctx context.Context, login string, itemID [16]by
 func (g *GRPCClient) GetItems(ctx context.Context, login string, typ models.ItemType) ([]models.EncryptedItem, error) {
 	req := pbit.GetUserItemsRequest{
 		UserLogin: login,
-		Type: typ.ToPb(),
+		Type:      typ.ToPb(),
 	}
- 
+
 	resp, err := g.Item.GetUserItems(ctx, &req)
 	if err != nil {
 		return nil, fmt.Errorf("get user items server error: %w", err)
@@ -71,4 +71,3 @@ func (g *GRPCClient) GetTypesCounts(ctx context.Context, login string) (map[stri
 	}
 	return resp.GetTypes(), nil
 }
-

@@ -13,11 +13,17 @@ import (
 
 func TestCreateGRPCServer(t *testing.T) {
 	repo := &database.PGDB{}
-	us := user_service.NewUserService(repo)
-	cs := crypto_service.NewCryptoService(repo)
-	is := item_service.NewItemService(repo)
+	us, err := user_service.NewUserService(repo)
+	require.NoError(t, err)
+	cs, err := crypto_service.NewCryptoService(repo)
+	require.NoError(t, err)
+	is, err := item_service.NewItemService(repo)
+	require.NoError(t, err)
 
-	config.GetServerConfig().Addr = "127.0.0.1:12345"
-	server := createGRPCServer(us, cs, is)
+	cnfg, err := config.GetServerConfig()
+	require.NoError(t, err)
+	cnfg.Addr = "127.0.0.1:12345"
+	server, err := createGRPCServer(us, cs, is)
+	require.NoError(t, err)
 	require.NotNil(t, server)
 }

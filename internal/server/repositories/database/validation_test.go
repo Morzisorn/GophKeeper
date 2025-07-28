@@ -20,7 +20,8 @@ func TestValidation_EmptyUserLogin(t *testing.T) {
 
 	q := gen.New(mock)
 
-	userDB := NewUserDB(q, mock)
+	userDB, err := NewUserDB(q, mock)
+	require.NoError(t, err)
 
 	// Test with empty login
 	mock.ExpectExec("INSERT INTO users").
@@ -44,7 +45,8 @@ func TestValidation_NilPassword(t *testing.T) {
 
 	q := gen.New(mock)
 
-	userDB := NewUserDB(q, mock)
+	userDB, err := NewUserDB(q, mock)
+	require.NoError(t, err)
 
 	// Test with nil password
 	mock.ExpectExec("INSERT INTO users").
@@ -68,7 +70,8 @@ func TestValidation_EmptyItemName(t *testing.T) {
 
 	q := gen.New(mock)
 
-	itemDB := NewItemDB(q, mock)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	// Test with empty item name
 	mock.ExpectQuery("INSERT INTO items").

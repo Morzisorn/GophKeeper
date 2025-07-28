@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"github.com/stretchr/testify/require"
 	"gophkeeper/models"
 	"testing"
 
@@ -12,7 +13,8 @@ func TestNewItemService(t *testing.T) {
 	mockClient := &MockClient{}
 	mockCrypto := &CryptoService{}
 
-	service := NewItemService(mockClient, mockCrypto)
+	service, err := NewItemService(mockClient, mockCrypto)
+	require.NoError(t, err)
 
 	assert.NotNil(t, service)
 	assert.Equal(t, mockClient, service.Client)

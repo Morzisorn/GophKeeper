@@ -16,12 +16,12 @@ func TestUIController_deleteItemCmd(t *testing.T) {
 
 func TestUIController_handleConfirmDeleteInput_Quit(t *testing.T) {
 	ui := &UIController{}
-	
+
 	// Test ctrl+c
 	model, cmd := ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyCtrlC})
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd)
-	
+
 	// Test q
 	model, cmd = ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
 	assert.Equal(t, ui, model)
@@ -32,9 +32,9 @@ func TestUIController_handleConfirmDeleteInput_Escape(t *testing.T) {
 	ui := &UIController{
 		state: stateConfirmDelete,
 	}
-	
+
 	model, cmd := ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyEscape})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, stateItemDetails, ui.state)
@@ -44,17 +44,17 @@ func TestUIController_handleConfirmDeleteInput_Navigation_Left(t *testing.T) {
 	ui := &UIController{
 		confirmChoice: 1,
 	}
-	
+
 	model, cmd := ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyLeft})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, 0, ui.confirmChoice)
-	
+
 	// Test h key
 	ui.confirmChoice = 1
 	model, cmd = ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'h'}})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, 0, ui.confirmChoice)
@@ -64,17 +64,17 @@ func TestUIController_handleConfirmDeleteInput_Navigation_Right(t *testing.T) {
 	ui := &UIController{
 		confirmChoice: 0,
 	}
-	
+
 	model, cmd := ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyRight})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, 1, ui.confirmChoice)
-	
+
 	// Test l key
 	ui.confirmChoice = 0
 	model, cmd = ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'l'}})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, 1, ui.confirmChoice)
@@ -90,9 +90,9 @@ func TestUIController_handleConfirmDeleteInput_QuickChoice_Yes(t *testing.T) {
 			},
 		},
 	}
-	
+
 	model, cmd := ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'y'}})
-	
+
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd) // Should return delete command
 	assert.Equal(t, 1, ui.confirmChoice)
@@ -104,9 +104,9 @@ func TestUIController_handleConfirmDeleteInput_QuickChoice_No(t *testing.T) {
 		confirmChoice: 1,
 		state:         stateConfirmDelete,
 	}
-	
+
 	model, cmd := ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'n'}})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, 0, ui.confirmChoice)
@@ -123,9 +123,9 @@ func TestUIController_handleConfirmDeleteInput_Enter_Confirm(t *testing.T) {
 			},
 		},
 	}
-	
+
 	model, cmd := ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd) // Should return delete command
 	assert.Equal(t, stateProcessing, ui.state)
@@ -136,9 +136,9 @@ func TestUIController_handleConfirmDeleteInput_Enter_Cancel(t *testing.T) {
 		confirmChoice: 0, // No selected
 		state:         stateConfirmDelete,
 	}
-	
+
 	model, cmd := ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, stateItemDetails, ui.state)
@@ -154,9 +154,9 @@ func TestUIController_handleConfirmDelete_Confirm_ValidItem(t *testing.T) {
 			},
 		},
 	}
-	
+
 	result, cmd := ui.handleConfirmDelete()
-	
+
 	assert.Equal(t, ui, result)
 	assert.NotNil(t, cmd) // Should return delete command
 	assert.Equal(t, stateProcessing, ui.state)
@@ -167,9 +167,9 @@ func TestUIController_handleConfirmDelete_Cancel(t *testing.T) {
 		confirmChoice: 0,
 		state:         stateConfirmDelete,
 	}
-	
+
 	result, cmd := ui.handleConfirmDelete()
-	
+
 	assert.Equal(t, ui, result)
 	assert.Nil(t, cmd)
 	assert.Equal(t, stateItemDetails, ui.state)
@@ -186,9 +186,9 @@ func TestUIController_handleConfirmDelete_InvalidIndex(t *testing.T) {
 		},
 		state: stateConfirmDelete,
 	}
-	
+
 	result, cmd := ui.handleConfirmDelete()
-	
+
 	assert.Equal(t, ui, result)
 	assert.Nil(t, cmd)
 	assert.Equal(t, stateItemDetails, ui.state)
@@ -196,12 +196,12 @@ func TestUIController_handleConfirmDelete_InvalidIndex(t *testing.T) {
 
 func TestUIController_handleDeleteErrorInput_Quit(t *testing.T) {
 	ui := &UIController{}
-	
+
 	// Test ctrl+c
 	model, cmd := ui.handleDeleteErrorInput(tea.KeyMsg{Type: tea.KeyCtrlC})
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd)
-	
+
 	// Test q
 	model, cmd = ui.handleDeleteErrorInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
 	assert.Equal(t, ui, model)
@@ -214,9 +214,9 @@ func TestUIController_handleDeleteErrorInput_Enter(t *testing.T) {
 			deleteErrorMsg: "test error message",
 		},
 	}
-	
+
 	model, cmd := ui.handleDeleteErrorInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, stateConfirmDelete, ui.state)
@@ -229,9 +229,9 @@ func TestUIController_handleDeleteErrorInput_Escape(t *testing.T) {
 			deleteErrorMsg: "test error message",
 		},
 	}
-	
+
 	model, cmd := ui.handleDeleteErrorInput(tea.KeyMsg{Type: tea.KeyEscape})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, stateConfirmDelete, ui.state)
@@ -240,12 +240,12 @@ func TestUIController_handleDeleteErrorInput_Escape(t *testing.T) {
 
 func TestUIController_handleDeleteSuccessInput_Quit(t *testing.T) {
 	ui := &UIController{}
-	
+
 	// Test ctrl+c
 	model, cmd := ui.handleDeleteSuccessInput(tea.KeyMsg{Type: tea.KeyCtrlC})
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd)
-	
+
 	// Test q
 	model, cmd = ui.handleDeleteSuccessInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
 	assert.Equal(t, ui, model)
@@ -258,9 +258,9 @@ func TestUIController_handleDeleteSuccessInput_Enter(t *testing.T) {
 			deleteSuccessMsg: "test success message",
 		},
 	}
-	
+
 	model, cmd := ui.handleDeleteSuccessInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd) // Should return loadItemsCmd
 	assert.Equal(t, stateProcessing, ui.state)
@@ -273,9 +273,9 @@ func TestUIController_deleteSuccessView(t *testing.T) {
 			deleteSuccessMsg: "Item deleted successfully!",
 		},
 	}
-	
+
 	view := ui.deleteSuccessView()
-	
+
 	assert.Contains(t, view, "Item Deleted Successfully")
 	assert.Contains(t, view, "Item deleted successfully!")
 	assert.Contains(t, view, "Enter to return to items list")
@@ -288,9 +288,9 @@ func TestUIController_deleteErrorView(t *testing.T) {
 			deleteErrorMsg: "Failed to delete item: server error",
 		},
 	}
-	
+
 	view := ui.deleteErrorView()
-	
+
 	assert.Contains(t, view, "Delete Error")
 	assert.Contains(t, view, "Failed to delete item: server error")
 	assert.Contains(t, view, "Enter to try again")
@@ -307,9 +307,9 @@ func TestUIController_confirmDeleteView_ValidItem(t *testing.T) {
 			},
 		},
 	}
-	
+
 	view := ui.confirmDeleteView()
-	
+
 	assert.Contains(t, view, "Confirm Delete")
 	assert.Contains(t, view, "Are you sure you want to delete 'Test Item'?")
 	assert.Contains(t, view, "[ No ]")
@@ -327,9 +327,9 @@ func TestUIController_confirmDeleteView_YesSelected(t *testing.T) {
 			},
 		},
 	}
-	
+
 	view := ui.confirmDeleteView()
-	
+
 	assert.Contains(t, view, "Confirm Delete")
 	assert.Contains(t, view, "Test Item")
 	// В этом случае "Yes" должен быть выделен, а "No" - обычным
@@ -343,9 +343,9 @@ func TestUIController_confirmDeleteView_NoItem(t *testing.T) {
 			selectedItem: nil,
 		},
 	}
-	
+
 	view := ui.confirmDeleteView()
-	
+
 	assert.Equal(t, "No item selected", view)
 }
 
@@ -354,11 +354,11 @@ func TestUIController_handleConfirmDeleteInput_OtherKey(t *testing.T) {
 		confirmChoice: 0,
 		state:         stateConfirmDelete,
 	}
-	
+
 	model, cmd := ui.handleConfirmDeleteInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'x'}})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
-	assert.Equal(t, 0, ui.confirmChoice) // Should remain unchanged
+	assert.Equal(t, 0, ui.confirmChoice)          // Should remain unchanged
 	assert.Equal(t, stateConfirmDelete, ui.state) // Should remain unchanged
 }

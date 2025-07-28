@@ -10,11 +10,11 @@ const (
 	stateItemTypeSelection
 	stateViewItemsByType
 	stateAddItem
-    stateAddItemName        
+	stateAddItemName
 	stateAddItemData
-	stateAddCredentialLogin
-	stateAddCredentialPassword 
-	stateAddItemError   
+	//stateAddCredentialLogin
+	stateAddCredentialPassword
+	stateAddItemError
 	stateAddItemSuccess
 	stateEditItem
 	stateDeleteItem
@@ -23,39 +23,39 @@ const (
 	stateSignInLogin
 	stateSignInPassword
 	stateItemDetails
-	stateDecryptError     
+	stateDecryptError
 	stateConfirmDelete
 	stateProcessing
 	stateSuccess
 	stateError
 	stateFinished
-	stateDeleteSuccess 
+	stateDeleteSuccess
 	stateDeleteError
-	stateEditItemName          
-	stateEditItemData          
-	stateEditCredentialLogin   
+	stateEditItemName
+	stateEditItemData
+	stateEditCredentialLogin
 	stateEditCredentialPassword
-	stateEditTextContent  
-    stateEditBinaryData
-	stateEditCardNumber        
-	stateEditCardExpiry        
-	stateEditCardCVV           
-	stateEditCardHolder        
-	stateEditSuccess           
-	stateEditError  
-	stateMetadataList           
-    stateAddMetadataKey         
-    stateAddMetadataValue      
-    stateEditMetadataValue      
-    stateConfirmDeleteMetadata  
-    stateMetadataSuccess        
-    stateMetadataError
-    stateAddCardExpiry     
-    stateAddCardCVV       
-    stateAddCardHolder    
-	stateConfirmLogout   
-    stateLogoutSuccess   
-    stateLogoutError         
+	stateEditTextContent
+	stateEditBinaryData
+	stateEditCardNumber
+	stateEditCardExpiry
+	stateEditCardCVV
+	stateEditCardHolder
+	stateEditSuccess
+	stateEditError
+	stateMetadataList
+	stateAddMetadataKey
+	stateAddMetadataValue
+	stateEditMetadataValue
+	stateConfirmDeleteMetadata
+	stateMetadataSuccess
+	stateMetadataError
+	stateAddCardExpiry
+	stateAddCardCVV
+	stateAddCardHolder
+	stateConfirmLogout
+	stateLogoutSuccess
+	stateLogoutError
 )
 
 func (s state) IsAuth() bool {
@@ -79,9 +79,9 @@ func (s state) IsPasswordInput() bool {
 }
 
 func (s state) IsLoggedIn() bool {
-    return s == stateMenuLoggedIn || s == stateItemsList || s == stateAddItem || s == stateEditItem || s == stateDeleteItem
+	return s == stateMenuLoggedIn || s == stateItemsList || s == stateAddItem || s == stateEditItem || s == stateDeleteItem
 }
 
 func (s state) IsAddItemInput() bool {
-    return s >= stateAddItem && s <= stateAddCredentialPassword
+	return s >= stateAddItem && s <= stateAddCredentialPassword
 }

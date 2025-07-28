@@ -60,7 +60,8 @@ func (m *MockStorage) GetTypesCounts(ctx context.Context, login string) (map[mod
 
 func TestNewUserService(t *testing.T) {
 	repo := &MockStorage{}
-	service := NewUserService(repo)
+	service, err := NewUserService(repo)
+	assert.NoError(t, err)
 
 	assert.NotNil(t, service)
 }
@@ -108,7 +109,8 @@ func TestUserService_GetUser(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &MockStorage{}
 			tt.setup(mockRepo)
-			service := NewUserService(mockRepo)
+			service, err := NewUserService(mockRepo)
+			assert.NoError(t, err)
 
 			user, err := service.GetUser(context.Background(), &models.User{Login: tt.login})
 
@@ -165,7 +167,8 @@ func TestUserService_SignUpUser_ValidationOnly(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &MockStorage{}
 			tt.setup(mockRepo)
-			service := NewUserService(mockRepo)
+			service, err := NewUserService(mockRepo)
+			assert.NoError(t, err)
 
 			token, salt, err := service.SignUpUser(context.Background(), tt.login, tt.encryptedPassword)
 
@@ -221,7 +224,8 @@ func TestUserService_SignInUser_ValidationOnly(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &MockStorage{}
 			tt.setup(mockRepo)
-			service := NewUserService(mockRepo)
+			service, err := NewUserService(mockRepo)
+			assert.NoError(t, err)
 
 			token, salt, err := service.SignInUser(context.Background(), tt.login, tt.encryptedPassword)
 
