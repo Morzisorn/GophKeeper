@@ -21,7 +21,8 @@ func TestItemDB_AddItem(t *testing.T) {
 
 	q := gen.New(mock)
 
-	itemDB := NewItemDB(q, mock)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name    string
@@ -88,7 +89,8 @@ func TestItemDB_GetAllUserItems(t *testing.T) {
 	defer mock.Close()
 
 	q := gen.New(mock)
-	itemDB := NewItemDB(q, mock)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name     string
@@ -183,7 +185,8 @@ func TestItemDB_GetUserItemsWithType(t *testing.T) {
 	defer mock.Close()
 
 	q := gen.New(mock)
-	itemDB := NewItemDB(q, mock)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name     string
@@ -260,7 +263,8 @@ func TestItemDB_GetTypesCounts(t *testing.T) {
 	defer mock.Close()
 
 	q := gen.New(mock)
-	itemDB := NewItemDB(q, mock)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name     string
@@ -333,7 +337,8 @@ func TestItemDB_EditItem(t *testing.T) {
 	defer mock.Close()
 
 	q := gen.New(mock)
-	itemDB := NewItemDB(q, mock)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name    string
@@ -414,7 +419,8 @@ func TestItemDB_DeleteItem(t *testing.T) {
 	defer mock.Close()
 
 	q := gen.New(mock)
-	itemDB := NewItemDB(q, mock)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name    string

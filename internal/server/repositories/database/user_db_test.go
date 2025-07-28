@@ -21,7 +21,8 @@ func TestUserDB_SignUpUser(t *testing.T) {
 
 	q := gen.New(mock)
 
-	userDB := NewUserDB(q, mock)
+	userDB, err := NewUserDB(q, mock)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name    string
@@ -79,7 +80,8 @@ func TestUserDB_GetUser(t *testing.T) {
 
 	q := gen.New(mock)
 
-	userDB := NewUserDB(q, mock)
+	userDB, err := NewUserDB(q, mock)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name     string

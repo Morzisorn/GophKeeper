@@ -22,8 +22,10 @@ func TestPGDB_SignUpUser(t *testing.T) {
 
 	q := gen.New(mock)
 
-	userDB := NewUserDB(q, mock)
-	itemDB := NewItemDB(q, mock)
+	userDB, err := NewUserDB(q, mock)
+	require.NoError(t, err)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	pgdb := &PGDB{
 		users: userDB,
@@ -86,8 +88,10 @@ func TestPGDB_GetUser(t *testing.T) {
 
 	q := gen.New(mock)
 
-	userDB := NewUserDB(q, mock)
-	itemDB := NewItemDB(q, mock)
+	userDB, err := NewUserDB(q, mock)
+	require.NoError(t, err)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	pgdb := &PGDB{
 		users: userDB,

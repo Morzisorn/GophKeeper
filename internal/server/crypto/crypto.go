@@ -106,7 +106,10 @@ func getKeyPEMFromFile(filename string) ([]byte, error) {
 }
 
 func (kp *RSAKeyPair) getPublicKeyPEM() ([]byte, error) {
-	publicKeyBytes := x509.MarshalPKCS1PublicKey(kp.PublicKey)
+	publicKeyBytes, err := x509.MarshalPKIXPublicKey(kp.PublicKey)
+	if err != nil {
+		return nil, fmt.Errorf("marshal PKIX public key error: %w", err)
+	}
 
 	publicKeyPEM := pem.EncodeToMemory(&pem.Block{
 		Type:  "PUBLIC KEY",
@@ -162,32 +165,34 @@ func saveKeyInFile(key []byte, filename string) error {
 }
 
 func getKeysPath() (string, error) {
-	return config.GetProjectRoot()
+	projectRoot, err := config.GetProjectRoot()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(projectRoot, "internal/server/crypto/keys"), nil
 }
 
 func GetPublicKeyFromPEM(pemData []byte) (*rsa.PublicKey, error) {
-	var zero *rsa.PublicKey
-	rest := pemData
-	for {
-		block, remaining := pem.Decode(rest)
-		if block == nil {
-			return nil, fmt.Errorf("no PUBLIC KEY block found")
-		}
-
-		if _, isPub := any(zero).(*rsa.PublicKey); isPub && block.Type == "PUBLIC KEY" {
-			pubkix, err := x509.ParsePKIXPublicKey(block.Bytes)
-			if err != nil {
-				return nil, err
-			}
-			pub, ok := pubkix.(*rsa.PublicKey)
-			if !ok {
-				return nil, err
-			}
-			return pub, nil
-		}
-
-		rest = remaining
+	block, _ := pem.Decode(pemData)
+	if block == nil {
+		return nil, fmt.Errorf("no PUBLIC KEY block found")
 	}
+
+	if block.Type != "PUBLIC KEY" {
+		return nil, fmt.Errorf("invalid block type: %s, expected PUBLIC KEY", block.Type)
+	}
+
+	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("parse PKIX public key error: %w", err)
+	}
+
+	pub, ok := pubInterface.(*rsa.PublicKey)
+	if !ok {
+		return nil, fmt.Errorf("not an RSA public key")
+	}
+
+	return pub, nil
 }
 
 func getPrivateKeyFromPEM(pemData []byte) (*rsa.PrivateKey, error) {

@@ -1,6 +1,7 @@
 package crypto
 
 import (
+	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"testing"
@@ -38,8 +39,10 @@ func TestRSAKeyPair_GetPublicKeyPEM(t *testing.T) {
 	assert.Equal(t, "PUBLIC KEY", block.Type)
 
 	// Verify we can parse the key back
-	publicKey, err := x509.ParsePKCS1PublicKey(block.Bytes)
+	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
 	require.NoError(t, err)
+	publicKey, ok := pubInterface.(*rsa.PublicKey)
+	require.True(t, ok)
 	assert.NotNil(t, publicKey)
 }
 
@@ -66,14 +69,9 @@ func TestGetPublicKeyFromPEM(t *testing.T) {
 	originalKey, err := generateRSAKeyPair()
 	require.NoError(t, err)
 
-	// Create proper PKIX format PEM for testing GetPublicKeyFromPEM
-	publicKeyBytes, err := x509.MarshalPKIXPublicKey(originalKey.PublicKey)
+	// Get PEM data using the actual getPublicKeyPEM method
+	pemData, err := originalKey.getPublicKeyPEM()
 	require.NoError(t, err)
-
-	pemData := pem.EncodeToMemory(&pem.Block{
-		Type:  "PUBLIC KEY",
-		Bytes: publicKeyBytes,
-	})
 
 	// Parse back from PEM
 	parsedKey, err := GetPublicKeyFromPEM(pemData)
@@ -176,15 +174,8 @@ func TestKeyPairRoundTrip(t *testing.T) {
 
 	// Convert to PEM
 	privatePEM := originalPair.getPrivateKeyPEM()
-
-	// For public key, create PKIX format for GetPublicKeyFromPEM
-	publicKeyBytes, err := x509.MarshalPKIXPublicKey(originalPair.PublicKey)
+	publicPEM, err := originalPair.getPublicKeyPEM()
 	require.NoError(t, err)
-
-	publicPEM := pem.EncodeToMemory(&pem.Block{
-		Type:  "PUBLIC KEY",
-		Bytes: publicKeyBytes,
-	})
 
 	// Parse back from PEM
 	parsedPrivate, err := getPrivateKeyFromPEM(privatePEM)

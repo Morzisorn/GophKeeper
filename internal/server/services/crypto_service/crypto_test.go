@@ -31,7 +31,8 @@ func (m *MockStorage) GetTypesCounts(ctx context.Context, login string) (map[mod
 
 func TestNewCryptoService(t *testing.T) {
 	repo := &MockStorage{}
-	service := NewCryptoService(repo)
+	service, err := NewCryptoService(repo)
 
+	assert.NoError(t, err)
 	assert.NotNil(t, service)
 }

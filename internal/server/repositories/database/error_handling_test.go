@@ -21,7 +21,8 @@ func TestErrorHandling_InvalidJSONMeta(t *testing.T) {
 	defer mock.Close()
 
 	q := gen.New(mock)
-	itemDB := NewItemDB(q, mock)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	// Test GetAllUserItems with invalid JSON meta
 	testUUID := pgtype.UUID{
@@ -57,7 +58,8 @@ func TestErrorHandling_DatabaseConnectionFailure(t *testing.T) {
 	defer mock.Close()
 
 	q := gen.New(mock)
-	userDB := NewUserDB(q, mock)
+	userDB, err := NewUserDB(q, mock)
+	require.NoError(t, err)
 
 	// Test connection failure during user signup
 	mock.ExpectExec("INSERT INTO users").
@@ -81,7 +83,8 @@ func TestErrorHandling_QueryScanFailure(t *testing.T) {
 	defer mock.Close()
 
 	q := gen.New(mock)
-	itemDB := NewItemDB(q, mock)
+	itemDB, err := NewItemDB(q, mock)
+	require.NoError(t, err)
 
 	// Test scan failure during GetAllUserItems
 	rows := pgxmock.NewRows([]string{
