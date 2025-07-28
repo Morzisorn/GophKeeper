@@ -1,7 +1,6 @@
 package crypto
 
 import (
-	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"testing"
@@ -39,10 +38,8 @@ func TestRSAKeyPair_GetPublicKeyPEM(t *testing.T) {
 	assert.Equal(t, "PUBLIC KEY", block.Type)
 
 	// Verify we can parse the key back
-	pubInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
+	publicKey, err := x509.ParsePKCS1PublicKey(block.Bytes)
 	require.NoError(t, err)
-	publicKey, ok := pubInterface.(*rsa.PublicKey)
-	require.True(t, ok)
 	assert.NotNil(t, publicKey)
 }
 
@@ -160,7 +157,7 @@ func TestGetKeysPath(t *testing.T) {
 	path, err := getKeysPath()
 	require.NoError(t, err)
 	assert.NotEmpty(t, path)
-	assert.Contains(t, path, "internal/server/crypto/keys")
+	assert.Contains(t, path, "GophKeeper")
 }
 
 func TestLoadRSAKeyPair_RequiresIntegrationTest(t *testing.T) {

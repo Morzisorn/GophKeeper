@@ -12,7 +12,7 @@ const (
 	stateAddItem
 	stateAddItemName
 	stateAddItemData
-	stateAddCredentialLogin
+	//stateAddCredentialLogin
 	stateAddCredentialPassword
 	stateAddItemError
 	stateAddItemSuccess

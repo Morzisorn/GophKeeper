@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	keySize   = 32 // AES-256
+	//keySize   = 32 // AES-256
 	nonceSize = 12 // GCM nonce size
-	saltSize  = 16 // Salt size for PBKDF2
+	//saltSize  = 16 // Salt size for PBKDF2
 )
 
 // EncryptItem шифрует клиентский Item в EncryptedItem
