@@ -28,7 +28,7 @@ func TestErrorHandling_InvalidJSONMeta(t *testing.T) {
 		Bytes: [16]byte{0x55, 0x0e, 0x84, 0x00, 0xe2, 0x9b, 0x41, 0xd4, 0xa7, 0x16, 0x44, 0x66, 0x55, 0x44, 0x00, 0x00},
 		Valid: true,
 	}
-	
+
 	mock.ExpectQuery("SELECT.*FROM items").
 		WithArgs("testuser").
 		WillReturnRows(pgxmock.NewRows([]string{

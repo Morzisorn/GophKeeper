@@ -1,6 +1,7 @@
 package client
 
 import (
+	"github.com/stretchr/testify/require"
 	"gophkeeper/config"
 	"testing"
 
@@ -8,10 +9,12 @@ import (
 )
 
 func TestNewGRPCClient_NotNil(t *testing.T) {
-	cfg := config.GetServerConfig()
-	cfg.Addr = "localhost:8080"
-	
-	client := NewGRPCClient(cfg)
-	
+	cnfg, err := config.GetServerConfig()
+	require.NoError(t, err)
+	cnfg.Addr = "localhost:8080"
+
+	client, err := NewGRPCClient(cnfg)
+	require.NoError(t, err)
+
 	assert.NotNil(t, client)
 }

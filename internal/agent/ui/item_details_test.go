@@ -377,7 +377,7 @@ func TestUIController_itemDetailsView_WithBinary(t *testing.T) {
 	assert.Contains(t, view, "Content: binary data")
 }
 
-type UnknownItemType struct {}
+type UnknownItemType struct{}
 
 func (u UnknownItemType) GetType() models.ItemType {
 	return "UNKNOWN"

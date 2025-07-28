@@ -114,8 +114,8 @@ func (c *CryptoService) encryptData(data models.Data) (*models.EncryptedData, er
 
 	// Возвращаем EncryptedData с Base64 кодированием
 	return &models.EncryptedData{
-		EncryptedContent:  base64.StdEncoding.EncodeToString(ciphertext),
-		Nonce: base64.StdEncoding.EncodeToString(nonce),
+		EncryptedContent: base64.StdEncoding.EncodeToString(ciphertext),
+		Nonce:            base64.StdEncoding.EncodeToString(nonce),
 	}, nil
 }
 

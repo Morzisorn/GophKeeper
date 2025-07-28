@@ -198,11 +198,11 @@ func TestItemTypes_Constant(t *testing.T) {
 	}
 
 	assert.Len(t, ItemTypes, len(expectedTypes))
-	
+
 	for _, expectedType := range expectedTypes {
 		assert.Contains(t, ItemTypes, expectedType)
 	}
-	
+
 	// Проверяем что UNSPECIFIED не включен в ItemTypes
 	assert.NotContains(t, ItemTypes, ItemTypeUNSPECIFIED)
 }

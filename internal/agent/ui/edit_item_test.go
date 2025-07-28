@@ -15,9 +15,9 @@ func TestUIController_startEditItem_NilDecryptedItem(t *testing.T) {
 			decryptedItem: nil,
 		},
 	}
-	
+
 	result, cmd := ui.startEditItem()
-	
+
 	assert.Equal(t, ui, result)
 	assert.Nil(t, cmd)
 }
@@ -40,9 +40,9 @@ func TestUIController_startEditItem_Credentials(t *testing.T) {
 		},
 		input: "some-input",
 	}
-	
+
 	result, cmd := ui.startEditItem()
-	
+
 	assert.Equal(t, ui, result)
 	assert.Nil(t, cmd)
 	assert.NotNil(t, ui.itemCtrl.editingItem)
@@ -67,9 +67,9 @@ func TestUIController_startEditItem_Text(t *testing.T) {
 			},
 		},
 	}
-	
+
 	result, cmd := ui.startEditItem()
-	
+
 	assert.Equal(t, ui, result)
 	assert.Nil(t, cmd)
 	assert.NotNil(t, ui.itemCtrl.editingItem)
@@ -93,9 +93,9 @@ func TestUIController_startEditItem_Card(t *testing.T) {
 			},
 		},
 	}
-	
+
 	result, cmd := ui.startEditItem()
-	
+
 	assert.Equal(t, ui, result)
 	assert.Nil(t, cmd)
 	assert.NotNil(t, ui.itemCtrl.editingItem)
@@ -118,9 +118,9 @@ func TestUIController_startEditItem_Binary(t *testing.T) {
 			},
 		},
 	}
-	
+
 	result, cmd := ui.startEditItem()
-	
+
 	assert.Equal(t, ui, result)
 	assert.Nil(t, cmd)
 	assert.NotNil(t, ui.itemCtrl.editingItem)
@@ -131,11 +131,11 @@ func TestUIController_startEditItem_Binary(t *testing.T) {
 
 func TestUIController_handleEditItemNameInput_Quit(t *testing.T) {
 	ui := &UIController{}
-	
+
 	model, cmd := ui.handleEditItemNameInput(tea.KeyMsg{Type: tea.KeyCtrlC})
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd)
-	
+
 	model, cmd = ui.handleEditItemNameInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd)
@@ -149,9 +149,9 @@ func TestUIController_handleEditItemNameInput_Escape(t *testing.T) {
 		input: "test-input",
 		state: stateEditItemName,
 	}
-	
+
 	model, cmd := ui.handleEditItemNameInput(tea.KeyMsg{Type: tea.KeyEscape})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Nil(t, ui.itemCtrl.editingItem)
@@ -169,9 +169,9 @@ func TestUIController_handleEditItemNameInput_Enter_ValidName(t *testing.T) {
 			},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditItemNameInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, "new-name", ui.itemCtrl.editingItem.Name)
@@ -187,13 +187,13 @@ func TestUIController_handleEditItemNameInput_Enter_EmptyName(t *testing.T) {
 		},
 		state: stateEditItemName,
 	}
-	
+
 	model, cmd := ui.handleEditItemNameInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, "original", ui.itemCtrl.editingItem.Name) // Should remain unchanged
-	assert.Equal(t, stateEditItemName, ui.state) // Should remain unchanged
+	assert.Equal(t, stateEditItemName, ui.state)              // Should remain unchanged
 }
 
 func TestUIController_handleEditItemNameInput_Enter_TextType(t *testing.T) {
@@ -206,9 +206,9 @@ func TestUIController_handleEditItemNameInput_Enter_TextType(t *testing.T) {
 			},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditItemNameInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, "new-text-name", ui.itemCtrl.editingItem.Name)
@@ -226,9 +226,9 @@ func TestUIController_handleEditItemNameInput_Enter_CardType(t *testing.T) {
 			},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditItemNameInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, "new-card-name", ui.itemCtrl.editingItem.Name)
@@ -246,9 +246,9 @@ func TestUIController_handleEditItemNameInput_Enter_BinaryType(t *testing.T) {
 			},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditItemNameInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, "new-binary-name", ui.itemCtrl.editingItem.Name)
@@ -258,9 +258,9 @@ func TestUIController_handleEditItemNameInput_Enter_BinaryType(t *testing.T) {
 
 func TestUIController_handleEditItemNameInput_Backspace(t *testing.T) {
 	ui := &UIController{input: "test"}
-	
+
 	model, cmd := ui.handleEditItemNameInput(tea.KeyMsg{Type: tea.KeyBackspace})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, "tes", ui.input)
@@ -268,9 +268,9 @@ func TestUIController_handleEditItemNameInput_Backspace(t *testing.T) {
 
 func TestUIController_handleEditItemNameInput_CharacterInput(t *testing.T) {
 	ui := &UIController{input: "test"}
-	
+
 	model, cmd := ui.handleEditItemNameInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'a'}})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, "testa", ui.input)
@@ -285,9 +285,9 @@ func TestUIController_handleEditCredentialLoginInput_Enter(t *testing.T) {
 			},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditCredentialLoginInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, "new-login", ui.itemCtrl.editingItem.Data.(*models.Credentials).Login)
@@ -304,9 +304,9 @@ func TestUIController_handleEditCredentialPasswordInput_Enter(t *testing.T) {
 			},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditCredentialPasswordInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd) // Should return saveEditedItemCmd
 	assert.Equal(t, "new-password", ui.itemCtrl.editingItem.Data.(*models.Credentials).Password)
@@ -326,9 +326,9 @@ func TestUIController_handleEditSuccessInput_Enter(t *testing.T) {
 			editingItem:    &models.Item{Name: "test"},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditSuccessInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd) // Should return loadItemsCmd
 	assert.Equal(t, stateProcessing, ui.state)
@@ -343,9 +343,9 @@ func TestUIController_handleEditErrorInput_Enter(t *testing.T) {
 			editingItem:  &models.Item{Name: "test"},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditErrorInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, stateItemDetails, ui.state)
@@ -360,9 +360,9 @@ func TestUIController_handleEditErrorInput_Escape(t *testing.T) {
 			editingItem:  &models.Item{Name: "test"},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditErrorInput(tea.KeyMsg{Type: tea.KeyEscape})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, stateItemDetails, ui.state)
@@ -379,9 +379,9 @@ func TestUIController_handleEditTextContentInput_Enter_ValidContent(t *testing.T
 			},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditTextContentInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd) // Should return saveEditedItemCmd
 	assert.Equal(t, "new content", ui.itemCtrl.editingItem.Data.(*models.Text).Content)
@@ -398,13 +398,13 @@ func TestUIController_handleEditTextContentInput_Enter_EmptyContent(t *testing.T
 		},
 		state: stateEditTextContent,
 	}
-	
+
 	model, cmd := ui.handleEditTextContentInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, "original", ui.itemCtrl.editingItem.Data.(*models.Text).Content) // Should remain unchanged
-	assert.Equal(t, stateEditTextContent, ui.state) // Should remain unchanged
+	assert.Equal(t, stateEditTextContent, ui.state)                                  // Should remain unchanged
 }
 
 func TestUIController_handleEditBinaryDataInput_Enter_ValidData(t *testing.T) {
@@ -416,9 +416,9 @@ func TestUIController_handleEditBinaryDataInput_Enter_ValidData(t *testing.T) {
 			},
 		},
 	}
-	
+
 	model, cmd := ui.handleEditBinaryDataInput(tea.KeyMsg{Type: tea.KeyEnter})
-	
+
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd) // Should return saveEditedItemCmd
 	assert.Equal(t, []byte("new binary data"), ui.itemCtrl.editingItem.Data.(*models.Binary).Content)
@@ -430,9 +430,9 @@ func TestUIController_editItemNameView(t *testing.T) {
 	ui := &UIController{
 		input: "test-name",
 	}
-	
+
 	view := ui.editItemNameView()
-	
+
 	assert.Contains(t, view, "Edit Item - Name")
 	assert.Contains(t, view, "test-name")
 	assert.Contains(t, view, "█")
@@ -448,9 +448,9 @@ func TestUIController_editCredentialLoginView(t *testing.T) {
 			},
 		},
 	}
-	
+
 	view := ui.editCredentialLoginView()
-	
+
 	assert.Contains(t, view, "Edit Credentials - Login")
 	assert.Contains(t, view, "test-item")
 	assert.Contains(t, view, "test-login")
@@ -467,13 +467,13 @@ func TestUIController_editCredentialPasswordView(t *testing.T) {
 			},
 		},
 	}
-	
+
 	view := ui.editCredentialPasswordView()
-	
+
 	assert.Contains(t, view, "Edit Credentials - Password")
 	assert.Contains(t, view, "test-item")
 	assert.Contains(t, view, "test-login")
-	assert.Contains(t, view, "***********") // Hidden password
+	assert.Contains(t, view, "***********")    // Hidden password
 	assert.NotContains(t, view, "password123") // Should not show actual password
 	assert.Contains(t, view, "█")
 }
@@ -484,9 +484,9 @@ func TestUIController_editSuccessView(t *testing.T) {
 			editSuccessMsg: "Item updated successfully!",
 		},
 	}
-	
+
 	view := ui.editSuccessView()
-	
+
 	assert.Contains(t, view, "Item Updated Successfully")
 	assert.Contains(t, view, "Item updated successfully!")
 	assert.Contains(t, view, "Enter to return to items list")
@@ -498,9 +498,9 @@ func TestUIController_editErrorView(t *testing.T) {
 			editErrorMsg: "Failed to update item",
 		},
 	}
-	
+
 	view := ui.editErrorView()
-	
+
 	assert.Contains(t, view, "Edit Error")
 	assert.Contains(t, view, "Failed to update item")
 	assert.Contains(t, view, "Enter to return to item details")
@@ -515,9 +515,9 @@ func TestUIController_editTextContentView(t *testing.T) {
 			},
 		},
 	}
-	
+
 	view := ui.editTextContentView()
-	
+
 	assert.Contains(t, view, "Edit Text - Content")
 	assert.Contains(t, view, "test-text")
 	assert.Contains(t, view, "test content")
@@ -533,9 +533,9 @@ func TestUIController_editBinaryDataView(t *testing.T) {
 			},
 		},
 	}
-	
+
 	view := ui.editBinaryDataView()
-	
+
 	assert.Contains(t, view, "Edit Binary - Data")
 	assert.Contains(t, view, "test-binary")
 	assert.Contains(t, view, "binary data")

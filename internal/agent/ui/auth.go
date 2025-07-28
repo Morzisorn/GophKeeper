@@ -189,7 +189,6 @@ func (ui *UIController) passwordInputView() string {
 
 	title := titleStyle.Render(fmt.Sprintf("%s - Enter Password", action))
 
-
 	hiddenPassword := strings.Repeat("*", len(ui.input))
 	input := inputStyle.Render(hiddenPassword + "█")
 	controls := "\nControls: Esc to go back, Enter to continue"
@@ -200,7 +199,6 @@ func (ui *UIController) passwordInputView() string {
 func (ui *UIController) processingView() string {
 	return fmt.Sprintln("\nProcessing...\n\nPlease wait...")
 }
-
 
 func (ui *UIController) handleMasterPasswordInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
@@ -243,11 +241,11 @@ func (ui *UIController) setMasterPasswordCmd(masterPassword string) tea.Cmd {
 
 func (ui *UIController) masterPasswordInputView() string {
 	title := titleStyle.Render("Master Password Required")
-	
+
 	hiddenPassword := strings.Repeat("*", len(ui.input))
 	input := inputStyle.Render(hiddenPassword + "█")
 	controls := "\nControls: Esc to go back, Enter to continue"
-	
+
 	info := "\nEnter your master password to unlock your vault:"
 
 	return fmt.Sprintf("%s%s\n\nMaster Password: %s%s", title, info, input, controls)

@@ -10,14 +10,14 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (ui *UIController) handleAddItem() (*UIController, tea.Cmd) {
+func (ui *UIController) handleAddItem() (tea.Model, tea.Cmd) {
 	ui.state = stateAddItem
 	ui.input = ""
 	ui.itemTypeMenu = 0
 	ui.maxItemTypes = 3
-	ui.newItem = models.Item{UserLogin: ui.login} 
-	ui.addItemErrorMsg = ""                      
-	ui.addItemSuccessMsg = ""                    
+	ui.newItem = models.Item{UserLogin: ui.login}
+	ui.addItemErrorMsg = ""
+	ui.addItemSuccessMsg = ""
 	return ui, nil
 }
 
@@ -304,7 +304,7 @@ func (ui *UIController) addItemPasswordView() string {
 func (ui *UIController) addItemDataView() string {
 	var prompt string
 	var hint string
-	
+
 	switch ui.newItem.Type {
 	case models.ItemTypeCREDENTIALS:
 		prompt = "Login"
@@ -346,12 +346,12 @@ func (ui *UIController) handleAddCardExpiryInput(msg tea.KeyMsg) (tea.Model, tea
 			ui.messages.Set("error", "Expiry date cannot be empty")
 			return ui, nil
 		}
-		
+
 		if err := validateExpiry(expiry); err != nil {
 			ui.messages.Set("error", err.Error())
 			return ui, nil
 		}
-		
+
 		ui.newItem.Data.(*models.Card).ExpiryDate = expiry
 		ui.input = ""
 		ui.state = stateAddCardCVV
@@ -386,12 +386,12 @@ func (ui *UIController) handleAddCardCVVInput(msg tea.KeyMsg) (tea.Model, tea.Cm
 			ui.messages.Set("error", "CVV cannot be empty")
 			return ui, nil
 		}
-		
+
 		if err := validateCVV(cvv); err != nil {
 			ui.messages.Set("error", err.Error())
 			return ui, nil
 		}
-		
+
 		ui.newItem.Data.(*models.Card).SecurityCode = cvv
 		ui.input = ""
 		ui.state = stateAddCardHolder
@@ -466,7 +466,7 @@ func (ui *UIController) addCardCVVView() string {
 	controls := "\nControls: Esc to go back, Enter to continue"
 	hint := "\n3 digits only"
 	return fmt.Sprintf("%s\n\nName: %s\nNumber: %s\nExpiry: %s\nCVV: %s%s%s%s",
-		title, ui.newItem.Name, ui.newItem.Data.(*models.Card).Number, 
+		title, ui.newItem.Name, ui.newItem.Data.(*models.Card).Number,
 		ui.newItem.Data.(*models.Card).ExpiryDate, input, hint, errorMsg, controls)
 }
 

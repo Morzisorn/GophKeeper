@@ -5,12 +5,11 @@ import (
 	"gophkeeper/internal/server/repositories/database"
 )
 
-
-type Storage interface{
+type Storage interface {
 	database.Database
 	//Close() error
 }
 
-func NewStorage(cfg *config.Config) (Storage, error){
+func NewStorage(cfg *config.Config) (Storage, error) {
 	return database.NewPGDB(cfg)
 }

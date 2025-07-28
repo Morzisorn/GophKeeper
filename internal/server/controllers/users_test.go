@@ -15,7 +15,7 @@ import (
 func TestNewUserController(t *testing.T) {
 	service := &userv.UserService{}
 	controller := NewUserController(service)
-	
+
 	assert.NotNil(t, controller)
 	assert.Equal(t, service, controller.service)
 }

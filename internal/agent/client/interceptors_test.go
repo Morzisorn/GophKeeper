@@ -24,11 +24,11 @@ func TestGRPCClient_authInterceptor_WithToken(t *testing.T) {
 	err := client.authInterceptor(ctx, "test-method", nil, nil, nil, mockInvoker)
 
 	assert.NoError(t, err)
-	
+
 	// Проверяем, что токен добавлен в метаданные
 	md, ok := metadata.FromOutgoingContext(capturedCtx)
 	assert.True(t, ok)
-	
+
 	authValues := md.Get("authorization")
 	assert.Len(t, authValues, 1)
 	assert.Equal(t, "Bearer test-token", authValues[0])
@@ -49,7 +49,7 @@ func TestGRPCClient_authInterceptor_WithoutToken(t *testing.T) {
 	err := client.authInterceptor(ctx, "test-method", nil, nil, nil, mockInvoker)
 
 	assert.NoError(t, err)
-	
+
 	// Проверяем, что метаданные не содержат токен
 	md, ok := metadata.FromOutgoingContext(capturedCtx)
 	if ok {

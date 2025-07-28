@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"github.com/stretchr/testify/require"
 	"gophkeeper/config"
 	"gophkeeper/internal/errs"
 	"gophkeeper/models"
@@ -14,7 +15,8 @@ func TestNewUserService(t *testing.T) {
 	mockClient := &MockClient{}
 	mockCrypto := &CryptoService{}
 
-	service := NewUserService(mockClient, mockCrypto)
+	service, err := NewUserService(mockClient, mockCrypto)
+	require.NoError(t, err)
 
 	assert.NotNil(t, service)
 	assert.Equal(t, mockClient, service.Client)
