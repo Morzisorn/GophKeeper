@@ -5,7 +5,6 @@ import (
 	"gophkeeper/config"
 	"gophkeeper/internal/logger"
 	"gophkeeper/internal/server"
-	"gophkeeper/internal/server/crypto"
 	"gophkeeper/internal/server/repositories"
 	cserv "gophkeeper/internal/server/services/crypto_service"
 	iserv "gophkeeper/internal/server/services/item_service"
@@ -24,11 +23,17 @@ func runServer() error {
 	if err := logger.Init(); err != nil {
 		return fmt.Errorf("init logger error: %w\n", err)
 	}
-	cnfg, err := config.GetServerConfig()
+	cnfg, err := config.NewServerConfig()
 	if err != nil {
 		return fmt.Errorf("get agent config error: %w\n", err)
 	}
-	if err := crypto.LoadRSAKeyPair(); err != nil {
+
+	cs, err := cserv.NewCryptoService(cnfg)
+	if err != nil {
+		return fmt.Errorf("failed to create crypto service: %w\n", err)
+	}
+
+	if err := cs.LoadRSAKeyPair(); err != nil {
 		return fmt.Errorf("failed to load RSA keys: %w\n", err)
 	}
 
@@ -37,20 +42,17 @@ func runServer() error {
 		return fmt.Errorf("failed to create storage: %w\n", err)
 	}
 
-	us, err := userv.NewUserService(repo)
+	us, err := userv.NewUserService(cnfg, repo)
 	if err != nil {
 		return fmt.Errorf("failed to create user service: %w\n", err)
 	}
-	cs, err := cserv.NewCryptoService(repo)
-	if err != nil {
-		return fmt.Errorf("failed to create crypto service: %w\n", err)
-	}
+
 	ic, err := iserv.NewItemService(repo)
 	if err != nil {
 		return fmt.Errorf("failed to create item service: %w\n", err)
 	}
 
-	if err := server.CreateAndRun(us, cs, ic); err != nil {
+	if err := server.CreateAndRun(cnfg, us, cs, ic); err != nil {
 		return fmt.Errorf("create server error: %w\n", err)
 	}
 

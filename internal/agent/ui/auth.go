@@ -128,7 +128,15 @@ func (ui *UIController) signUpCmd(login, password string) tea.Cmd {
 				context: "auth",
 			}
 		}
-		if ui.User.Client.GetJWTToken() != "" {
+		token, err := ui.User.Client.GetJWTToken()
+		if err != nil {
+			return processComplete{
+				success: false,
+				message: fmt.Sprintf("Sign up error: %v", err),
+				context: "auth",
+			}
+		}
+		if len(token) != 0 {
 			ui.isAuthenticated = true
 			ui.login = login
 		}
@@ -151,7 +159,16 @@ func (ui *UIController) signInCmd(login, password string) tea.Cmd {
 			}
 		}
 
-		if ui.User.Client.GetJWTToken() != "" {
+		token, err := ui.User.Client.GetJWTToken()
+		if err != nil {
+			return processComplete{
+				success: false,
+				message: fmt.Sprintf("Sign up error: %v", err),
+				context: "auth",
+			}
+		}
+
+		if len(token) != 0 {
 			ui.isAuthenticated = true
 			ui.login = login
 		}

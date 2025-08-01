@@ -19,28 +19,28 @@ func NewItemService(client client.Client, cs *CryptoService) (*ItemService, erro
 	}, nil
 }
 
-func (ic *ItemService) AddItem(ctx context.Context, item *models.Item) error {
-	encItem, err := ic.Crypto.EncryptItem(item)
+func (is *ItemService) AddItem(ctx context.Context, item *models.Item) error {
+	encItem, err := is.Crypto.encryptItem(item)
 	if err != nil {
 		return fmt.Errorf("encrypt item error: %w", err)
 	}
-	return ic.Client.AddItem(ctx, encItem)
+	return is.Client.AddItem(ctx, encItem)
 }
 
-func (ic *ItemService) EditItem(ctx context.Context, item *models.Item) error {
-	encItem, err := ic.Crypto.EncryptItem(item)
+func (is *ItemService) EditItem(ctx context.Context, item *models.Item) error {
+	encItem, err := is.Crypto.encryptItem(item)
 	if err != nil {
 		return fmt.Errorf("encrypt item error: %w", err)
 	}
-	return ic.Client.EditItem(ctx, encItem)
+	return is.Client.EditItem(ctx, encItem)
 }
 
-func (ic *ItemService) DeleteItem(ctx context.Context, login string, itemID [16]byte) error {
-	return ic.Client.DeleteItem(ctx, login, itemID)
+func (is *ItemService) DeleteItem(ctx context.Context, login string, itemID [16]byte) error {
+	return is.Client.DeleteItem(ctx, login, itemID)
 }
 
-func (ic *ItemService) GetItems(ctx context.Context, login string, typ models.ItemType) ([]models.EncryptedItem, error) {
-	return ic.Client.GetItems(ctx, login, typ)
+func (is *ItemService) GetItems(ctx context.Context, login string, typ models.ItemType) ([]models.EncryptedItem, error) {
+	return is.Client.GetItems(ctx, login, typ)
 }
 
 func (is *ItemService) GetTypesCounts(ctx context.Context, login string) (map[string]int32, error) {
@@ -48,5 +48,5 @@ func (is *ItemService) GetTypesCounts(ctx context.Context, login string) (map[st
 }
 
 func (is *ItemService) DecryptItem(encItem *models.EncryptedItem) (*models.Item, error) {
-	return is.Crypto.DecryptItem(encItem)
+	return is.Crypto.decryptItem(encItem)
 }

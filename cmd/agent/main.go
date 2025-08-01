@@ -22,7 +22,7 @@ func runAgent() error {
 		return fmt.Errorf("init logger error: %w\n", err)
 	}
 
-	cnfg, err := config.GetAgentConfig()
+	cnfg, err := config.NewAgentConfig()
 	if err != nil {
 		return fmt.Errorf("get agent config error: %w\n", err)
 	}
@@ -32,12 +32,12 @@ func runAgent() error {
 		return fmt.Errorf("new grpc client error: %w\n", err)
 	}
 
-	cs, err := services.NewCryptoService(clnt)
+	cs, err := services.NewCryptoService(cnfg, clnt)
 	if err != nil {
 		return fmt.Errorf("new crypto service error: %w\n", err)
 	}
 
-	us, err := services.NewUserService(clnt, cs)
+	us, err := services.NewUserService(cnfg, clnt, cs)
 	if err != nil {
 		return fmt.Errorf("new user service error: %w\n", err)
 	}

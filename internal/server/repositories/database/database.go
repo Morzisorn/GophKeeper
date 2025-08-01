@@ -25,8 +25,8 @@ type PGDB struct {
 
 var _ Database = (*PGDB)(nil)
 
-func NewPGDB(cfg *config.Config) (Database, error) {
-	pool, err := pgxpool.New(context.Background(), cfg.DBConnStr)
+func NewPGDB(cfg config.DatabaseConfig) (Database, error) {
+	pool, err := pgxpool.New(context.Background(), cfg.GetConnectionString())
 	if err != nil {
 		return nil, fmt.Errorf("create new db error: %v", err)
 	}

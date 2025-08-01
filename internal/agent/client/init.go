@@ -19,8 +19,8 @@ type Client interface {
 	//User
 	SignUpUser(ctx context.Context, user *models.User) (token string, salt string, err error)
 	SignInUser(ctx context.Context, user *models.User) (token string, salt string, err error)
-	SetJWTToken(token string)
-	GetJWTToken() string
+	SetJWTToken(token string) error
+	GetJWTToken() (string, error)
 
 	//Crypto
 	GetPublicKeyPEM(ctx context.Context) (string, error)
@@ -36,21 +36,21 @@ type Client interface {
 var _ Client = (*GRPCClient)(nil)
 
 type GRPCClient struct {
-	token   string
-	conn    *grpc.ClientConn
-	BaseURL string
+	token string
+	conn  *grpc.ClientConn
+	cnfg  config.AgentClientConfig
 
 	User   pbus.UserControllerClient
 	Crypto pbcr.CryptoControllerClient
 	Item   pbit.ItemsControllerClient
 }
 
-func NewGRPCClient(c *config.Config) (*GRPCClient, error) {
+func NewGRPCClient(cnfg config.AgentClientConfig) (*GRPCClient, error) {
 	client := &GRPCClient{
-		BaseURL: c.Addr,
+		cnfg: cnfg,
 	}
 
-	conn, err := grpc.NewClient(c.Addr,
+	conn, err := grpc.NewClient(cnfg.GetAddress(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithUnaryInterceptor(client.authInterceptor),
 	)

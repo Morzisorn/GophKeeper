@@ -10,6 +10,6 @@ type Storage interface {
 	//Close() error
 }
 
-func NewStorage(cfg *config.Config) (Storage, error) {
+func NewStorage(cfg config.DatabaseConfig) (Storage, error) {
 	return database.NewPGDB(cfg)
 }

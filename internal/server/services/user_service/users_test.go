@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"gophkeeper/config"
 	"gophkeeper/internal/errs"
 	"gophkeeper/models"
 
@@ -59,8 +60,11 @@ func (m *MockStorage) GetTypesCounts(ctx context.Context, login string) (map[mod
 }
 
 func TestNewUserService(t *testing.T) {
+	cnfg, err := config.NewServerConfig()
+	assert.NoError(t, err)
+
 	repo := &MockStorage{}
-	service, err := NewUserService(repo)
+	service, err := NewUserService(cnfg, repo)
 	assert.NoError(t, err)
 
 	assert.NotNil(t, service)
@@ -109,7 +113,9 @@ func TestUserService_GetUser(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &MockStorage{}
 			tt.setup(mockRepo)
-			service, err := NewUserService(mockRepo)
+			cnfg, err := config.NewServerConfig()
+			assert.NoError(t, err)
+			service, err := NewUserService(cnfg, mockRepo)
 			assert.NoError(t, err)
 
 			user, err := service.GetUser(context.Background(), &models.User{Login: tt.login})
@@ -167,7 +173,9 @@ func TestUserService_SignUpUser_ValidationOnly(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &MockStorage{}
 			tt.setup(mockRepo)
-			service, err := NewUserService(mockRepo)
+			cnfg, err := config.NewServerConfig()
+			assert.NoError(t, err)
+			service, err := NewUserService(cnfg, mockRepo)
 			assert.NoError(t, err)
 
 			token, salt, err := service.SignUpUser(context.Background(), tt.login, tt.encryptedPassword)
@@ -224,7 +232,9 @@ func TestUserService_SignInUser_ValidationOnly(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := &MockStorage{}
 			tt.setup(mockRepo)
-			service, err := NewUserService(mockRepo)
+			cnfg, err := config.NewServerConfig()
+			assert.NoError(t, err)
+			service, err := NewUserService(cnfg, mockRepo)
 			assert.NoError(t, err)
 
 			token, salt, err := service.SignInUser(context.Background(), tt.login, tt.encryptedPassword)

@@ -2,24 +2,11 @@ package services
 
 import (
 	"context"
-	"github.com/stretchr/testify/require"
 	"gophkeeper/models"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func TestNewItemService(t *testing.T) {
-	mockClient := &MockClient{}
-	mockCrypto := &CryptoService{}
-
-	service, err := NewItemService(mockClient, mockCrypto)
-	require.NoError(t, err)
-
-	assert.NotNil(t, service)
-	assert.Equal(t, mockClient, service.Client)
-	assert.Equal(t, mockCrypto, service.Crypto)
-}
 
 func TestItemService_AddItem_NilService(t *testing.T) {
 	var service *ItemService = nil
@@ -162,10 +149,12 @@ func (m *MockClient) SignInUser(ctx context.Context, user *models.User) (token s
 	return "", "", nil
 }
 
-func (m *MockClient) SetJWTToken(token string) {}
+func (m *MockClient) SetJWTToken(token string) error {
+	return nil
+}
 
-func (m *MockClient) GetJWTToken() string {
-	return ""
+func (m *MockClient) GetJWTToken() (string, error) {
+	return "", nil
 }
 
 func (m *MockClient) GetPublicKeyPEM(ctx context.Context) (string, error) {

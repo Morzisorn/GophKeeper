@@ -12,19 +12,15 @@ import (
 
 type UserService struct {
 	Client client.Client
-	Crypto *CryptoService
-	config *config.Config
+	crypto *CryptoService
+	cnfg   config.AgentUserServiceConfig
 }
 
-func NewUserService(client client.Client, cr *CryptoService) (*UserService, error) {
-	cnfg, err := config.GetAgentConfig()
-	if err != nil {
-		return nil, fmt.Errorf("get agent config error: %w", err)
-	}
+func NewUserService(cnfg config.AgentUserServiceConfig, client client.Client, cr *CryptoService) (*UserService, error) {
 	return &UserService{
 		Client: client,
-		Crypto: cr,
-		config: cnfg,
+		crypto: cr,
+		cnfg:   cnfg,
 	}, nil
 }
 
@@ -33,7 +29,7 @@ func (us *UserService) SignUpUser(ctx context.Context, user *models.User) error 
 		return errs.ErrRequiredArgumentIsMissing
 	}
 
-	encryptedPassword, err := encryptData(user.Password)
+	encryptedPassword, err := us.crypto.encryptData(user.Password)
 	if err != nil {
 		return fmt.Errorf("failed to encrypt password: %w", err)
 	}
@@ -45,12 +41,13 @@ func (us *UserService) SignUpUser(ctx context.Context, user *models.User) error 
 		return fmt.Errorf("server failed to sign up user: %w", err)
 	}
 
-	err = us.Crypto.SetSalt(salt)
-	if err != nil {
+	if err = us.cnfg.SetSalt([]byte(salt)); err != nil {
 		return err
 	}
 
-	us.Client.SetJWTToken(token)
+	if err := us.Client.SetJWTToken(token); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -60,7 +57,7 @@ func (us *UserService) SignInUser(ctx context.Context, user *models.User) error 
 		return errs.ErrRequiredArgumentIsMissing
 	}
 
-	encryptedPassword, err := encryptData(user.Password)
+	encryptedPassword, err := us.crypto.encryptData(user.Password)
 	if err != nil {
 		return fmt.Errorf("failed to encrypt password: %w", err)
 	}
@@ -71,25 +68,38 @@ func (us *UserService) SignInUser(ctx context.Context, user *models.User) error 
 	if err != nil {
 		return fmt.Errorf("server failed to sign in user: %w", err)
 	}
-	err = us.Crypto.SetSalt(salt)
+	err = us.crypto.setSalt(salt)
 	if err != nil {
 		return err
 	}
 
-	us.Client.SetJWTToken(token)
+	if err := us.Client.SetJWTToken(token); err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func (us *UserService) SetMasterKey(masterPassword string) {
-	us.Crypto.SetMasterPassword(masterPassword)
-	masterKey := us.Crypto.GenerateMasterKey()
-	us.Crypto.SetMasterKey(masterKey)
+func (us *UserService) SetMasterKey(masterPassword string) error {
+	if err := us.cnfg.SetMasterPassword(masterPassword); err != nil {
+		return err
+	}
+	masterKey, err := us.crypto.generateMasterKey()
+	if err != nil {
+		return err
+	}
+	return us.cnfg.SetMasterKey(masterKey)
 }
 
 func (us *UserService) Logout() error {
-	us.config.MasterKey = nil
-	us.config.MasterPassword = ""
-	us.config.Salt = nil
+	if err := us.cnfg.SetMasterKey(nil); err != nil {
+		return err
+	}
+	if err := us.cnfg.SetMasterPassword(""); err != nil {
+		return err
+	}
+	if err := us.cnfg.SetSalt(nil); err != nil {
+		return err
+	}
 	return nil
 }

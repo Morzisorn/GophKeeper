@@ -13,21 +13,28 @@ import (
 )
 
 const (
-	//keySize   = 32 // AES-256
 	nonceSize = 12 // GCM nonce size
-	//saltSize  = 16 // Salt size for PBKDF2
 )
 
 // EncryptItem шифрует клиентский Item в EncryptedItem
-func (c *CryptoService) EncryptItem(item *models.Item) (*models.EncryptedItem, error) {
-	if c.config.MasterPassword == "" {
+func (cs *CryptoService) encryptItem(item *models.Item) (*models.EncryptedItem, error) {
+	mp, err := cs.cnfg.GetMasterPassword()
+	if err != nil {
+		return nil, err
+	}
+	if len(mp) == 0 {
 		return nil, errors.New("master password not set")
 	}
-	if len(c.config.Salt) == 0 {
+
+	salt, err := cs.cnfg.GetSalt()
+	if err != nil {
+		return nil, err
+	}
+	if len(salt) == 0 {
 		return nil, errors.New("user salt not set")
 	}
 
-	encryptedData, err := c.encryptData(item.Data)
+	encryptedData, err := cs.encryptItemData(item.Data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to encrypt item data: %w", err)
 	}
@@ -44,11 +51,19 @@ func (c *CryptoService) EncryptItem(item *models.Item) (*models.EncryptedItem, e
 	}, nil
 }
 
-func (c *CryptoService) DecryptItem(encryptedItem *models.EncryptedItem) (*models.Item, error) {
-	if c.config.MasterPassword == "" {
+func (cs *CryptoService) decryptItem(encryptedItem *models.EncryptedItem) (*models.Item, error) {
+	mp, err := cs.cnfg.GetMasterPassword()
+	if err != nil {
+		return nil, err
+	}
+	if len(mp) == 0 {
 		return nil, errors.New("master password not set")
 	}
-	if len(c.config.Salt) == 0 {
+	salt, err := cs.cnfg.GetSalt()
+	if err != nil {
+		return nil, err
+	}
+	if len(salt) == 0 {
 		return nil, errors.New("user salt not set")
 	}
 
@@ -59,7 +74,7 @@ func (c *CryptoService) DecryptItem(encryptedItem *models.EncryptedItem) (*model
 	}
 
 	// Расшифровываем данные
-	err = c.decryptData(&encryptedItem.EncryptedData, data)
+	err = cs.decryptData(&encryptedItem.EncryptedData, data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decrypt item data: %w", err)
 	}
@@ -76,23 +91,25 @@ func (c *CryptoService) DecryptItem(encryptedItem *models.EncryptedItem) (*model
 	}, nil
 }
 
-// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
-
-// encryptData шифрует объект данных в EncryptedData
-func (c *CryptoService) encryptData(data models.Data) (*models.EncryptedData, error) {
+func (cs *CryptoService) encryptItemData(data models.Data) (*models.EncryptedData, error) {
 	// Сериализуем данные в JSON
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal data: %w", err)
 	}
 
-	// Используем кешированный ключ
-	if len(c.config.MasterKey) == 0 {
-		c.GenerateMasterKey()
+	mk, err := cs.cnfg.GetMasterKey()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get master key: %w", err)
+	}
+	if len(mk) == 0 {
+		if _, err := cs.generateMasterKey(); err != nil {
+			return nil, fmt.Errorf("failed to generate master key: %w", err)
+		}
 	}
 
 	// Создаем AES шифр
-	block, err := aes.NewCipher(c.config.MasterKey)
+	block, err := aes.NewCipher(mk)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create cipher: %w", err)
 	}
@@ -119,8 +136,7 @@ func (c *CryptoService) encryptData(data models.Data) (*models.EncryptedData, er
 	}, nil
 }
 
-// decryptData расшифровывает EncryptedData в объект данных
-func (c *CryptoService) decryptData(encryptedData *models.EncryptedData, result models.Data) error {
+func (cs *CryptoService) decryptData(encryptedData *models.EncryptedData, result models.Data) error {
 	// Декодируем Base64
 	ciphertext, err := base64.StdEncoding.DecodeString(encryptedData.EncryptedContent)
 	if err != nil {
@@ -133,12 +149,19 @@ func (c *CryptoService) decryptData(encryptedData *models.EncryptedData, result 
 	}
 
 	// Используем кешированный ключ
-	if len(c.GetMasterKey()) == 0 {
-		c.GenerateMasterKey()
+	mk, err := cs.cnfg.GetMasterKey()
+	if err != nil {
+		return fmt.Errorf("failed to get master key: %w", err)
+	}
+	if len(mk) == 0 {
+		_, err := cs.generateMasterKey()
+		if err != nil {
+			return fmt.Errorf("failed to generate master key: %w", err)
+		}
 	}
 
 	// Создаем AES шифр
-	block, err := aes.NewCipher(c.GetMasterKey())
+	block, err := aes.NewCipher(mk)
 	if err != nil {
 		return fmt.Errorf("failed to create cipher: %w", err)
 	}

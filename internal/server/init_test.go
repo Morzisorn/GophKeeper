@@ -2,6 +2,7 @@ package server
 
 import (
 	"gophkeeper/config"
+	"gophkeeper/internal/server/repositories"
 	"gophkeeper/internal/server/repositories/database"
 	"gophkeeper/internal/server/services/crypto_service"
 	"gophkeeper/internal/server/services/item_service"
@@ -12,18 +13,20 @@ import (
 )
 
 func TestCreateGRPCServer(t *testing.T) {
-	repo := &database.PGDB{}
-	us, err := user_service.NewUserService(repo)
+	cnfg, err := config.NewServerConfig()
 	require.NoError(t, err)
-	cs, err := crypto_service.NewCryptoService(repo)
+
+	// Create a mock storage
+	var repo repositories.Storage = &database.PGDB{}
+
+	us, err := user_service.NewUserService(cnfg, repo)
+	require.NoError(t, err)
+	cs, err := crypto_service.NewCryptoService(cnfg)
 	require.NoError(t, err)
 	is, err := item_service.NewItemService(repo)
 	require.NoError(t, err)
 
-	cnfg, err := config.GetServerConfig()
-	require.NoError(t, err)
-	cnfg.Addr = "127.0.0.1:12345"
-	server, err := createGRPCServer(us, cs, is)
+	server, err := createGRPCServer(cnfg, us, cs, is)
 	require.NoError(t, err)
 	require.NotNil(t, server)
 }

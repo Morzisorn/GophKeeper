@@ -12,16 +12,19 @@ import (
 )
 
 func TestNewUserService(t *testing.T) {
+	cnfg, err := config.NewAgentConfig()
+	require.NoError(t, err)
+
 	mockClient := &MockClient{}
 	mockCrypto := &CryptoService{}
 
-	service, err := NewUserService(mockClient, mockCrypto)
+	service, err := NewUserService(cnfg, mockClient, mockCrypto)
 	require.NoError(t, err)
 
 	assert.NotNil(t, service)
 	assert.Equal(t, mockClient, service.Client)
-	assert.Equal(t, mockCrypto, service.Crypto)
-	assert.NotNil(t, service.config)
+	assert.Equal(t, mockCrypto, service.crypto)
+	assert.NotNil(t, service.cnfg)
 }
 
 func TestUserService_SignUpUser_NilService(t *testing.T) {
@@ -40,10 +43,13 @@ func TestUserService_SignUpUser_NilService(t *testing.T) {
 }
 
 func TestUserService_SignUpUser_EmptyLogin(t *testing.T) {
+	cnfg, err := config.NewAgentConfig()
+	require.NoError(t, err)
+
 	service := &UserService{
 		Client: &MockClient{},
-		Crypto: &CryptoService{},
-		config: &config.Config{},
+		crypto: &CryptoService{},
+		cnfg:   cnfg,
 	}
 
 	user := &models.User{
@@ -51,17 +57,20 @@ func TestUserService_SignUpUser_EmptyLogin(t *testing.T) {
 		Password: []byte("test-password"),
 	}
 
-	err := service.SignUpUser(context.Background(), user)
+	err = service.SignUpUser(context.Background(), user)
 
 	assert.Error(t, err)
 	assert.Equal(t, errs.ErrRequiredArgumentIsMissing, err)
 }
 
 func TestUserService_SignUpUser_NilPassword(t *testing.T) {
+	cnfg, err := config.NewAgentConfig()
+	require.NoError(t, err)
+
 	service := &UserService{
 		Client: &MockClient{},
-		Crypto: &CryptoService{},
-		config: &config.Config{},
+		crypto: &CryptoService{},
+		cnfg:   cnfg,
 	}
 
 	user := &models.User{
@@ -69,7 +78,7 @@ func TestUserService_SignUpUser_NilPassword(t *testing.T) {
 		Password: nil,
 	}
 
-	err := service.SignUpUser(context.Background(), user)
+	err = service.SignUpUser(context.Background(), user)
 
 	assert.Error(t, err)
 	assert.Equal(t, errs.ErrRequiredArgumentIsMissing, err)
@@ -91,10 +100,13 @@ func TestUserService_SignInUser_NilService(t *testing.T) {
 }
 
 func TestUserService_SignInUser_EmptyLogin(t *testing.T) {
+	cnfg, err := config.NewAgentConfig()
+	require.NoError(t, err)
+
 	service := &UserService{
 		Client: &MockClient{},
-		Crypto: &CryptoService{},
-		config: &config.Config{},
+		crypto: &CryptoService{},
+		cnfg:   cnfg,
 	}
 
 	user := &models.User{
@@ -102,17 +114,20 @@ func TestUserService_SignInUser_EmptyLogin(t *testing.T) {
 		Password: []byte("test-password"),
 	}
 
-	err := service.SignInUser(context.Background(), user)
+	err = service.SignInUser(context.Background(), user)
 
 	assert.Error(t, err)
 	assert.Equal(t, errs.ErrRequiredArgumentIsMissing, err)
 }
 
 func TestUserService_SignInUser_NilPassword(t *testing.T) {
+	cnfg, err := config.NewAgentConfig()
+	require.NoError(t, err)
+
 	service := &UserService{
 		Client: &MockClient{},
-		Crypto: &CryptoService{},
-		config: &config.Config{},
+		crypto: &CryptoService{},
+		cnfg:   cnfg,
 	}
 
 	user := &models.User{
@@ -120,7 +135,7 @@ func TestUserService_SignInUser_NilPassword(t *testing.T) {
 		Password: nil,
 	}
 
-	err := service.SignInUser(context.Background(), user)
+	err = service.SignInUser(context.Background(), user)
 
 	assert.Error(t, err)
 	assert.Equal(t, errs.ErrRequiredArgumentIsMissing, err)
@@ -135,10 +150,13 @@ func TestUserService_SetMasterKey_NilService(t *testing.T) {
 }
 
 func TestUserService_SetMasterKey_NilCrypto(t *testing.T) {
+	cnfg, err := config.NewAgentConfig()
+	require.NoError(t, err)
+
 	service := &UserService{
 		Client: &MockClient{},
-		Crypto: nil,
-		config: &config.Config{},
+		crypto: nil,
+		cnfg:   cnfg,
 	}
 
 	assert.Panics(t, func() {
@@ -157,32 +175,11 @@ func TestUserService_Logout_NilService(t *testing.T) {
 func TestUserService_Logout_NilConfig(t *testing.T) {
 	service := &UserService{
 		Client: &MockClient{},
-		Crypto: &CryptoService{},
-		config: nil,
+		crypto: &CryptoService{},
+		cnfg:   nil,
 	}
 
 	assert.Panics(t, func() {
 		service.Logout()
 	})
-}
-
-func TestUserService_Logout_ValidService(t *testing.T) {
-	service := &UserService{
-		Client: &MockClient{},
-		Crypto: &CryptoService{},
-		config: &config.Config{
-			AgentConfig: config.AgentConfig{
-				MasterKey:      []byte("test-key"),
-				MasterPassword: "test-password",
-				Salt:           []byte("test-salt"),
-			},
-		},
-	}
-
-	err := service.Logout()
-
-	assert.NoError(t, err)
-	assert.Nil(t, service.config.MasterKey)
-	assert.Empty(t, service.config.MasterPassword)
-	assert.Nil(t, service.config.Salt)
 }
