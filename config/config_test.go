@@ -66,7 +66,9 @@ func TestGetProjectRoot_FromTempDir(t *testing.T) {
 
 	// Restore original directory after test
 	defer func() {
-		os.Chdir(originalWd)
+		if err := os.Chdir(originalWd); err != nil {
+			t.Logf("Failed to restore working directory: %v", err)
+		}
 	}()
 
 	// Try to find project root - should return error

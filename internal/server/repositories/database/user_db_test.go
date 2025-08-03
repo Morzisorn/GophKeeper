@@ -17,7 +17,9 @@ import (
 func TestUserDB_SignUpUser(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 
@@ -76,7 +78,9 @@ func TestUserDB_SignUpUser(t *testing.T) {
 func TestUserDB_GetUser(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 

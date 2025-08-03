@@ -17,7 +17,9 @@ import (
 func TestItemDB_AddItem(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 
@@ -86,7 +88,9 @@ func TestItemDB_AddItem(t *testing.T) {
 func TestItemDB_GetAllUserItems(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)
@@ -182,7 +186,9 @@ func TestItemDB_GetAllUserItems(t *testing.T) {
 func TestItemDB_GetUserItemsWithType(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)
@@ -260,7 +266,9 @@ func TestItemDB_GetUserItemsWithType(t *testing.T) {
 func TestItemDB_GetTypesCounts(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)
@@ -334,7 +342,9 @@ func TestItemDB_GetTypesCounts(t *testing.T) {
 func TestItemDB_EditItem(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)
@@ -416,7 +426,9 @@ func TestItemDB_EditItem(t *testing.T) {
 func TestItemDB_DeleteItem(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)
