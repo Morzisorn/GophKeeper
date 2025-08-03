@@ -138,7 +138,7 @@ func TestItemService_DecryptItem_NilCrypto(t *testing.T) {
 	})
 }
 
-// MockClient для тестирования
+// MockClient for testing
 type MockClient struct{}
 
 func (m *MockClient) SignUpUser(ctx context.Context, user *models.User) (token string, salt string, err error) {

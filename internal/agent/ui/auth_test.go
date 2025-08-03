@@ -10,12 +10,12 @@ import (
 func TestUIController_handleMenuLoggedOutInput_Quit(t *testing.T) {
 	ui := &UIController{}
 
-	// Тест ctrl+c
+	// Test ctrl+c
 	model, cmd := ui.handleMenuLoggedOutInput(tea.KeyMsg{Type: tea.KeyCtrlC})
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd)
 
-	// Тест q
+	// Test q
 	model, cmd = ui.handleMenuLoggedOutInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
 	assert.Equal(t, ui, model)
 	assert.NotNil(t, cmd)
@@ -28,13 +28,13 @@ func TestUIController_handleMenuLoggedOutInput_Navigation(t *testing.T) {
 		},
 	}
 
-	// Тест up
+	// Test up
 	model, cmd := ui.handleMenuLoggedOutInput(tea.KeyMsg{Type: tea.KeyUp})
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, 0, ui.currentMenu)
 
-	// Тест down
+	// Test down
 	model, cmd = ui.handleMenuLoggedOutInput(tea.KeyMsg{Type: tea.KeyDown})
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
@@ -44,13 +44,13 @@ func TestUIController_handleMenuLoggedOutInput_Navigation(t *testing.T) {
 func TestUIController_handleMenuLoggedOutInput_DirectSelection(t *testing.T) {
 	ui := &UIController{}
 
-	// Тест выбора 1 (Sign Up)
+	// Test selection 1 (Sign Up)
 	model, cmd := ui.handleMenuLoggedOutInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'1'}})
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, 0, ui.currentMenu)
 
-	// Тест выбора 2 (Sign In)
+	// Test selection 2 (Sign In)
 	model, cmd = ui.handleMenuLoggedOutInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'2'}})
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
@@ -255,7 +255,7 @@ func TestUIController_handleMasterPasswordInput_CharacterInput(t *testing.T) {
 	assert.Equal(t, "testa", ui.input)
 }
 
-// Тесты view методов
+// Tests for view methods
 func TestUIController_loginInputView_SignUp(t *testing.T) {
 	ui := &UIController{
 		state: stateSignUpLogin,

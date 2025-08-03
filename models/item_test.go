@@ -158,7 +158,7 @@ func TestItemType_CreateDataByType(t *testing.T) {
 }
 
 func TestItemType_CreateDataByType_Types(t *testing.T) {
-	// Тестируем что возвращаются правильные типы структур
+	// Test that correct struct types are returned
 	t.Run("credentials returns Credentials struct", func(t *testing.T) {
 		data, err := ItemTypeCREDENTIALS.CreateDataByType()
 		require.NoError(t, err)
@@ -189,7 +189,7 @@ func TestItemType_CreateDataByType_Types(t *testing.T) {
 }
 
 func TestItemTypes_Constant(t *testing.T) {
-	// Тестируем что константа ItemTypes содержит все ожидаемые типы
+	// Test that ItemTypes constant contains all expected types
 	expectedTypes := []ItemType{
 		ItemTypeCREDENTIALS,
 		ItemTypeTEXT,
@@ -203,12 +203,12 @@ func TestItemTypes_Constant(t *testing.T) {
 		assert.Contains(t, ItemTypes, expectedType)
 	}
 
-	// Проверяем что UNSPECIFIED не включен в ItemTypes
+	// Check that UNSPECIFIED is not included in ItemTypes
 	assert.NotContains(t, ItemTypes, ItemTypeUNSPECIFIED)
 }
 
 func TestData_Interface(t *testing.T) {
-	// Тестируем что все структуры данных реализуют интерфейс Data
+	// Test that all data structures implement Data interface
 	var data Data
 
 	data = &Credentials{}
@@ -225,7 +225,7 @@ func TestData_Interface(t *testing.T) {
 }
 
 func TestItemType_Constants(t *testing.T) {
-	// Тестируем что константы имеют правильные значения
+	// Test that constants have correct values
 	assert.Equal(t, "UNSPECIFIED", string(ItemTypeUNSPECIFIED))
 	assert.Equal(t, "CREDENTIALS", string(ItemTypeCREDENTIALS))
 	assert.Equal(t, "TEXT", string(ItemTypeTEXT))
@@ -234,7 +234,7 @@ func TestItemType_Constants(t *testing.T) {
 }
 
 func TestDataStructures_DefaultValues(t *testing.T) {
-	// Тестируем что структуры данных могут быть созданы с нулевыми значениями
+	// Test that data structures can be created with zero values
 	t.Run("credentials with default values", func(t *testing.T) {
 		creds := Credentials{}
 		assert.Equal(t, "", creds.Login)

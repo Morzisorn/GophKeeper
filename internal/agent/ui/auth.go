@@ -246,7 +246,13 @@ func (ui *UIController) handleMasterPasswordInput(msg tea.KeyMsg) (tea.Model, te
 
 func (ui *UIController) setMasterPasswordCmd(masterPassword string) tea.Cmd {
 	return func() tea.Msg {
-		ui.User.SetMasterKey(masterPassword)
+		if err := ui.User.SetMasterKey(masterPassword); err != nil {
+			return processComplete{
+				success: false,
+				message: fmt.Sprintf("Set master password: %v", err),
+				context: "master_password",
+			}
+		}
 
 		return processComplete{
 			success: true,

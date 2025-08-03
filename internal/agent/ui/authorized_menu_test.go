@@ -71,7 +71,7 @@ func TestUIController_handleMenuLoggedInInput_Navigation_Up(t *testing.T) {
 func TestUIController_handleMenuLoggedInInput_Navigation_Down(t *testing.T) {
 	ui := &UIController{
 		loggedInMenu:    0,
-		maxLoggedInMenu: 3, // Устанавливаем максимальное значение (4 пункта меню: 0,1,2,3)
+		maxLoggedInMenu: 3, // Set maximum value (4 menu items: 0,1,2,3)
 	}
 
 	// Test down arrow key
@@ -139,7 +139,7 @@ func TestUIController_handleMenuLoggedInInput_DirectSelection_Logout(t *testing.
 	model, cmd := ui.handleMenuLoggedInInput(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'4'}})
 
 	assert.Equal(t, ui, model)
-	assert.Nil(t, cmd) // handleLogout возвращает nil command
+	assert.Nil(t, cmd) // handleLogout returns nil command
 	assert.Equal(t, 3, ui.loggedInMenu)
 }
 
@@ -184,7 +184,7 @@ func TestUIController_handleMenuLoggedInInput_Enter_Logout(t *testing.T) {
 	model, cmd := ui.handleMenuLoggedInInput(tea.KeyMsg{Type: tea.KeyEnter})
 
 	assert.Equal(t, ui, model)
-	assert.Nil(t, cmd) // handleLogout возвращает nil command
+	assert.Nil(t, cmd) // handleLogout returns nil command
 }
 
 func TestUIController_handleMenuLoggedInInput_InvalidKey(t *testing.T) {

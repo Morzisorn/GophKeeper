@@ -35,8 +35,8 @@ func TestUserService_SignUpUser_NilService(t *testing.T) {
 		Password: []byte("test-password"),
 	}
 
-	// Этот вызов должен привести к panic при попытке вызвать encryptData
-	// или обратиться к service.Client
+	// This call should panic when trying to call encryptData
+	// or access service.Client
 	assert.Panics(t, func() {
 		service.SignUpUser(context.Background(), user)
 	})
@@ -92,8 +92,8 @@ func TestUserService_SignInUser_NilService(t *testing.T) {
 		Password: []byte("test-password"),
 	}
 
-	// Этот вызов должен привести к panic при попытке вызвать encryptData
-	// или обратиться к service.Client
+	// This call should panic when trying to call encryptData
+	// or access service.Client
 	assert.Panics(t, func() {
 		service.SignInUser(context.Background(), user)
 	})

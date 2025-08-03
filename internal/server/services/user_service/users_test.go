@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// MockStorage реализует интерфейс repositories.Storage для тестирования
+// MockStorage implements repositories.Storage interface for testing
 type MockStorage struct {
 	shouldFail bool
 	users      map[string]*models.User
@@ -133,7 +133,7 @@ func TestUserService_GetUser(t *testing.T) {
 }
 
 func TestUserService_SignUpUser_ValidationOnly(t *testing.T) {
-	// Тестируем только логику валидации без шифрования
+	// Test only validation logic without encryption
 	tests := []struct {
 		name              string
 		login             string
@@ -198,7 +198,7 @@ func TestUserService_SignUpUser_ValidationOnly(t *testing.T) {
 }
 
 func TestUserService_SignInUser_ValidationOnly(t *testing.T) {
-	// Тестируем только логику валидации без шифрования
+	// Test only validation logic without encryption
 	tests := []struct {
 		name              string
 		login             string

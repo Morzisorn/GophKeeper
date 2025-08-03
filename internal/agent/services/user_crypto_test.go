@@ -84,7 +84,7 @@ func TestCryptoService_GenerateMasterKey_NilConfig(t *testing.T) {
 }
 
 func TestEncryptData_NilPublicKey(t *testing.T) {
-	// Этот тест потребует настройки config.GetAgentConfig()
-	// Пропускаем, так как требует глобального состояния
+	// This test would require config.GetAgentConfig() setup
+	// Skip since it requires global state
 	t.Skip("encryptData uses global config - needs integration test")
 }

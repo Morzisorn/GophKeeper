@@ -16,7 +16,7 @@ const (
 	nonceSize = 12 // GCM nonce size
 )
 
-// EncryptItem шифрует клиентский Item в EncryptedItem
+// EncryptItem encrypts client Item into EncryptedItem
 func (cs *CryptoService) encryptItem(item *models.Item) (*models.EncryptedItem, error) {
 	mp, err := cs.cnfg.GetMasterPassword()
 	if err != nil {
@@ -67,13 +67,13 @@ func (cs *CryptoService) decryptItem(encryptedItem *models.EncryptedItem) (*mode
 		return nil, errors.New("user salt not set")
 	}
 
-	// Создаем экземпляр правильного типа данных
+	// Create instance of correct data type
 	data, err := encryptedItem.Type.CreateDataByType()
 	if err != nil {
 		return nil, err
 	}
 
-	// Расшифровываем данные
+	// Decrypt data
 	err = cs.decryptData(&encryptedItem.EncryptedData, data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decrypt item data: %w", err)
@@ -92,7 +92,7 @@ func (cs *CryptoService) decryptItem(encryptedItem *models.EncryptedItem) (*mode
 }
 
 func (cs *CryptoService) encryptItemData(data models.Data) (*models.EncryptedData, error) {
-	// Сериализуем данные в JSON
+	// Serialize data to JSON
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal data: %w", err)
@@ -108,28 +108,28 @@ func (cs *CryptoService) encryptItemData(data models.Data) (*models.EncryptedDat
 		}
 	}
 
-	// Создаем AES шифр
+	// Create AES cipher
 	block, err := aes.NewCipher(mk)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create cipher: %w", err)
 	}
 
-	// Создаем GCM режим
+	// Create GCM mode
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create GCM: %w", err)
 	}
 
-	// Генерируем случайный nonce
+	// Generate random nonce
 	nonce := make([]byte, nonceSize)
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
 		return nil, fmt.Errorf("failed to generate nonce: %w", err)
 	}
 
-	// Шифруем данные
+	// Encrypt data
 	ciphertext := gcm.Seal(nil, nonce, jsonData, nil)
 
-	// Возвращаем EncryptedData с Base64 кодированием
+	// Return EncryptedData with Base64 encoding
 	return &models.EncryptedData{
 		EncryptedContent: base64.StdEncoding.EncodeToString(ciphertext),
 		Nonce:            base64.StdEncoding.EncodeToString(nonce),
@@ -137,7 +137,7 @@ func (cs *CryptoService) encryptItemData(data models.Data) (*models.EncryptedDat
 }
 
 func (cs *CryptoService) decryptData(encryptedData *models.EncryptedData, result models.Data) error {
-	// Декодируем Base64
+	// Decode Base64
 	ciphertext, err := base64.StdEncoding.DecodeString(encryptedData.EncryptedContent)
 	if err != nil {
 		return fmt.Errorf("failed to decode data: %w", err)
@@ -148,7 +148,7 @@ func (cs *CryptoService) decryptData(encryptedData *models.EncryptedData, result
 		return fmt.Errorf("failed to decode nonce: %w", err)
 	}
 
-	// Используем кешированный ключ
+	// Use cached key
 	mk, err := cs.cnfg.GetMasterKey()
 	if err != nil {
 		return fmt.Errorf("failed to get master key: %w", err)
@@ -160,25 +160,25 @@ func (cs *CryptoService) decryptData(encryptedData *models.EncryptedData, result
 		}
 	}
 
-	// Создаем AES шифр
+	// Create AES cipher
 	block, err := aes.NewCipher(mk)
 	if err != nil {
 		return fmt.Errorf("failed to create cipher: %w", err)
 	}
 
-	// Создаем GCM режим
+	// Create GCM mode
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
 		return fmt.Errorf("failed to create GCM: %w", err)
 	}
 
-	// Расшифровываем данные
+	// Decrypt data
 	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
 		return fmt.Errorf("failed to decrypt data: %w", err)
 	}
 
-	// Десериализуем JSON в результирующий объект
+	// Deserialize JSON into result object
 	if err := json.Unmarshal(plaintext, result); err != nil {
 		return fmt.Errorf("failed to unmarshal decrypted data: %w", err)
 	}

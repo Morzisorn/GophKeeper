@@ -53,23 +53,23 @@ func TestGetProjectRoot_ValidProject(t *testing.T) {
 }
 
 func TestGetProjectRoot_FromTempDir(t *testing.T) {
-	// Создаем временную директорию без go.mod
+	// Create temporary directory without go.mod
 	tempDir := t.TempDir()
 
-	// Сохраняем текущую директорию
+	// Save current directory
 	originalWd, err := os.Getwd()
 	assert.NoError(t, err)
 
-	// Переходим во временную директорию
+	// Change to temporary directory
 	err = os.Chdir(tempDir)
 	assert.NoError(t, err)
 
-	// Восстанавливаем оригинальную директорию после теста
+	// Restore original directory after test
 	defer func() {
 		os.Chdir(originalWd)
 	}()
 
-	// Пытаемся найти корень проекта - должна быть ошибка
+	// Try to find project root - should return error
 	_, err = GetProjectRoot()
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "project root not found")
@@ -83,15 +83,15 @@ func TestGetEncFilePath_NotEmpty(t *testing.T) {
 }
 
 func TestGetEncFilePath_WithMockedGetEnvPath(t *testing.T) {
-	// Сохраняем оригинальную функцию
+	// Save original function
 	originalGetEnvPath := getEnvPath
 
-	// Мокаем функцию
+	// Mock the function
 	getEnvPath = func() string {
 		return "/mock/path/.env"
 	}
 
-	// Восстанавливаем после теста
+	// Restore after test
 	defer func() {
 		getEnvPath = originalGetEnvPath
 	}()
@@ -101,10 +101,10 @@ func TestGetEncFilePath_WithMockedGetEnvPath(t *testing.T) {
 }
 
 func TestNewServerConfig_WithMockedEnv(t *testing.T) {
-	// Мокаем getEnvPath чтобы избежать проблем с файлами
+	// Mock getEnvPath to avoid file issues
 	originalGetEnvPath := getEnvPath
 	getEnvPath = func() string {
-		return "/nonexistent/.env" // Файл не существует, но это не должно ломать создание конфига
+		return "/nonexistent/.env" // File doesn't exist, but this shouldn't break config creation
 	}
 	defer func() {
 		getEnvPath = originalGetEnvPath
@@ -117,10 +117,10 @@ func TestNewServerConfig_WithMockedEnv(t *testing.T) {
 }
 
 func TestNewAgentConfig_WithMockedEnv(t *testing.T) {
-	// Мокаем getEnvPath чтобы избежать проблем с файлами
+	// Mock getEnvPath to avoid file issues
 	originalGetEnvPath := getEnvPath
 	getEnvPath = func() string {
-		return "/nonexistent/.env" // Файл не существует, но это не должно ломать создание конфига
+		return "/nonexistent/.env" // File doesn't exist, but this shouldn't break config creation
 	}
 	defer func() {
 		getEnvPath = originalGetEnvPath

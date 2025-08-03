@@ -447,8 +447,8 @@ func TestUIController_handleConfirmDeleteMetadata_Cancel(t *testing.T) {
 }
 
 func TestUIController_saveMetadataCmd(t *testing.T) {
-	// Этот тест сложен для unit-тестирования, так как требует mock Item service
-	// Пропускаем, так как это интеграционный тест
+	// This test is complex for unit testing as it requires mock Item service
+	// Skipping as this is an integration test
 	t.Skip("Requires mock Item service - integration test")
 }
 
