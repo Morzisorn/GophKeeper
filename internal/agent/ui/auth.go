@@ -108,6 +108,7 @@ func (ui *UIController) startSignUp() *UIController {
 	ui.state = stateSignUpLogin
 	ui.input = ""
 	ui.messages.ClearAll()
+	ui.messages.Clear("auth_error") // Clear any previous auth errors
 	return ui
 }
 
@@ -115,6 +116,7 @@ func (ui *UIController) startSignIn() *UIController {
 	ui.state = stateSignInLogin
 	ui.input = ""
 	ui.messages.ClearAll()
+	ui.messages.Clear("auth_error") // Clear any previous auth errors
 	return ui
 }
 
