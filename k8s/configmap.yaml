@@ -4,11 +4,8 @@ metadata:
   name: gophkeeper-config
   namespace: default
 data:
+  # Server bind address and port
   ADDRESS: "0.0.0.0:8080"
-  LOG_LEVEL: "debug"
-  AUTH_TOKEN_EXPIRY: "24h"
-  DB_MAX_CONNECTIONS: "25"
-  DB_TIMEOUT: "30s"
-  AUTH_PRIVATE_KEY_PATH: "/etc/keys/private.pem"
-  AUTH_PUBLIC_KEY_PATH: "/etc/keys/public.pem"
+  
+  # Directory where RSA keys are mounted
   KEYS_DIR: "/etc/keys"

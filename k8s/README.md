@@ -1,35 +1,64 @@
-# GophKeeper Kubernetes Deployment
+# k3d Development Setup for Trainees
 
-This directory contains Kubernetes manifests and scripts for deploying GophKeeper using k3d.
+This guide explains how to use k3d for GophKeeper
+
+## Quick Start
+
+### 1. Build and Deploy
+
+```bash
+make k3d-build
+# This builds Docker images and deploys them to k3d
+```
+
+### 2. Start the Client
+
+```bash
+make k3d-agent
+# This opens the password manager client in your terminal
+```
+
+### 3. Check Database (optional)
+
+```bash
+make k3d-db
+# This connects to PostgreSQL to see stored data
+```
+
+## What's Running?
+
+When you run `make k3d-build`, these components start in k3d:
+
+- **Server** (`gophkeeper` deployment) - The password manager server
+- **Agent** (`agent` pod) - The client application (dormant until you run `make k3d-agent`)
+- **Database** (`postgres` deployment) - PostgreSQL database for storing encrypted data
+
+## Typical Development Workflow
+
+1. Make code changes
+2. Rebuild and redeploy:
+   - `make k3d-build` - Full rebuild (both server and agent)
+   - `make k3d-build-server` - Server only (faster for server changes)
+   - `make k3d-build-agent` - Agent only (faster for client changes)
+3. Run `make k3d-agent` to test your changes
+4. Use `make k3d-db` to inspect database changes
+
+## Available Commands
+
+Run `make` or `make help` to see all available commands:
+
+- `make k3d-build` - Build and deploy everything
+- `make k3d-build-server` - Rebuild only server (faster for server changes)
+- `make k3d-build-agent` - Rebuild only agent (faster for client changes)
+- `make k3d-agent` - Start the password manager client
+- `make k3d-server` - View server logs (server runs automatically)
+- `make k3d-db` - Connect to database
 
 ## Prerequisites
 
 - Docker
 - k3d
 - kubectl
-
-## Quick Start
-
-1. **Deploy the application:**
-   ```bash
-   ./k8s/deploy.sh
-   ```
-
-2. **Verify deployment:**
-   ```bash
-   ./k8s/verify.sh
-   ```
-
-3. **Access the application:**
-    - gRPC Server: localhost:8080 (NodePort)
-    - Or use port-forwarding: `kubectl port-forward svc/gophkeeper-service 8080:80`
-    - PostgreSQL: localhost:5432 (if needed for debugging)
-    - Connect CLI agent to: localhost:8080 (gRPC endpoint)
-
-4. **Clean up:**
-   ```bash
-   ./k8s/cleanup.sh
-   ```
 
 ## Files Description
 
@@ -38,9 +67,10 @@ This directory contains Kubernetes manifests and scripts for deploying GophKeepe
 - `verify.sh` - Verification script to check deployment status and connectivity
 - `deployment.yaml` - Main application deployment and service
 - `postgres.yaml` - PostgreSQL database deployment and service
+- `agent-pod.yaml` - Agent (client) pod for testing
 - `configmap.yaml` - Application configuration
-- `secrets.yaml` - Application secrets (DB connection, JWT key)
-- `init-db.yaml` - Database initialization scripts
+- `secrets.yaml` - Application secrets
+- `init-wrapper.sql` - Database initialization wrapper (imports actual schema files)
 - `README.md` - This file
 
 ## Manual Deployment Steps
@@ -74,7 +104,12 @@ If you prefer to deploy manually:
 
 5. **Deploy PostgreSQL:**
    ```bash
-   kubectl apply -f k8s/init-db.yaml
+   # Create database schema configmap from actual schema files
+   kubectl create configmap postgres-init \
+     --from-file=000_init.sql=k8s/init-wrapper.sql \
+     --from-file=001_types.sql=internal/server/repositories/database/schema/001_types.sql \
+     --from-file=002_tables.sql=internal/server/repositories/database/schema/002_tables.sql
+   
    kubectl apply -f k8s/postgres.yaml
    kubectl rollout status deployment/postgres --timeout=300s
    ```
@@ -127,28 +162,11 @@ kubectl exec -it deployment/postgres -- psql -U dmitrij -d gophkeeper_db
 
 The application uses the following environment variables configured in `configmap.yaml` and `secrets.yaml`:
 
-- `SERVER_HOST` - gRPC server bind address (default: 0.0.0.0)
-- `SERVER_PORT` - gRPC server port (default: 8080)
-- `LOG_LEVEL` - Logging level (default: debug)
-- `AUTH_TOKEN_EXPIRY` - JWT token expiry time (default: 24h)
-- `DB_MAX_CONNECTIONS` - Maximum database connections (default: 25)
-- `DB_TIMEOUT` - Database operation timeout (default: 30s)
-- `AUTH_PRIVATE_KEY_PATH` - Path to RSA private key (mounted from configmap)
-- `AUTH_PUBLIC_KEY_PATH` - Path to RSA public key (mounted from configmap)
-- `AUTH_SECRET_KEY` - JWT signing secret
-- `DATABASE_URI` - PostgreSQL connection string
+- `ADDRESS` - Server bind address and port (0.0.0.0:8080)
+- `KEYS_DIR` - Directory where RSA keys are mounted (/etc/keys)
+- `DATABASE_URI` - PostgreSQL connection string (from secrets)
 
 ### Key Files
 
 The RSA key files (`private_key.pem` and `public_key.pem`) must be present in the project root directory before
 deployment. These are automatically mounted into the container at `/etc/keys/`.
-
-## Security Notes
-
-⚠️ **Warning**: The current configuration uses hardcoded database credentials for development purposes. In production:
-
-1. Use Kubernetes secrets with base64 encoded values
-2. Use strong, randomly generated passwords
-3. Enable SSL/TLS for database connections
-4. Use RBAC for proper access control
-5. Store sensitive data in a proper secret management system

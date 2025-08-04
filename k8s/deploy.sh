@@ -13,11 +13,12 @@ fi
 echo "🔄 Starting k3d cluster..."
 k3d cluster start gophkeeper
 
-echo "🏗️  Building Docker image..."
-docker build --platform linux/arm64 -t gophkeeper:latest .
+echo "🏗️  Building Docker images..."
+docker build --platform linux/arm64 -t gophkeeper:latest --target server .
+docker build --platform linux/arm64 -t gophkeeper-agent:latest -f Dockerfile.agent .
 
-echo "📦 Importing image to k3d..."
-k3d image import gophkeeper:latest -c gophkeeper
+echo "📦 Importing images to k3d..."
+k3d image import gophkeeper:latest gophkeeper-agent:latest -c gophkeeper
 
 echo "🔧 Applying configurations..."
 kubectl apply -f k8s/configmap.yaml
@@ -34,8 +35,14 @@ else
     exit 1
 fi
 
+echo "🗄️  Setting up database schema..."
+kubectl delete configmap postgres-init --ignore-not-found=true
+kubectl create configmap postgres-init \
+  --from-file=000_init.sql=k8s/init-wrapper.sql \
+  --from-file=001_types.sql=internal/server/repositories/database/schema/001_types.sql \
+  --from-file=002_tables.sql=internal/server/repositories/database/schema/002_tables.sql
+
 echo "🗄️  Deploying PostgreSQL..."
-kubectl apply -f k8s/init-db.yaml
 kubectl apply -f k8s/postgres.yaml
 kubectl rollout status deployment/postgres --timeout=300s
 
@@ -47,11 +54,17 @@ echo "🚀 Deploying application..."
 kubectl apply -f k8s/deployment.yaml
 kubectl rollout status deployment/gophkeeper --timeout=300s
 
+echo "🤖 Deploying agent pod..."
+kubectl apply -f k8s/agent-pod.yaml
+
 echo "📋 Getting status..."
 kubectl get pods,svc
 
 echo "✅ Deployment completed!"
-echo "🌐 Access your app at: http://localhost:8080"
+echo "🤖 To use the password manager client:"
+echo "   make k3d-agent"
+echo ""
 echo "📝 Useful commands:"
-echo "   Logs: kubectl logs -f deployment/gophkeeper"
-echo "   Port-forward: kubectl port-forward svc/gophkeeper-service 8080:80"
+echo "   Server logs: make k3d-server"
+echo "   Database:    make k3d-db"
+echo "   Rebuild:     make k3d-build"

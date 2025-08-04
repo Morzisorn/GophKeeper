@@ -5,10 +5,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Common Development Commands
 
 ### Building and Running
-- `make run-agent` - Run the client agent application
-- `make run-server` - Run the server application  
+
+- `make run-agent` - Run the client agent application locally
+- `make run-server` - Run the server application locally
 - `go run cmd/agent/main.go` - Run agent directly
 - `go run cmd/server/main.go` - Run server directly
+
+### k3d Development Commands
+
+- `make k3d-build` - Build and deploy both server and agent to k3d
+- `make k3d-build-server` - Rebuild only server (faster for server-only changes)
+- `make k3d-build-agent` - Rebuild only agent (faster for client-only changes)
+- `make k3d-agent` - Run the password manager client in k3d
+- `make k3d-server` - View server logs (server runs automatically)
+- `make k3d-db` - Connect to PostgreSQL database
 
 ### Testing
 - `go test ./...` - Run all tests
