@@ -389,6 +389,7 @@ func (ui *UIController) handleProcessComplete(msg processComplete) (tea.Model, t
 		switch msg.context {
 		case "auth":
 			ui.state = stateMenuLoggedOut
+			ui.messages.Set("auth_error", msg.message)
 		case "master_password":
 			ui.state = stateMasterPassword
 		case "delete_item":
