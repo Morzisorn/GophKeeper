@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"gophkeeper/config"
-	"io"
 	"os"
 	"path/filepath"
 )
@@ -32,12 +31,31 @@ type rsaKeyPair struct {
 }
 
 func (cs *CryptoService) LoadRSAKeyPair() error {
-	privatePEM, err := getKeyPEMFromFile(privateKeyFilename)
+	// Try different filename combinations for flexibility
+	privateFiles := []string{"private.pem", privateKeyFilename}
+	publicFiles := []string{"public.pem", publicKeyFilename}
+
+	var privatePEM, publicPEM []byte
+	var err error
+
+	// Try to load private key
+	for _, filename := range privateFiles {
+		privatePEM, err = getKeyPEMFromFile(filename)
+		if err == nil && len(privatePEM) > 0 {
+			break
+		}
+	}
 	if err != nil {
 		return fmt.Errorf("get private key pem from file error: %w", err)
 	}
 
-	publicPEM, err := getKeyPEMFromFile(publicKeyFilename)
+	// Try to load public key
+	for _, filename := range publicFiles {
+		publicPEM, err = getKeyPEMFromFile(filename)
+		if err == nil && len(publicPEM) > 0 {
+			break
+		}
+	}
 	if err != nil {
 		return fmt.Errorf("get public key pem from file error: %w", err)
 	}
@@ -101,13 +119,23 @@ func getKeyPEMFromFile(filename string) ([]byte, error) {
 	}
 	filep := filepath.Join(keysPath, filename)
 
-	file, err := os.OpenFile(filep, os.O_CREATE|os.O_RDWR, 0644)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open file with pem keys: %w. Path: %s", err, filep)
+	// Check if file exists first
+	if _, err := os.Stat(filep); os.IsNotExist(err) {
+		// For container environment, try read-only access first
+		data, err := os.ReadFile(filep)
+		if err == nil {
+			return data, nil
+		}
+		// If read-only fails, try creating for local development
+		file, err := os.OpenFile(filep, os.O_CREATE|os.O_RDWR, 0644)
+		if err != nil {
+			return nil, fmt.Errorf("failed to open file with pem keys: %w. Path: %s", err, filep)
+		}
+		defer file.Close()
+		return []byte{}, nil // Return empty for new file
 	}
-	defer file.Close()
 
-	data, err := io.ReadAll(file)
+	data, err := os.ReadFile(filep)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file with pem keys: %w", err)
 	}
@@ -172,6 +200,12 @@ func saveKeyInFile(key []byte, filename string) error {
 }
 
 func getKeysPath() (string, error) {
+	// First try to get the key path from environment variables
+	if keysDir := os.Getenv("KEYS_DIR"); keysDir != "" {
+		return keysDir, nil
+	}
+
+	// Fallback to project root for local development
 	return config.GetProjectRoot()
 }
 
