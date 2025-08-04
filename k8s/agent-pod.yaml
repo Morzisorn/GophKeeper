@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: agent
+spec:
+  restartPolicy: Never
+  containers:
+    - name: agent
+      image: gophkeeper-agent:latest
+      imagePullPolicy: Never
+      env:
+        - name: ADDRESS
+          value: "gophkeeper-service:80"
+        - name: TERM
+          value: "xterm"
+      stdin: true
+      tty: true
+      command: [ "/bin/sh" ]
+      args: [ "-c", "while true; do sleep 30; done" ]

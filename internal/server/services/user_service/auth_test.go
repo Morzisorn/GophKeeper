@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"gophkeeper/config"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -34,7 +36,11 @@ func TestGenerateToken(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			token, err := generateToken(tt.login)
+			cnfg, err := config.NewServerConfig()
+			require.NoError(t, err)
+			userService, err := NewUserService(cnfg, &MockStorage{})
+			require.NoError(t, err)
+			token, err := userService.generateToken(tt.login)
 
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -67,7 +73,11 @@ func TestGenerateToken(t *testing.T) {
 }
 
 func TestGenerateToken_Format(t *testing.T) {
-	token, err := generateToken("testuser")
+	cnfg, err := config.NewServerConfig()
+	require.NoError(t, err)
+	userService, err := NewUserService(cnfg, &MockStorage{})
+	require.NoError(t, err)
+	token, err := userService.generateToken("testuser")
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 
@@ -84,8 +94,12 @@ func TestGenerateToken_DifferentLogins(t *testing.T) {
 	login1 := "user1"
 	login2 := "user2"
 
-	token1, err1 := generateToken(login1)
-	token2, err2 := generateToken(login2)
+	cnfg, err := config.NewServerConfig()
+	require.NoError(t, err)
+	userService, err := NewUserService(cnfg, &MockStorage{})
+	require.NoError(t, err)
+	token1, err1 := userService.generateToken(login1)
+	token2, err2 := userService.generateToken(login2)
 
 	assert.NoError(t, err1)
 	assert.NoError(t, err2)
@@ -98,9 +112,13 @@ func TestGenerateToken_DifferentLogins(t *testing.T) {
 func TestGenerateToken_MultipleCallsSameUser(t *testing.T) {
 	login := "testuser"
 
-	token1, err1 := generateToken(login)
+	cnfg, err := config.NewServerConfig()
+	require.NoError(t, err)
+	userService, err := NewUserService(cnfg, &MockStorage{})
+	require.NoError(t, err)
+	token1, err1 := userService.generateToken(login)
 	time.Sleep(time.Second)
-	token2, err2 := generateToken(login)
+	token2, err2 := userService.generateToken(login)
 
 	assert.NoError(t, err1)
 	assert.NoError(t, err2)

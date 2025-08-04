@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gophkeeper
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gophkeeper
+  template:
+    metadata:
+      labels:
+        app: gophkeeper
+    spec:
+      containers:
+        - name: gophkeeper
+          image: gophkeeper:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: gophkeeper-config
+            - secretRef:
+                name: gophkeeper-secrets
+          volumeMounts:
+            - name: keys
+              mountPath: /etc/keys
+              readOnly: true
+      volumes:
+        - name: keys
+          configMap:
+            name: gophkeeper-keys
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gophkeeper-service
+  namespace: default
+spec:
+  selector:
+    app: gophkeeper
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30080
+  type: NodePort

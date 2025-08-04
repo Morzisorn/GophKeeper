@@ -18,7 +18,9 @@ import (
 func TestErrorHandling_InvalidJSONMeta(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)
@@ -55,7 +57,9 @@ func TestErrorHandling_InvalidJSONMeta(t *testing.T) {
 func TestErrorHandling_DatabaseConnectionFailure(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	userDB, err := NewUserDB(q, mock)
@@ -80,7 +84,9 @@ func TestErrorHandling_DatabaseConnectionFailure(t *testing.T) {
 func TestErrorHandling_QueryScanFailure(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)

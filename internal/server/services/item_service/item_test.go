@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// MockStorage реализует интерфейс repositories.Storage для тестирования
+// MockStorage implements repositories.Storage interface for testing
 type MockStorage struct {
 	shouldFail bool
 	items      []models.EncryptedItem

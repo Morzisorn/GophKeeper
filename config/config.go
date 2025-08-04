@@ -3,112 +3,44 @@ package config
 import (
 	"crypto/rsa"
 	"fmt"
+	"go.uber.org/zap"
 	"gophkeeper/internal/logger"
 	"os"
 	"path/filepath"
-	"sync"
-
-	"go.uber.org/zap"
 )
 
 type Config struct {
-	CommonConfig
-	AgentConfig
-	ServerConfig
+	commonConfig
+	agentConfig
+	serverConfig
 }
 
-type CommonConfig struct {
-	AppType       string
-	Addr          string
-	CryptoKeyPath string
-	SecretKey     string
+type commonConfig struct {
+	Addr      string
+	SecretKey string
 }
 
-type AgentConfig struct {
-	PublicKey      *rsa.PublicKey
-	MasterPassword string
-	MasterKey      []byte
-	Salt           []byte
-}
-
-type ServerConfig struct {
-	DBConnStr    string
-	PrivateKey   *rsa.PrivateKey
-	PublicKeyPEM []byte
-}
-
-var (
-	instanceServer *Config
-	onceServer     sync.Once
-
-	instanceAgent *Config
-	onceAgent     sync.Once
-)
-
-func GetServerConfig() (*Config, error) {
-	var initErr error
-
-	onceServer.Do(func() {
-		var err error
-		instanceServer, err = newServerConfig()
-		if err != nil {
-			initErr = fmt.Errorf("get server config error: %w", err)
-		}
-	})
-
-	if initErr != nil {
-		return nil, initErr
+func (c *Config) GetConnectionString() string    { return c.DBConnStr }
+func (c *Config) GetPrivateKey() *rsa.PrivateKey { return c.PrivateKey }
+func (c *Config) GetSecretKey() string           { return c.SecretKey }
+func (c *Config) GetPublicKeyPEM() []byte        { return c.PublicKeyPEM }
+func (c *Config) GetAddress() string             { return c.Addr }
+func (c *Config) SetPrivateKey(pk *rsa.PrivateKey) error {
+	if pk == nil {
+		return fmt.Errorf("private key is nil")
 	}
-	return instanceServer, nil
+	c.PrivateKey = pk
+	return nil
+}
+func (c *Config) SetPublicKeyPEM(pk []byte) error {
+	if pk == nil {
+		return fmt.Errorf("public key is nil")
+	}
+	c.PublicKeyPEM = pk
+	return nil
 }
 
 var getEnvPath = getEncFilePath
-
-func newServerConfig() (*Config, error) {
-	envPath := getEnvPath()
-	if err := loadEnvFile(envPath); err != nil {
-		fmt.Printf("Load .env error: %v. Env path: %s\n", err, envPath)
-	}
-
-	c := &Config{}
-
-	c.parseCommonEnvs()
-	c.parseServerEnvs()
-
-	return c, nil
-}
-
-func GetAgentConfig() (*Config, error) {
-	var initErr error
-
-	onceAgent.Do(func() {
-		var err error
-		instanceAgent, err = newAgentConfig()
-		if err != nil {
-			initErr = fmt.Errorf("get agent config error: %w", err)
-		}
-	})
-
-	if initErr != nil {
-		return nil, initErr
-	}
-
-	return instanceAgent, nil
-}
-
-func newAgentConfig() (*Config, error) {
-	envPath := getEnvPath()
-	if err := loadEnvFile(envPath); err != nil {
-		fmt.Printf("Load .env error: %v. Env path: %s\n", err, envPath)
-	}
-
-	c := &Config{}
-
-	c.parseCommonEnvs()
-	c.parseAgentEnvs()
-
-	return c, nil
-}
 
 func GetProjectRoot() (string, error) {
 	wd, err := os.Getwd()

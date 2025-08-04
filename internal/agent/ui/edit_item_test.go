@@ -175,7 +175,7 @@ func TestUIController_handleEditItemNameInput_Enter_ValidName(t *testing.T) {
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
 	assert.Equal(t, "new-name", ui.itemCtrl.editingItem.Name)
-	assert.Equal(t, "test-login", ui.input) // Input должен быть установлен в значение логина
+	assert.Equal(t, "test-login", ui.input) // Input should be set to login value
 	assert.Equal(t, stateEditCredentialLogin, ui.state)
 }
 
@@ -314,8 +314,8 @@ func TestUIController_handleEditCredentialPasswordInput_Enter(t *testing.T) {
 }
 
 func TestUIController_saveEditedItemCmd(t *testing.T) {
-	// Этот тест сложен для unit-тестирования, так как требует mock Item service
-	// Пропускаем, так как это интеграционный тест
+	// This test is complex for unit testing as it requires mock Item service
+	// Skipping as this is an integration test
 	t.Skip("Requires mock Item service - integration test")
 }
 

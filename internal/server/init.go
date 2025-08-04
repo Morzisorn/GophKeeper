@@ -21,14 +21,15 @@ import (
 	"google.golang.org/grpc"
 )
 
+var _ Server = (*GRPCServer)(nil)
+
 type Server interface {
-	Create(us *userv.UserService) error
 	Run() error
 	Shutdown(ctx context.Context, idleConnsClosed chan struct{})
 }
 
-func CreateAndRun(us *userv.UserService, cs *cserv.CryptoService, is *iserv.ItemService) error {
-	g, err := createGRPCServer(us, cs, is)
+func CreateAndRun(cnfg config.ServerConfig, us *userv.UserService, cs *cserv.CryptoService, is *iserv.ItemService) error {
+	g, err := createGRPCServer(cnfg, us, cs, is)
 	if err != nil {
 		return fmt.Errorf("create grpc server error: %w\n", err)
 	}
@@ -49,21 +50,18 @@ type GRPCServer struct {
 	IS *iserv.ItemService
 }
 
-func createGRPCServer(us *userv.UserService, cs *cserv.CryptoService, is *iserv.ItemService) (*GRPCServer, error) {
+func createGRPCServer(cnfg config.ServerConfig, us *userv.UserService, cs *cserv.CryptoService, is *iserv.ItemService) (*GRPCServer, error) {
 	uc := controllers.NewUserController(us)
-	cc := controllers.NewCryptoController()
+	cc := controllers.NewCryptoController(cnfg)
 	ic := controllers.NewItemController(is)
-	cnfg, err := config.GetServerConfig()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get server config: %w", err)
-	}
-	listen, err := net.Listen("tcp", cnfg.Addr)
+	listen, err := net.Listen("tcp", cnfg.GetAddress())
 	if err != nil {
 		return nil, fmt.Errorf("create listener error: %w", err)
 	}
 
+	authInterceptor := controllers.NewAuthInterceptor(cnfg)
 	s := grpc.NewServer(
-		grpc.UnaryInterceptor(controllers.AuthInterceptor),
+		grpc.UnaryInterceptor(authInterceptor),
 	)
 	pbus.RegisterUserControllerServer(s, uc)
 	pbcs.RegisterCryptoControllerServer(s, cc)

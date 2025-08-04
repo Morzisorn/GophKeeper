@@ -28,8 +28,8 @@ func TestUIController_handleViewItems(t *testing.T) {
 }
 
 func TestUIController_loadItemsCmd(t *testing.T) {
-	// Этот тест сложен для unit-тестирования, так как требует mock Item service
-	// Пропускаем, так как это интеграционный тест
+	// This test is complex for unit testing as it requires mock Item service
+	// Skipping as this is an integration test
 	t.Skip("Requires mock Item service - integration test")
 }
 

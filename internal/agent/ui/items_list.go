@@ -160,6 +160,9 @@ func (ui *UIController) itemTypeSelectionView() string {
 
 	menu := ""
 	for i, itemType := range ui.itemTypes {
+		if itemType.count == 0 {
+			continue
+		}
 		prefix := fmt.Sprintf("%d. ", i+1)
 		option := fmt.Sprintf("%s (%d)", itemType.typ, itemType.count)
 
@@ -243,7 +246,7 @@ func (ui *UIController) viewItemsByTypeView() string {
 	menu := ""
 	for i, item := range ui.items {
 		prefix := fmt.Sprintf("%d. ", i+1)
-		itemName := item.Name // или как у вас называется поле с именем
+		itemName := item.Name // or whatever the name field is called
 		if itemName == "" {
 			itemName = "Unnamed Item"
 		}

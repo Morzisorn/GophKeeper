@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
+	"gophkeeper/internal/logger"
 	"gophkeeper/models"
 
 	gen "gophkeeper/internal/server/repositories/database/generated"
@@ -31,6 +33,7 @@ func NewUserDB(q *gen.Queries, pool PoolInterface) (UserDatabase, error) {
 }
 
 func (db *UserDB) SignUpUser(ctx context.Context, user *models.User) error {
+	logger.Log.Info("try to sign up user", zap.String("login", user.Login))
 	return db.q.SignUpUser(ctx, gen.SignUpUserParams{
 		Login:    user.Login,
 		Password: user.Password,

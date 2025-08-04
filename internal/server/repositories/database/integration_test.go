@@ -17,7 +17,9 @@ import (
 func TestIntegrationUserItemOperations(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 
@@ -71,7 +73,7 @@ func TestIntegrationUserItemOperations(t *testing.T) {
 		Meta: models.Meta{},
 	}
 
-	// Используем правильный JSON для Meta
+	// Use correct JSON for Meta
 	mock.ExpectQuery("INSERT INTO items").
 		WithArgs("integrationuser", "test credential", itemTypeModelsToPg(models.ItemTypeCREDENTIALS), "encrypted_login_password", "random_nonce", []byte(`{"Map":null}`)).
 		WillReturnRows(pgxmock.NewRows([]string{"id"}).AddRow("550e8400-e29b-41d4-a716-446655440000"))
@@ -79,7 +81,7 @@ func TestIntegrationUserItemOperations(t *testing.T) {
 	err = pgdb.AddItem(ctx, item)
 	assert.NoError(t, err)
 
-	// Test get all user items - исправляем порядок ожиданий
+	// Test get all user items - fix order of expectations
 	testUUID := pgtype.UUID{
 		Bytes: [16]byte{0x55, 0x0e, 0x84, 0x00, 0xe2, 0x9b, 0x41, 0xd4, 0xa7, 0x16, 0x44, 0x66, 0x55, 0x44, 0x00, 0x00},
 		Valid: true,
@@ -103,7 +105,7 @@ func TestIntegrationUserItemOperations(t *testing.T) {
 
 	items, err := pgdb.GetAllUserItems(ctx, "integrationuser")
 	assert.NoError(t, err)
-	require.Len(t, items, 1) // используем require чтобы избежать panic
+	require.Len(t, items, 1) // use require to avoid panic
 	if len(items) > 0 {
 		assert.Equal(t, "test credential", items[0].Name)
 		assert.Equal(t, models.ItemTypeCREDENTIALS, items[0].Type)

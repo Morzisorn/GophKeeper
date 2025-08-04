@@ -13,7 +13,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func NewAuthInterceptor(cnfg config.ServerInterceptorsConfig) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		return AuthInterceptor(ctx, cnfg, req, info, handler)
+	}
+}
+
+func AuthInterceptor(ctx context.Context, cnfg config.ServerInterceptorsConfig, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	if isPublicMethod(info.FullMethod) {
 		return handler(ctx, req)
 	}
@@ -30,7 +36,7 @@ func AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServe
 
 	token := strings.TrimPrefix(authHeader[0], "Bearer ")
 
-	claims, err := validateJWT(token)
+	claims, err := validateJWT(cnfg, token)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid token: %v", err)
 	}
@@ -67,12 +73,8 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func validateJWT(tokenString string) (jwt.MapClaims, error) {
-	cnfg, err := config.GetServerConfig()
-	if err != nil {
-		return nil, fmt.Errorf("GetPublicKeyPEM: failed to get config: %w", err)
-	}
-	secretKey := []byte(cnfg.SecretKey)
+func validateJWT(cnfg config.ServerInterceptorsConfig, tokenString string) (jwt.MapClaims, error) {
+	secretKey := []byte(cnfg.GetSecretKey())
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

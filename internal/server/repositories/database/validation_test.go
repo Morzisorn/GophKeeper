@@ -16,7 +16,9 @@ import (
 func TestValidation_EmptyUserLogin(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 
@@ -41,7 +43,9 @@ func TestValidation_EmptyUserLogin(t *testing.T) {
 func TestValidation_NilPassword(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 
@@ -66,7 +70,9 @@ func TestValidation_NilPassword(t *testing.T) {
 func TestValidation_EmptyItemName(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 

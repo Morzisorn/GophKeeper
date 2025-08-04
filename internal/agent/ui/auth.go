@@ -128,12 +128,16 @@ func (ui *UIController) signUpCmd(login, password string) tea.Cmd {
 				context: "auth",
 			}
 		}
-		if ui.User.Client.GetJWTToken() != "" {
-			ui.isAuthenticated = true
-			ui.login = login
+		token, err := ui.User.Client.GetJWTToken()
+		if err != nil {
+			return processComplete{
+				success: false,
+				message: fmt.Sprintf("Sign up error: %v", err),
+				context: "auth",
+			}
 		}
 		return processComplete{
-			success: true,
+			success: len(token) != 0,
 			message: "Account successfully registered",
 			context: "auth_to_master",
 		}
@@ -151,13 +155,17 @@ func (ui *UIController) signInCmd(login, password string) tea.Cmd {
 			}
 		}
 
-		if ui.User.Client.GetJWTToken() != "" {
-			ui.isAuthenticated = true
-			ui.login = login
+		token, err := ui.User.Client.GetJWTToken()
+		if err != nil {
+			return processComplete{
+				success: false,
+				message: fmt.Sprintf("Sign up error: %v", err),
+				context: "auth",
+			}
 		}
 
 		return processComplete{
-			success: true,
+			success: len(token) != 0,
 			message: "Signed in successfully",
 			context: "auth_to_master",
 		}
@@ -229,7 +237,13 @@ func (ui *UIController) handleMasterPasswordInput(msg tea.KeyMsg) (tea.Model, te
 
 func (ui *UIController) setMasterPasswordCmd(masterPassword string) tea.Cmd {
 	return func() tea.Msg {
-		ui.User.SetMasterKey(masterPassword)
+		if err := ui.User.SetMasterKey(masterPassword); err != nil {
+			return processComplete{
+				success: false,
+				message: fmt.Sprintf("Set master password: %v", err),
+				context: "master_password",
+			}
+		}
 
 		return processComplete{
 			success: true,

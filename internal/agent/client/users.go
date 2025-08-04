@@ -45,10 +45,17 @@ func (g *GRPCClient) SignInUser(ctx context.Context, user *models.User) (token s
 	return resp.Token, resp.Salt, nil
 }
 
-func (g *GRPCClient) SetJWTToken(token string) {
+func (g *GRPCClient) SetJWTToken(token string) error {
+	if token == "" {
+		return errors.New("token is empty")
+	}
 	g.token = token
+	return nil
 }
 
-func (g *GRPCClient) GetJWTToken() string {
-	return g.token
+func (g *GRPCClient) GetJWTToken() (string, error) {
+	if g.token == "" {
+		return "", errors.New("token is empty")
+	}
+	return g.token, nil
 }

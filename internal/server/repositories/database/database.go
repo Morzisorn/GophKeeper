@@ -25,8 +25,8 @@ type PGDB struct {
 
 var _ Database = (*PGDB)(nil)
 
-func NewPGDB(cfg *config.Config) (Database, error) {
-	pool, err := pgxpool.New(context.Background(), cfg.DBConnStr)
+func NewPGDB(cfg config.DatabaseConfig) (Database, error) {
+	pool, err := pgxpool.New(context.Background(), cfg.GetConnectionString())
 	if err != nil {
 		return nil, fmt.Errorf("create new db error: %v", err)
 	}
@@ -52,9 +52,21 @@ func NewPGDB(cfg *config.Config) (Database, error) {
 }
 
 func createTables(db *pgxpool.Pool) error {
+	// If we're in a container (no project root), skip table creation
+	// as it should be handled by init scripts
 	rootDir, err := config.GetProjectRoot()
 	if err != nil {
-		return err
+		// Likely in container environment, check if tables already exist
+		var tablesExist bool
+		err = db.QueryRow(context.Background(),
+			"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'users')").Scan(&tablesExist)
+		if err != nil {
+			return fmt.Errorf("failed to check if tables exist: %w", err)
+		}
+		if tablesExist {
+			return nil // Tables already exist, skip creation
+		}
+		return fmt.Errorf("tables don't exist and can't create them in container environment: %w", err)
 	}
 	dirpath := filepath.Join(rootDir, "internal", "server", "repositories", "database", "schema")
 

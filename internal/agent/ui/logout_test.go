@@ -173,8 +173,8 @@ func TestUIController_executeLogout_Cancel(t *testing.T) {
 }
 
 func TestUIController_logoutCmd(t *testing.T) {
-	// Этот тест сложен для unit-тестирования, так как требует mock User service
-	// Пропускаем, так как это интеграционный тест
+	// This test is complex for unit testing as it requires mock User service
+	// Skipping as this is an integration test
 	t.Skip("Requires mock User service - integration test")
 }
 
@@ -381,7 +381,7 @@ func TestUIController_confirmLogoutView_YesSelected(t *testing.T) {
 	assert.Contains(t, view, "Are you sure you want to logout?")
 	assert.Contains(t, view, "[ No ]")
 	assert.Contains(t, view, "[ Yes ]")
-	// В этом случае "Yes" должен быть выделен, а "No" - обычным
+	// In this case "Yes" should be highlighted and "No" should be normal
 }
 
 func TestUIController_logoutSuccessView(t *testing.T) {

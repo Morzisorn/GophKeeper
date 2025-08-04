@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gophkeeper-config
+  namespace: default
+data:
+  # Server bind address and port
+  ADDRESS: "0.0.0.0:8080"
+  
+  # Directory where RSA keys are mounted
+  KEYS_DIR: "/etc/keys"

@@ -9,8 +9,8 @@ import (
 )
 
 func TestUIController_deleteItemCmd(t *testing.T) {
-	// Этот тест сложен для unit-тестирования, так как требует mock Item service
-	// Пропускаем, так как это интеграционный тест
+	// This test is complex for unit testing as it requires mock Item service
+	// Skipping as this is an integration test
 	t.Skip("Requires mock Item service - integration test")
 }
 
@@ -332,7 +332,7 @@ func TestUIController_confirmDeleteView_YesSelected(t *testing.T) {
 
 	assert.Contains(t, view, "Confirm Delete")
 	assert.Contains(t, view, "Test Item")
-	// В этом случае "Yes" должен быть выделен, а "No" - обычным
+	// In this case "Yes" should be highlighted and "No" should be normal
 	assert.Contains(t, view, "[ No ]")
 	assert.Contains(t, view, "[ Yes ]")
 }

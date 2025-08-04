@@ -25,7 +25,7 @@ func TestGRPCClient_authInterceptor_WithToken(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	// Проверяем, что токен добавлен в метаданные
+	// Check that token is added to metadata
 	md, ok := metadata.FromOutgoingContext(capturedCtx)
 	assert.True(t, ok)
 
@@ -50,7 +50,7 @@ func TestGRPCClient_authInterceptor_WithoutToken(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	// Проверяем, что метаданные не содержат токен
+	// Check that metadata doesn't contain token
 	md, ok := metadata.FromOutgoingContext(capturedCtx)
 	if ok {
 		authValues := md.Get("authorization")

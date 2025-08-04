@@ -17,7 +17,9 @@ import (
 func TestItemDB_AddItem(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 
@@ -86,7 +88,9 @@ func TestItemDB_AddItem(t *testing.T) {
 func TestItemDB_GetAllUserItems(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)
@@ -96,14 +100,14 @@ func TestItemDB_GetAllUserItems(t *testing.T) {
 		name     string
 		login    string
 		mockFn   func()
-		expected int // изменим на проверку количества элементов
+		expected int // changed to check number of elements
 		wantErr  bool
 	}{
 		{
 			name:  "successful get all items",
 			login: "testuser",
 			mockFn: func() {
-				// Используем pgtype.UUID вместо [16]byte
+				// Use pgtype.UUID instead of [16]byte
 				testUUID := pgtype.UUID{
 					Bytes: [16]byte{0x55, 0x0e, 0x84, 0x00, 0xe2, 0x9b, 0x41, 0xd4, 0xa7, 0x16, 0x44, 0x66, 0x55, 0x44, 0x00, 0x00},
 					Valid: true,
@@ -113,7 +117,7 @@ func TestItemDB_GetAllUserItems(t *testing.T) {
 					"id", "name", "type", "encrypted_data_content",
 					"encrypted_data_nonce", "meta", "created_at", "updated_at",
 				}).AddRow(
-					testUUID, // используем pgtype.UUID
+					testUUID, // use pgtype.UUID
 					"test item",
 					"CREDENTIALS",
 					"encrypted_content",
@@ -166,7 +170,7 @@ func TestItemDB_GetAllUserItems(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 				assert.Len(t, items, tt.expected)
-				// Дополнительные проверки для успешного случая
+				// Additional checks for successful case
 				if tt.expected > 0 && len(items) > 0 {
 					assert.Equal(t, "testuser", items[0].UserLogin)
 					assert.Equal(t, "test item", items[0].Name)
@@ -182,7 +186,9 @@ func TestItemDB_GetAllUserItems(t *testing.T) {
 func TestItemDB_GetUserItemsWithType(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)
@@ -260,7 +266,9 @@ func TestItemDB_GetUserItemsWithType(t *testing.T) {
 func TestItemDB_GetTypesCounts(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)
@@ -334,7 +342,9 @@ func TestItemDB_GetTypesCounts(t *testing.T) {
 func TestItemDB_EditItem(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)
@@ -416,7 +426,9 @@ func TestItemDB_EditItem(t *testing.T) {
 func TestItemDB_DeleteItem(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	require.NoError(t, err)
-	defer mock.Close()
+	defer func() {
+		mock.Close()
+	}()
 
 	q := gen.New(mock)
 	itemDB, err := NewItemDB(q, mock)

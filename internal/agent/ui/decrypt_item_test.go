@@ -9,8 +9,8 @@ import (
 )
 
 func TestUIController_decryptItemCmd_Success(t *testing.T) {
-	// Этот тест сложен для unit-тестирования, так как требует mock Item service
-	// Пропускаем, так как это интеграционный тест
+	// This test is complex for unit testing as it requires mock Item service
+	// Skipping as this is an integration test
 	t.Skip("Requires mock Item service - integration test")
 }
 
@@ -66,11 +66,11 @@ func TestUIController_handleDecryptError_FailedToDecrypt(t *testing.T) {
 }
 
 func TestUIController_handleDecryptError_DecryptItemCmdGeneratedError(t *testing.T) {
-	// Этот тест проверяет случай, когда decryptItemCmd генерирует ошибку "incorrect master password"
+	// This test checks the case when decryptItemCmd generates "incorrect master password" error
 	ui := &UIController{}
 
 	msg := decryptError{
-		err:     errors.New("incorrect master password"), // Как создается в decryptItemCmd
+		err:     errors.New("incorrect master password"), // As created in decryptItemCmd
 		context: "decrypt_item",
 	}
 
@@ -205,7 +205,7 @@ func TestUIController_decryptErrorView_EmptyMessage(t *testing.T) {
 }
 
 func TestUIController_decryptErrorView_ControlsAreSame(t *testing.T) {
-	// Проверяем, что контролы одинаковые для обоих типов ошибок
+	// Check that controls are the same for both error types
 	ui1 := &UIController{
 		itemCtrl: itemCtrl{
 			decryptErrorMsg: "incorrect master password detected",
@@ -221,7 +221,7 @@ func TestUIController_decryptErrorView_ControlsAreSame(t *testing.T) {
 	view1 := ui1.decryptErrorView()
 	view2 := ui2.decryptErrorView()
 
-	// Оба должны содержать одинаковые контролы
+	// Both should contain the same controls
 	assert.Contains(t, view1, "Enter to re-enter master password")
 	assert.Contains(t, view2, "Enter to re-enter master password")
 	assert.Contains(t, view1, "q to quit")

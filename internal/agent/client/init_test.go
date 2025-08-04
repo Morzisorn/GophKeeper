@@ -9,7 +9,7 @@ import (
 )
 
 func TestNewGRPCClient_NotNil(t *testing.T) {
-	cnfg, err := config.GetServerConfig()
+	cnfg, err := config.NewAgentConfig()
 	require.NoError(t, err)
 	cnfg.Addr = "localhost:8080"
 

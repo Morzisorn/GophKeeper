@@ -226,7 +226,7 @@ func TestItemType_ToPb(t *testing.T) {
 }
 
 func TestRoundTripConversion(t *testing.T) {
-	// Тест полного цикла: models -> pb -> models
+	// Full cycle test: models -> pb -> models
 	original := &EncryptedItem{
 		ID:        [16]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16},
 		UserLogin: "testuser",
@@ -237,7 +237,7 @@ func TestRoundTripConversion(t *testing.T) {
 			Nonce:            "test_nonce",
 		},
 		Meta:      Meta{Map: map[string]string{"key": "value"}},
-		CreatedAt: time.Now().Truncate(time.Second), // Обрезаем до секунд для сравнения
+		CreatedAt: time.Now().Truncate(time.Second), // Truncate to seconds for comparison
 		UpdatedAt: time.Now().Truncate(time.Second),
 	}
 
@@ -250,7 +250,7 @@ func TestRoundTripConversion(t *testing.T) {
 	converted := EncryptedItemPbToModels(pbItem)
 	require.NotNil(t, converted)
 
-	// Сравниваем
+	// Compare
 	assert.Equal(t, original.ID, converted.ID)
 	assert.Equal(t, original.UserLogin, converted.UserLogin)
 	assert.Equal(t, original.Name, converted.Name)

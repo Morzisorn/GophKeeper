@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGRPCClient_SignUpUser_NilClient(t *testing.T) {
@@ -94,7 +95,8 @@ func TestGRPCClient_GetJWTToken_ValidClient(t *testing.T) {
 		token: "test-jwt-token",
 	}
 
-	result := client.GetJWTToken()
+	result, err := client.GetJWTToken()
+	require.NoError(t, err)
 
 	assert.Equal(t, "test-jwt-token", result)
 }
