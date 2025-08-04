@@ -80,7 +80,9 @@ func (ui *UIController) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		ui.selectedType = msg.itemType
 		return ui, nil
 	case errorMsg:
-		ui.state = stateItemsList
+		ui.messages.Set("error", msg.err.Error())
+		ui.messages.Set("error_context", msg.context)
+		ui.state = stateError
 		return ui, nil
 	}
 	return ui, nil
@@ -303,7 +305,7 @@ func (ui *UIController) errorView() string {
 		result += fmt.Sprintf(" [%s]", context)
 	}
 
-	controls := "\nPress Enter to try again, q to quit"
+	controls := "\nPress Enter to continue, q to quit"
 	return result + controls
 }
 
@@ -343,6 +345,7 @@ func (ui *UIController) handleProcessComplete(msg processComplete) (tea.Model, t
 	if msg.success {
 		switch msg.context {
 		case "auth_to_master":
+			ui.isAuthenticated = true
 			ui.state = stateMasterPassword
 			ui.input = ""
 			return ui, nil

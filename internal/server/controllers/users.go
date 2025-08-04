@@ -3,7 +3,9 @@ package controllers
 import (
 	"context"
 	"errors"
+	"go.uber.org/zap"
 	"gophkeeper/internal/errs"
+	"gophkeeper/internal/logger"
 	pb "gophkeeper/internal/protos/users"
 	userv "gophkeeper/internal/server/services/user_service"
 
@@ -26,6 +28,7 @@ func (us *UserController) SignUpUser(ctx context.Context, in *pb.SignUpUserReque
 	if in.User.Login == "" || in.User.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
+	logger.Log.Info("Try to sign up user", zap.String("user", in.User.Login))
 
 	token, salt, err := us.service.SignUpUser(ctx, in.User.Login, in.User.Password)
 	switch {
@@ -34,6 +37,7 @@ func (us *UserController) SignUpUser(ctx context.Context, in *pb.SignUpUserReque
 			Error: errs.ErrUserAlreadyRegistered.Error(),
 		}, nil
 	case err != nil && !errors.Is(err, errs.ErrUserAlreadyRegistered):
+		logger.Log.Info("Sign up user error", zap.Error(err))
 		return nil, status.Error(codes.Internal, errs.ErrInternalServerError.Error())
 	}
 
@@ -47,6 +51,7 @@ func (us *UserController) SignInUser(ctx context.Context, in *pb.SignInUserReque
 	if in.User.Login == "" || in.User.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, errs.ErrRequiredArgumentIsMissing.Error())
 	}
+	logger.Log.Info("Try to sign in", zap.String("user", in.User.Login))
 
 	token, salt, err := us.service.SignInUser(ctx, in.User.Login, in.User.Password)
 	switch {

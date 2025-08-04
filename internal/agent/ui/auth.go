@@ -136,12 +136,8 @@ func (ui *UIController) signUpCmd(login, password string) tea.Cmd {
 				context: "auth",
 			}
 		}
-		if len(token) != 0 {
-			ui.isAuthenticated = true
-			ui.login = login
-		}
 		return processComplete{
-			success: true,
+			success: len(token) != 0,
 			message: "Account successfully registered",
 			context: "auth_to_master",
 		}
@@ -168,13 +164,8 @@ func (ui *UIController) signInCmd(login, password string) tea.Cmd {
 			}
 		}
 
-		if len(token) != 0 {
-			ui.isAuthenticated = true
-			ui.login = login
-		}
-
 		return processComplete{
-			success: true,
+			success: len(token) != 0,
 			message: "Signed in successfully",
 			context: "auth_to_master",
 		}
