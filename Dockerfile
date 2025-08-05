@@ -44,8 +44,4 @@ WORKDIR /root/
 # Copy the agent binary from builder stage
 COPY --from=builder /app/agent .
 
-# Copy RSA keys for encryption
-RUN mkdir -p ./keys
-COPY --from=builder /app/*.pem ./keys/
-
 CMD ["./agent"]

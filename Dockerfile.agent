@@ -14,7 +14,4 @@ WORKDIR /root/
 
 COPY --from=builder /app/agent .
 
-RUN mkdir -p ./keys
-COPY --from=builder /app/*.pem ./keys/
-
 CMD ["./agent"]
