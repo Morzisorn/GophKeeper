@@ -107,5 +107,9 @@ k3d-server: ## Show server logs from k3d
 
 .PHONY: k3d-db
 k3d-db: ## Connect to PostgreSQL database in k3d
-	kubectl exec -it deployment/postgres -- psql -U dmitrij -d gophkeeper_db
+	kubectl exec -it deployment/postgres -- psql -U gophkeeper -d gophkeeper_db
+
+.PHONY: k3d-clean
+k3d-clean: ## Clean up k3d cluster and all resources
+	./k8s/cleanup.sh
 

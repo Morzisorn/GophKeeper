@@ -29,3 +29,6 @@ vendor/
 
 # Keys
 *.pem
+
+# Instructions
+REDIS_INTEGRATION.md

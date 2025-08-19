@@ -31,11 +31,14 @@ type ServerInterceptorsConfig interface {
 type ServerConfig interface {
 	ServerInterceptorsConfig
 	ServerControllersConfig
+	ServerServicesConfig
 
 	GetAddress() string
 }
 
 type serverConfig struct {
+	Redis *ServerRedisConfig
+
 	DBConnStr    string
 	PrivateKey   *rsa.PrivateKey
 	PublicKeyPEM []byte
@@ -49,8 +52,11 @@ func NewServerConfig() (*Config, error) {
 
 	c := &Config{}
 
+	c.Redis = loadDefaultRedisConfig()
+
 	c.parseCommonEnvs()
 	c.parseServerEnvs()
+	c.parseServerRedisEnvs()
 
 	return c, nil
 }

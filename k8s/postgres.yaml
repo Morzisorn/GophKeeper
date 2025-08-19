@@ -20,9 +20,9 @@ spec:
             - name: POSTGRES_DB
               value: gophkeeper_db
             - name: POSTGRES_USER
-              value: dmitrij
+              value: gophkeeper
             - name: POSTGRES_PASSWORD
-              value: Antirise1!
+              value: dev-password
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           ports:

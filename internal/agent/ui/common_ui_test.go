@@ -79,7 +79,7 @@ func TestUIController_Update_ErrorMsg(t *testing.T) {
 
 	assert.Equal(t, ui, model)
 	assert.Nil(t, cmd)
-	assert.Equal(t, stateItemsList, ui.state)
+	assert.Equal(t, stateError, ui.state)
 }
 
 func TestUIController_View_MenuLoggedOut(t *testing.T) {
@@ -166,7 +166,7 @@ func TestUIController_errorView(t *testing.T) {
 	assert.Contains(t, view, "Error!")
 	assert.Contains(t, view, "Something went wrong")
 	assert.Contains(t, view, "[error-context]")
-	assert.Contains(t, view, "Press Enter to try again")
+	assert.Contains(t, view, "Press Enter to continue, q to quit")
 }
 
 func TestUIController_errorView_NoContext(t *testing.T) {
@@ -178,7 +178,7 @@ func TestUIController_errorView_NoContext(t *testing.T) {
 	assert.Contains(t, view, "Error!")
 	assert.Contains(t, view, "Something failed")
 	assert.NotContains(t, view, "[")
-	assert.Contains(t, view, "Press Enter to try again")
+	assert.Contains(t, view, "Press Enter to continue, q to quit")
 }
 
 func TestUIController_handleResultInput_Quit(t *testing.T) {
